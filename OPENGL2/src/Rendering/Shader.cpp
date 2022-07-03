@@ -3,7 +3,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-
+#include <gtc/type_ptr.hpp>
 #include "Debuger.h"
 
 Shader::Shader()
@@ -13,6 +13,28 @@ Shader::Shader()
 Shader::~Shader()
 {
 	Unload();
+}
+
+void Shader::SetMatrixUniform(const char* name, const glm::mat4& matrix)
+{
+	// Find the uniform by this name
+	GLuint loc = glGetUniformLocation(mShaderProgram, name);
+	// Send the matrix data to the uniform
+	GLCall(glUniformMatrix4fv(loc, 1, GL_FALSE, &matrix[0][0]));
+}
+
+void Shader::SetVectorUniform(const char* name, const glm::vec3& vector)
+{
+	GLuint loc = glGetUniformLocation(mShaderProgram, name);
+	// Send the vector data
+	glUniform3fv(loc, 1, glm::value_ptr(vector));
+}
+
+void Shader::SetFloatUniform(const char* name, float value)
+{
+	GLuint loc = glGetUniformLocation(mShaderProgram, name);
+	// Send the float data
+	glUniform1f(loc, value);
 }
 
 void Shader::SetActive()

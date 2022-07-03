@@ -6,7 +6,7 @@
 
 int main(int argc, char* argv[])
 {
-	Application* app = new Application();
+	Application* app = new Application( 480 , 640 );
 	if (app->Init())
 	{
 		app->Run();

@@ -7,9 +7,11 @@
 #include <glfw3.h>
 #include <iostream>
 
-Application::Application() : _isRunning(true)
+Application::Application(int windowHeight, int windowWidth ) : _isRunning(true),
+_windowHeight(windowHeight),
+_windowWidth(windowWidth)
 {
-    _renderer = new Renderer();
+    _renderer = new Renderer(_windowHeight,_windowWidth);
 }
 
 
@@ -43,7 +45,7 @@ bool Application::Init()
     /* Create a windowed mode window and its OpenGL context */
     if (!glfwInit())
         return -1;
-    _window = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
+    _window = glfwCreateWindow(_windowWidth, _windowHeight, "Hello World", NULL, NULL);
     if (!_window)
     {
         glfwTerminate();
@@ -71,7 +73,7 @@ bool Application::Init()
     glGetError();
    
 
-    _renderer = new Renderer();
+    _renderer = new Renderer(_windowWidth, _windowHeight);
     _input = new Input();
     _renderer->Init();
 

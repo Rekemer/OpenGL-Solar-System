@@ -23,7 +23,7 @@ _numVert(numVerticies),_numInd(numInd)
 		GLCall(glEnableVertexAttribArray(0))
 	
 	GLCall(glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), reinterpret_cast<void*>(3 * sizeof(float))))
-		GLCall(glEnableVertexAttribArray(1))
+	GLCall(glEnableVertexAttribArray(1))
 
 
 }

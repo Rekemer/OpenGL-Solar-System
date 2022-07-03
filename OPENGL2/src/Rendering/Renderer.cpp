@@ -3,9 +3,11 @@
 #include "Renderer.h"
 
 #include <glfw3.h>
+#include <ext/matrix_clip_space.hpp>
 
 #include "VertexArray.h"
 #include "Debuger.h"
+#include "Mesh.h"
 #include "Shader.h"
 #include "../Texture.h"
 
@@ -13,9 +15,10 @@
 
 
 
-Renderer::Renderer()  
+Renderer::Renderer( int windowWidth, int windowHeight)
 {
-
+	 _orthographicMatrix= glm::ortho(-windowWidth/2.0f, windowWidth / 2.0f, -windowHeight / 2.0f , windowHeight / 2.0f);
+	 _perspectiveMatrix =  glm::perspective(glm::radians(45.0f), (float)windowWidth / (float)windowHeight, 0.1f, 100.0f);
 }
 
 Renderer::~Renderer()
@@ -27,14 +30,11 @@ void Renderer::Draw()
 	GLCall(glClearColor(0.3f, 0.3f, 0.3f,1.0f));
 	GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 	static int a =0;
-	_va->Bind();
-	_texture->SetActive();
-	_shader->SetActive();
+	_mesh->ComputeWorldTransform();
+	_mesh->Bind();
 	// Draw
-	GLCall(glDrawElements(GL_TRIANGLES, _va->GetNumIndices(),
+	GLCall(glDrawElements(GL_TRIANGLES, _mesh->GetNumIndices(),
 		GL_UNSIGNED_INT, nullptr));
-	
-	// clean up
 }
 
 void Renderer::Init()
@@ -50,14 +50,10 @@ void Renderer::Init()
 		0,1,2,
 		0,3,2
 	};
-	_va = new VertexArray(vertexPositions,4,indicies,6);
-	_texture = new Texture();
-	_shader = new Shader();
-	if (!_shader->Load("Shaders/basic.vert", "Shaders/basic.frag"))
-	{
-		std::cout<< "failed to load shaders" << "\n";
-	}
-	_texture->Load("res/Wall.png");
+	//glm::mat4 viewMatrix = 
+	_mesh = new Mesh(this);
+	_mesh->Load(vertexPositions, 4, indicies, 6);
+	
 
 
 }
