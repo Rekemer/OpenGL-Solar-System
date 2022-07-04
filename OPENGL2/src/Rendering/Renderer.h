@@ -4,9 +4,10 @@
 class Renderer
 {
 public:
-	Renderer(int windowHeight, int windowWidth);
+	Renderer( int windowWidth, int windowHeight);
 	~Renderer();
 	void Draw();
+	void UpdateUI();
 	void Init();
 	glm::mat4 GetPerspectiveMatrix()const { return _perspectiveMatrix; }
 	glm::mat4 GetOrthographicMatrix()const { return _orthographicMatrix; }

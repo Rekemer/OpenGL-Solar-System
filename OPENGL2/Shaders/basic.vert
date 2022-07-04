@@ -4,10 +4,12 @@ layout(location = 1) in vec2 texCoord;
 
 out vec2 fragTexCoord;
 uniform mat4 worldMatrix;
-uniform mat4 viewProjMatrix;
+uniform mat4 projMatrix;
+uniform mat4 viewMatrix;
 void main()
 {
-	fragTexCoord = texCoord;
+    vec2 texcoord = vec2(texCoord.x, 1.0-texCoord.y);
+	fragTexCoord = texcoord;
 	vec4 pos = vec4(worldPos,1.0);
-	gl_Position =viewProjMatrix * worldMatrix * pos;
+	gl_Position =projMatrix *viewMatrix* worldMatrix * pos;
 }

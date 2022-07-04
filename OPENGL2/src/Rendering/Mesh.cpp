@@ -9,7 +9,7 @@
 #include "VertexArray.h"
 
 Mesh::Mesh(Renderer* renderer):_position(glm::vec3(0.0f,0.0f,0.0f)),
-             _rotation(glm::vec3(0.0f, 0.0f, 0.0f)),
+             _rotation(glm::vec3(90.0f, 0.0f, 0.0f)),
              _scale(glm::vec3(1.0f, 1.0f, 1.0f)),
 			_recomputeWorldMat(true),
 			_renderer(renderer)
@@ -46,7 +46,13 @@ void Mesh::ComputeWorldTransform()
 	{
 		_shader->SetActive();
 		_shader->SetMatrixUniform("worldMatrix", _worldMat);
-		_shader->SetMatrixUniform("viewProjMatrix", _renderer->GetOrthographicMatrix());
+		glm::mat4 view = glm::mat4(1.0f);
+		// note that we're translating the scene in the reverse direction of where we want to move
+		view = glm::translate(view, glm::vec3(0.0f, 0.0f, -0.5f));
+		_shader->SetMatrixUniform("projMatrix",  _renderer->GetOrthographicMatrix());
+		_shader->SetMatrixUniform("viewMatrix", view);
+		
+		
 	}
 	_recomputeWorldMat = false;
 	
@@ -70,14 +76,14 @@ void Mesh::SetScale(glm::vec3 scale)
 
 void Mesh::Load(const float* verticies, const int numVerticies, const int* indicies, const int numInd)
 {
-	_va = new VertexArray(verticies, 4, indicies, 6);
+	_va = new VertexArray(verticies, numVerticies, indicies, numInd);
 	_texture = new Texture();
 	_shader = new Shader();
 	if (!_shader->Load("Shaders/basic.vert", "Shaders/basic.frag"))
 	{
 		std::cout << "failed to load shaders" << "\n";
 	}
-	_texture->Load("res/Wall.png");
+	_texture->Load("res/Morgana.jpg");
 }
 
 int Mesh::GetNumIndices()

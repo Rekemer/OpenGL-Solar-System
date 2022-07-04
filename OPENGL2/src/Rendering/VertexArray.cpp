@@ -11,18 +11,19 @@ _numVert(numVerticies),_numInd(numInd)
 	// set up vertex buffer
 	GLCall(glGenBuffers(1, &vb));
 	GLCall(glBindBuffer(GL_ARRAY_BUFFER, vb));
-	GLCall(glBufferData(GL_ARRAY_BUFFER, 4*5*sizeof(float), verticies,GL_STATIC_DRAW));
+	
+	GLCall(glBufferData(GL_ARRAY_BUFFER, sizeof(float) * numVerticies *8, verticies, GL_STATIC_DRAW));
 
 	// set up index buffer
 	GLCall(glGenBuffers(1, &ib));
 	GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ib));
-	GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, numInd * sizeof(int), indicies, GL_STATIC_DRAW));
+	GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(float)*numInd, indicies, GL_STATIC_DRAW));
 	// layout of vertex buffer
 	
-	GLCall(glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE, 5 *  sizeof(float), (void*)0))
+	GLCall(glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE, 8 *  sizeof(float), (void*)0))
 		GLCall(glEnableVertexAttribArray(0))
 	
-	GLCall(glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), reinterpret_cast<void*>(3 * sizeof(float))))
+	GLCall(glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), reinterpret_cast<void*>(6 * sizeof(float))))
 	GLCall(glEnableVertexAttribArray(1))
 
 

@@ -83,5 +83,8 @@
     <Image Include="res\Wall.png">
       <Filter>Файлы ресурсов</Filter>
     </Image>
+    <Image Include="res\Morgana.jpg">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
   </ItemGroup>
 </Project>
