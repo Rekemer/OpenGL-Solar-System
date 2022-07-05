@@ -4,13 +4,14 @@
 class Renderer
 {
 public:
-	Renderer( int windowWidth, int windowHeight);
+	Renderer(class GLFWwindow* window,int windowWidth, int windowHeight);
 	~Renderer();
 	void Draw();
-	void UpdateUI();
 	void Init();
+	class GLFWwindow* GetWindow() { return _window; }
 	glm::mat4 GetPerspectiveMatrix()const { return _perspectiveMatrix; }
 	glm::mat4 GetOrthographicMatrix()const { return _orthographicMatrix; }
+	class Camera* GetCamera() { return  _camera; }
 
 private:
 	
@@ -18,5 +19,7 @@ private:
 	class Mesh * _mesh;
 	glm::mat4 _perspectiveMatrix;
 	glm::mat4 _orthographicMatrix;
+	class GLFWwindow* _window;
+	class Camera* _camera;
 };
 

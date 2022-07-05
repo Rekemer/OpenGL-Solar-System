@@ -3,25 +3,25 @@
 #include "Renderer.h"
 
 #include <glfw3.h>
-#include <imgui.h>
 #include <ext/matrix_clip_space.hpp>
 
 #include "VertexArray.h"
 #include "Debuger.h"
-#include "Mesh.h"
+#include "../Entity/Mesh.h"
 #include "Shader.h"
 #include "../Texture.h"
+#include "../Entity/Camera.h"
 
 //#include <glfw3.h>
 
 
 
-Renderer::Renderer( int windowWidth, int windowHeight)
+Renderer::Renderer( GLFWwindow* window, int windowWidth, int windowHeight)
 {
 	auto aspect = (float)windowWidth / (float)windowHeight;
-	 _orthographicMatrix= glm::ortho(-1.0f, 1.0f , -1.0f * 1.f/aspect, 1.0f * 1.f/aspect);
-	
+	_orthographicMatrix= glm::ortho(-1.0f, 1.0f , -1.0f * 1.f/aspect, 1.0f * 1.f/aspect);
 	 _perspectiveMatrix =  glm::perspective(glm::radians(45.0f), aspect, 0.1f, 100.0f);
+	 _window = window;
 }
 
 Renderer::~Renderer()
@@ -30,60 +30,65 @@ Renderer::~Renderer()
 
 void Renderer::Draw()
 {
+	glEnable(GL_DEPTH_TEST);
 	GLCall(glClearColor(0.3f, 0.3f, 0.3f,1.0f));
 	GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 	static int a =0;
+	_camera->Update();
 	_mesh->ComputeWorldTransform();
 	_mesh->Bind();
 	// Draw
-	GLCall(glDrawElements(GL_TRIANGLES, _mesh->GetNumIndices(),
-		GL_UNSIGNED_INT, nullptr));
+	GLCall(glDrawArrays(GL_TRIANGLES, 0, 36););
 
 
 
 }
-void Renderer::UpdateUI()
-{
-	
-}
+
 
 void Renderer::Init()
 {
 	const float vertexPositions[] = {
-	-0.5, -0.5, -0.5, 0, 0, -1,  0, 0 ,
-	0.5, -0.5, -0.5, 0, 0, -1,  1, 0,
-	-0.5, 0.5, -0.5, 0, 0, -1,  0, 1,
-	0.5, 0.5, -0.5, 0, 0, -1,  1, 1,
+	-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+	 0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+	-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
 
-	-0.5, 0.5, 0.5, 0, 1, 0,    1, 0 ,
-	0.5, 0.5, 0.5, 0, 1, 0,    1, 1,
-	-0.5, -0.5, 0.5, 0, 0, 1,  0, 0,
-	0.5, -0.5, 0.5, 0, 0, 1,  1, 0,
+	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+	 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+	 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+	 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+	-0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
 
-	-0.5, 0.5, -0.5, 0, 0, -1,   0, 1 ,
-	0.5, -0.5, -0.5, 0, 0, -1,  1, 0,
-	-0.5, 0.5, -0.5, 0, 1, 0,   1, 0,
-	0.5, 0.5, -0.5, 0, 1, 0,   1, 1,
+	-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+	-0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+	-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
 
-	-0.5, 0.5, 0.5, 0, 1, 0,    0, 0 ,
-	-0.5, 0.5, 0.5, 0, 0, 1,   0, 1,
-	0.5, 0.5, 0.5, 0, 0, 1,    1, 1,
-	-0.5, -0.5, 0.5, 0, 0, 1,  0, 0,
+	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+	 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+	 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+	 0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
 
-	-0.5, -0.5, 0.5, 0, -1, 0,   0, 0 ,
-	0.5, -0.5, 0.5, 0, -1, 0,   0, 1,
-	-0.5, -0.5, -0.5, 0, -1, 0, 1, 0,
-	0.5, -0.5, -0.5, 0, -1, 0, 1, 1,
+	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+	 0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+	 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+	 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
 
-	0.5, -0.5, -0.5, 1, 0, 0,    0, 0 ,
-	0.5, -0.5, 0.5, 1, 0, 0,    0, 1,
-	0.5, 0.5, -0.5, 1, 0, 0,    1, 0,
-	0.5, 0.5, 0.5, 1, 0, 0,    1, 1,
-
-	-0.5, -0.5, 0.5, -1, 0, 0,      0, 0 ,
-	-0.5, -0.5, -0.5, -1, 0, 0,    0, 1,
-	-0.5, 0.5, 0.5, -1, 0, 0,      1, 0,
-	-0.5, 0.5, -0.5, -1, 0, 0,    1, 1,
+	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+	-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
 	};
 	std::cout << sizeof(vertexPositions);
 	
@@ -105,8 +110,8 @@ void Renderer::Init()
 		27,25,26
 	};
 	_mesh = new Mesh(this);
-	_mesh->Load(vertexPositions, 28, indicies, 36);
-	
+	_mesh->Load(vertexPositions, 30, indicies, 26);
+	_camera = new Camera(_window);
 
 
 }

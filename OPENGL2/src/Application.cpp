@@ -6,13 +6,13 @@
 #include "Input\Input.h"
 #include <glfw3.h>
 #include <iostream>
-#include "imgui.h"
+
 
 Application::Application(int windowHeight, int windowWidth ) : _isRunning(true),
 _windowHeight(windowHeight),
 _windowWidth(windowWidth)
 {
-    _renderer = new Renderer(_windowWidth, _windowHeight);
+  
 }
 
 
@@ -68,14 +68,14 @@ bool Application::Init()
         SDL_Log("Failed to initialize GLEW");
         return false;
     }
-    ImGui::CreateContext();
+   
     // On some platforms, GLEW will emit a benign error code,
     // so clear it
     glGetError();
-    ImGui::CreateContext();
+  
 
 
-    _renderer = new Renderer(_windowWidth, _windowHeight);
+    _renderer = new Renderer(_window,_windowWidth, _windowHeight);
     _input = new Input();
     _renderer->Init();
 
