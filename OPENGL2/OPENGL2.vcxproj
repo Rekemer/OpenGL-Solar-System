@@ -176,9 +176,26 @@
   <ItemGroup>
     <None Include="Shaders\basic.frag" />
     <None Include="Shaders\basic.vert" />
+    <None Include="Shaders\light.frag" />
+    <Text Include="Shaders\light.vert">
+      <FileType>Document</FileType>
+    </Text>
   </ItemGroup>
   <ItemGroup>
+    <Image Include="res\metal\Material_2079.jpg" />
+    <Image Include="res\metal\Metal_006_ambientOcclusion.jpg" />
+    <Image Include="res\metal\Metal_006_basecolor.jpg" />
+    <Image Include="res\metal\Metal_006_height.png" />
+    <Image Include="res\metal\Metal_006_metallic.jpg" />
+    <Image Include="res\metal\Metal_006_normal.jpg" />
+    <Image Include="res\metal\Metal_006_roughness.jpg" />
+    <Image Include="res\snow\Material_394.png" />
     <Image Include="res\Morgana.jpg" />
+    <Image Include="res\snow\Snow_002_COLOR.jpg" />
+    <Image Include="res\snow\Snow_002_DISP.png" />
+    <Image Include="res\snow\Snow_002_NORM.jpg" />
+    <Image Include="res\snow\Snow_002_OCC.jpg" />
+    <Image Include="res\snow\Snow_002_ROUGH.jpg" />
     <Image Include="res\Wall.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

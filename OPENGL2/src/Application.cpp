@@ -46,7 +46,7 @@ bool Application::Init()
     /* Create a windowed mode window and its OpenGL context */
     if (!glfwInit())
         return -1;
-    _window = glfwCreateWindow(_windowWidth, _windowHeight, "Hello World", NULL, NULL);
+    _window = glfwCreateWindow(_windowWidth, _windowHeight, "OPENGL", NULL, NULL);
     if (!_window)
     {
         glfwTerminate();
@@ -59,7 +59,7 @@ bool Application::Init()
     glfwMakeContextCurrent(_window);
     glfwSwapInterval(2);
     glfwSetKeyCallback(_window, ProcessInput);
-  
+    glfwSetInputMode(_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     // Initialize GLEW
     glewExperimental = GL_TRUE;

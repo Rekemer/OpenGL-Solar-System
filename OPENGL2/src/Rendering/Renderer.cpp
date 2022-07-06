@@ -36,12 +36,14 @@ void Renderer::Draw()
 	static int a =0;
 	_camera->Update();
 	_mesh->ComputeWorldTransform();
+
+	
 	_mesh->Bind();
 	// Draw
 	GLCall(glDrawArrays(GL_TRIANGLES, 0, 36););
-
-
-
+	_lightMesh->ComputeWorldTransform();
+	_lightMesh->Bind();
+	GLCall(glDrawArrays(GL_TRIANGLES, 0, 36););
 }
 
 
@@ -109,9 +111,17 @@ void Renderer::Init()
 		26,25,24,
 		27,25,26
 	};
+	// just object
 	_mesh = new Mesh(this);
 	_mesh->Load(vertexPositions, 30, indicies, 26);
+	_mesh->LoadShader("Shaders/basic.vert", "Shaders/basic.frag");
+	_mesh->LoadTexture("res/Wall.png");
+	//camera
 	_camera = new Camera(_window);
-
-
+	_camera->SetPosition(glm::vec3(0.f, 0.f, 5.f));
+	// light source
+	_lightMesh = new Mesh(this);
+	_lightMesh->Load(vertexPositions, 30, indicies, 26);
+	_lightMesh->LoadShader("Shaders/light.vert", "Shaders/light.frag");
+	_lightMesh->SetPosition(glm::vec3(4.f, 4.f, 4.f));
 }

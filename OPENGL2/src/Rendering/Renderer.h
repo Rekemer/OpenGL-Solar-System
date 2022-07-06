@@ -17,6 +17,7 @@ private:
 	
 private:
 	class Mesh * _mesh;
+	class Mesh * _lightMesh;
 	glm::mat4 _perspectiveMatrix;
 	glm::mat4 _orthographicMatrix;
 	class GLFWwindow* _window;

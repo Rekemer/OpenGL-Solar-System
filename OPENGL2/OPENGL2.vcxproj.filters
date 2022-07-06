@@ -84,6 +84,7 @@
   <ItemGroup>
     <None Include="Shaders\basic.vert" />
     <None Include="Shaders\basic.frag" />
+    <None Include="Shaders\light.frag" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\Wall.png">
@@ -92,5 +93,47 @@
     <Image Include="res\Morgana.jpg">
       <Filter>Файлы ресурсов</Filter>
     </Image>
+    <Image Include="res\snow\Snow_002_ROUGH.jpg">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="res\snow\Snow_002_OCC.jpg">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="res\snow\Snow_002_DISP.png">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="res\snow\Snow_002_NORM.jpg">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="res\snow\Snow_002_COLOR.jpg">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="res\snow\Material_394.png">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="res\metal\Metal_006_roughness.jpg">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="res\metal\Material_2079.jpg">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="res\metal\Metal_006_ambientOcclusion.jpg">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="res\metal\Metal_006_basecolor.jpg">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="res\metal\Metal_006_height.png">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="res\metal\Metal_006_metallic.jpg">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="res\metal\Metal_006_normal.jpg">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Shaders\light.vert" />
   </ItemGroup>
 </Project>

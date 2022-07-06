@@ -6,7 +6,11 @@
 
 int main(int argc, char* argv[])
 {
-	Application* app = new Application( 480 , 640 );
+	int fullA = 1920;
+	int fullB = 1080;
+	int testA = 480;
+	int testb = 640;
+	Application* app = new Application(testA, testb);
 	if (app->Init())
 	{
 		app->Run();
