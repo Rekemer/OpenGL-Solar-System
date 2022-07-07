@@ -14,6 +14,7 @@ public:
 	void LoadTexture(std::string filepath);
 	void Load(const float* verticies, const int  numVerticies, const int* indicies, const int  numInd);
 	int GetNumIndices();
+	class Shader* GetShader() { return _shader; }
 private:
 private:
 	class VertexArray* _va;

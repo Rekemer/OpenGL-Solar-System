@@ -52,7 +52,7 @@ void Mesh::LoadShader(const std::string& vertShaderPath, const std::string& frag
 void Mesh::LoadTexture(const std::string filepath)
 {
 	_texture = new Texture();
-	_texture->Load("res/Wall.png");
+	_texture->Load(filepath);
 }
 
 

@@ -61,7 +61,7 @@ void Camera::ProcessMouseInput()
     }
     GLdouble currentXPos, currentYPos;
     glfwGetCursorPos(_window, &currentXPos, &currentYPos);
-    std::cout << currentXPos << " " << currentYPos << "\n";
+   // std::cout << currentXPos << " " << currentYPos << "\n";
     float xoffset = currentXPos - _lastX;
     float yoffset = currentYPos - _lastY;
     yoffset *= -1;

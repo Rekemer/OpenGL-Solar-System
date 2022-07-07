@@ -20,12 +20,14 @@ _numVert(numVerticies),_numInd(numInd)
 	GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(float)*numInd, indicies, GL_STATIC_DRAW));
 	// layout of vertex buffer
 	
-	GLCall(glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE, 5 *  sizeof(float), (void*)0))
+	GLCall(glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE, 8 *  sizeof(float), (void*)0))
 		GLCall(glEnableVertexAttribArray(0))
 	
-	GLCall(glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), reinterpret_cast<void*>(3 * sizeof(float))))
+	GLCall(glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), reinterpret_cast<void*>(3 * sizeof(float))))
 	GLCall(glEnableVertexAttribArray(1))
 
+	GLCall(glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), reinterpret_cast<void*>(5 * sizeof(float))))
+	GLCall(glEnableVertexAttribArray(2))
 
 }
 

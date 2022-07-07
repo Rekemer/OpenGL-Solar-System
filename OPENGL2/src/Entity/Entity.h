@@ -9,6 +9,7 @@ public:
 	void SetPosition(glm::vec3 pos);
 	void SetRotation(glm::vec3 rot);
 	void ComputeWorldTransform();
+	glm::vec3 GetPosition() { return _position; }
 private:
 protected:
 	
