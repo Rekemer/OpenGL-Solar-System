@@ -30,6 +30,15 @@ void Shader::SetVectorUniform(const char* name, const glm::vec3& vector)
 	glUniform3fv(loc, 1, glm::value_ptr(vector));
 }
 
+
+void Shader::SetVectorUniform(const char* name,float x, float y,float z)
+{
+	auto vector = glm::vec3(x, y, z);
+	GLuint loc = glGetUniformLocation(mShaderProgram, name);
+	// Send the vector data
+	glUniform3fv(loc, 1, glm::value_ptr(vector));
+}
+
 void Shader::SetFloatUniform(const char* name, float value)
 {
 	GLuint loc = glGetUniformLocation(mShaderProgram, name);

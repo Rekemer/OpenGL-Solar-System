@@ -13,6 +13,7 @@ public:
 	bool Load(const std::string& vertName, const std::string& fragName);
 	void SetMatrixUniform(const char* name, const glm::mat4& matrix);
 	void SetVectorUniform(const char* name, const glm::vec3& vec);
+	void SetVectorUniform(const char* name, float x, float y, float z);
 	void SetFloatUniform(const char* name, const float value);
 private:
 	bool CompileShader(const std::string& fileName,

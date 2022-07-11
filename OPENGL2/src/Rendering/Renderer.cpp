@@ -27,7 +27,12 @@ Renderer::Renderer( GLFWwindow* window, int windowWidth, int windowHeight)
 Renderer::~Renderer()
 {
 }
-
+glm::vec3 pointLightPositions[] = {
+		glm::vec3(0.0f,  1.2f, 8.0f),
+		glm::vec3(2.3f * 2, 3.3f, 6.0f),
+		glm::vec3(5.0f,  2.0f, 6.0f),
+		glm::vec3(0.0f,  1.2f, 8.0f)
+};
 void Renderer::Draw()
 {
 	glEnable(GL_DEPTH_TEST);
@@ -47,16 +52,58 @@ void Renderer::Draw()
 		mesh->GetShader()->SetVectorUniform("material.specular", glm::vec3(0.8, 0.8, 0.8));
 		mesh->GetShader()->SetFloatUniform("material.shininess", 32.0f);
 
-		mesh->GetShader()->SetVectorUniform("light.ambient", glm::vec3(0.2f, 0.2f, 0.2f));
-		mesh->GetShader()->SetVectorUniform("light.diffuse", glm::vec3(0.5f, 0.5f, 0.5f)); // darken diffuse light a bit
-		mesh->GetShader()->SetVectorUniform("light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
-		mesh->GetShader()->SetVectorUniform("light.position", _camera->GetPosition());
+		mesh->GetShader()->SetVectorUniform("dirLight.ambient", glm::vec3(0.2, 0.2, 0.2));
+		mesh->GetShader()->SetVectorUniform("dirLight.diffuse", glm::vec3(0.6f, 0.6f, 0.6f)); // darken diffuse light a bit
+		mesh->GetShader()->SetVectorUniform("dirLight.specular", glm::vec3(1.0f, 1.0f, 1.0f));
+		//mesh->GetShader()->SetVectorUniform("light.position", _lightMesh->GetPosition());
 
-		auto dir = glm::vec4(0.0f, 0.0f, -1.0f, 1.0f) * _camera->GetViewMatrix();
+		auto dir = glm::vec4(-0.5f, 1.0f, -1.0f, 1.0f) ;
 	//	std::cout << dir.x << " " << dir.y << " " << dir.z << "\n";
-		mesh->GetShader()->SetVectorUniform("light.direction", (glm::vec3)dir);
-		mesh->GetShader()->SetFloatUniform("light.cutOff", glm::cos(glm::radians(12.5f)));
-		mesh->GetShader()->SetVectorUniform("cameraPos", _camera->GetPosition());
+		mesh->GetShader()->SetVectorUniform("dirLight.direction", (glm::vec3)dir);
+		//mesh->GetShader()->SetFloatUniform("light.cutOff", glm::cos(glm::radians(12.5f)));
+		//mesh->GetShader()->SetVectorUniform("cameraPos", _camera->GetPosition());
+
+		 // point light 1
+		mesh->GetShader()->SetVectorUniform("pointLights[0].position", pointLightPositions[0]);
+		mesh->GetShader()->SetVectorUniform("pointLights[0].ambient", 0.05f, 0.05f, 0.05f);
+		mesh->GetShader()->SetVectorUniform("pointLights[0].diffuse", 0.0f, 0.8f, 0.0f);
+		//mesh->GetShader()->SetVectorUniform("pointLights[0].specular", 1.0f, 1.0f, 1.0f);
+		mesh->GetShader()->SetFloatUniform("pointLights[0].constant", 1.0f);
+		mesh->GetShader()->SetFloatUniform("pointLights[0].linear", 0.09f);
+		mesh->GetShader()->SetFloatUniform("pointLights[0].quadratic", 0.032f);
+		//mesh->GetShader()->2
+		mesh->GetShader()->SetVectorUniform("pointLights[1].position", pointLightPositions[1]);
+		mesh->GetShader()->SetVectorUniform("pointLights[1].ambient", 0.05f, 0.05f, 0.05f);
+		mesh->GetShader()->SetVectorUniform("pointLights[1].diffuse", 0.0f, 0.8f, 0.0f);
+		//mesh->GetShader()->SetVectorUniform("pointLights[1].specular", 1.0f, 1.0f, 1.0f);
+		mesh->GetShader()->SetFloatUniform("pointLights[1].constant", 1.0f);
+		mesh->GetShader()->SetFloatUniform("pointLights[1].linear", 0.09f);
+		mesh->GetShader()->SetFloatUniform("pointLights[1].quadratic", 0.032f);
+		//mesh->GetShader()->3
+		mesh->GetShader()->SetVectorUniform("pointLights[2].position", pointLightPositions[2]);
+		mesh->GetShader()->SetVectorUniform("pointLights[2].ambient", 0.05f, 0.05f, 0.05f);
+		mesh->GetShader()->SetVectorUniform("pointLights[2].diffuse", 0.0f, 0.8f, 0.0f);
+		//mesh->GetShader()->SetVectorUniform("pointLights[2].specular", 1.0f, 1.0f, 1.0f);
+		mesh->GetShader()->SetFloatUniform("pointLights[2].constant", 1.0f);
+		mesh->GetShader()->SetFloatUniform("pointLights[2].linear", 0.09f);
+		mesh->GetShader()->SetFloatUniform("pointLights[2].quadratic", 0.032f);
+		//mesh->GetShader()->4
+		mesh->GetShader()->SetVectorUniform("pointLights[3].position", pointLightPositions[3]);
+		mesh->GetShader()->SetVectorUniform("pointLights[3].ambient", 0.05f, 0.05f, 0.05f);
+		mesh->GetShader()->SetVectorUniform("pointLights[3].diffuse", 0.0f, 0.8f, 0.0f);
+		//mesh->GetShader()->SetVectorUniform("pointLights[3].specular", 1.0f, 1.0f, 1.0f);
+		mesh->GetShader()->SetFloatUniform("pointLights[3].constant", 1.0f);
+		mesh->GetShader()->SetFloatUniform("pointLights[3].linear", 0.09f);
+		mesh->GetShader()->SetFloatUniform("pointLights[3].quadratic", 0.032f);
+
+		auto front = glm::vec4(0.0f, 0.0f, -1.f,1.0f) * _camera->GetViewMatrix();
+		mesh->GetShader()->SetVectorUniform("spotLight.position", _camera->GetPosition());
+		mesh->GetShader()->SetVectorUniform("spotLight.direction", (glm::vec3)front);
+		mesh->GetShader()->SetVectorUniform("spotLight.ambient", 0.0f, 0.0f, 0.0f);
+		mesh->GetShader()->SetVectorUniform("spotLight.diffuse", 1.0f, 1.0f, 1.0f);
+		mesh->GetShader()->SetVectorUniform("spotLight.specular", 1.0f, 1.0f, 1.0f);
+		mesh->GetShader()->SetFloatUniform("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
+
 		// Draw
 		GLCall(glDrawArrays(GL_TRIANGLES, 0, 36););
 	}
@@ -138,9 +185,9 @@ void Renderer::Init()
 		27,25,26
 	};
 	// just objects
-	for (int i= 0; i != 10; i++)
+	for (int i= 0; i != 5; i++)
 	{
-		for (int j = 10; j!= 0; j--)
+		for (int j = 5; j!= 0; j--)
 		{
 			auto _mesh = new Mesh(this);
 			_mesh->Load(vertexBuffer, 36, indicies, 26);
@@ -148,7 +195,7 @@ void Renderer::Init()
 			_mesh->LoadTexture("res/Morgana.jpg");
 			_mesh->SetPosition(glm::vec3(i *2, 0, j * 2));
 			_meshes.emplace_back(_mesh);
-			//std::cout << i << " " << j << "\n";
+			std::cout << i << " " << j << "\n";
 		}
 		
 		
