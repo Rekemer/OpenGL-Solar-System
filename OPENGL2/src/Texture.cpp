@@ -11,6 +11,7 @@ Texture::Texture()
 
 Texture::~Texture()
 {
+	Unload();
 }
 
 void Texture::Load(std::string fileName)

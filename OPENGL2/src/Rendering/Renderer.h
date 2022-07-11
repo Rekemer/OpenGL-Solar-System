@@ -1,4 +1,5 @@
 #pragma once
+#include <list>
 #include <ext/matrix_float4x4.hpp>
 
 class Renderer
@@ -16,7 +17,7 @@ public:
 private:
 	
 private:
-	class Mesh * _mesh;
+	std::list<class Mesh*>_meshes;
 	class Mesh * _lightMesh;
 	glm::mat4 _perspectiveMatrix;
 	glm::mat4 _orthographicMatrix;

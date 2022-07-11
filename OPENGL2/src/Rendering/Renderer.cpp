@@ -35,25 +35,35 @@ void Renderer::Draw()
 	GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 	static int a =0;
 	_camera->Update();
-	_mesh->ComputeWorldTransform();
+	
 
 	float time = (float)glfwGetTime();
-	_mesh->Bind();
+	for (auto mesh : _meshes)
+	{
+		mesh->ComputeWorldTransform();
+		mesh->Bind();
+		//_mesh->GetShader()->SetVectorUniform("material.ambient", glm::vec3(0.2, 0.8, 0.5));
+		//_mesh->GetShader()->SetVectorUniform("material.diffuse", glm::vec3(0.2, 0.8, 0.5));
+		mesh->GetShader()->SetVectorUniform("material.specular", glm::vec3(0.8, 0.8, 0.8));
+		mesh->GetShader()->SetFloatUniform("material.shininess", 32.0f);
 
-	_mesh->GetShader()->SetVectorUniform("material.ambient", glm::vec3(0.2, 0.8, 0.5));
-	_mesh->GetShader()->SetVectorUniform("material.diffuse", glm::vec3(0.2, 0.8, 0.5));
-	_mesh->GetShader()->SetVectorUniform("material.specular", glm::vec3(0.2, 0.8, 0.5));
-	_mesh->GetShader()->SetFloatUniform("material.shininess", 32.0f);
+		mesh->GetShader()->SetVectorUniform("light.ambient", glm::vec3(0.2f, 0.2f, 0.2f));
+		mesh->GetShader()->SetVectorUniform("light.diffuse", glm::vec3(0.5f, 0.5f, 0.5f)); // darken diffuse light a bit
+		mesh->GetShader()->SetVectorUniform("light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
+		mesh->GetShader()->SetVectorUniform("light.position", _camera->GetPosition());
 
-	_mesh->GetShader()->SetVectorUniform("light.ambient", glm::vec3(0.2f, 0.2f, 0.2f));
-	_mesh->GetShader()->SetVectorUniform("light.diffuse",glm::vec3( 0.5f, 0.5f, 0.5f)); // darken diffuse light a bit
-	_mesh->GetShader()->SetVectorUniform("light.specular",glm::vec3( 1.0f, 1.0f, 1.0f));
-	_mesh->GetShader()->SetVectorUniform("light.position", _lightMesh->GetPosition());
-	_mesh->GetShader()->SetVectorUniform("cameraPos", _camera->GetPosition());
+		auto dir = glm::vec4(0.0f, 0.0f, -1.0f, 1.0f) * _camera->GetViewMatrix();
+	//	std::cout << dir.x << " " << dir.y << " " << dir.z << "\n";
+		mesh->GetShader()->SetVectorUniform("light.direction", (glm::vec3)dir);
+		mesh->GetShader()->SetFloatUniform("light.cutOff", glm::cos(glm::radians(12.5f)));
+		mesh->GetShader()->SetVectorUniform("cameraPos", _camera->GetPosition());
+		// Draw
+		GLCall(glDrawArrays(GL_TRIANGLES, 0, 36););
+	}
+	
 
 
-	// Draw
-	GLCall(glDrawArrays(GL_TRIANGLES, 0, 36););
+	
 	_lightMesh->SetPosition(glm::vec3(cos(time) *4.f, 2.f, sin(time) * 4.f));
 	_lightMesh->ComputeWorldTransform();
 	_lightMesh->Bind();
@@ -127,11 +137,23 @@ void Renderer::Init()
 		26,25,24,
 		27,25,26
 	};
-	// just object
-	_mesh = new Mesh(this);
-	_mesh->Load(vertexBuffer, 36, indicies, 26);
-	_mesh->LoadShader("Shaders/basic.vert", "Shaders/basic.frag");
-	_mesh->LoadTexture("res/Morgana.jpg");
+	// just objects
+	for (int i= 0; i != 10; i++)
+	{
+		for (int j = 10; j!= 0; j--)
+		{
+			auto _mesh = new Mesh(this);
+			_mesh->Load(vertexBuffer, 36, indicies, 26);
+			_mesh->LoadShader("Shaders/basic.vert", "Shaders/basic.frag");
+			_mesh->LoadTexture("res/Morgana.jpg");
+			_mesh->SetPosition(glm::vec3(i *2, 0, j * 2));
+			_meshes.emplace_back(_mesh);
+			//std::cout << i << " " << j << "\n";
+		}
+		
+		
+	}
+	
 	//camera
 	_camera = new Camera(_window);
 	_camera->SetPosition(glm::vec3(0.f, 0.f, 5.f));

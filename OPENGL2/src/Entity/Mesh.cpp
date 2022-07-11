@@ -18,6 +18,8 @@ Mesh::Mesh(Renderer* renderer): Entity()
 
 Mesh::~Mesh()
 {
+	delete _va;
+	_va = nullptr;
 }
 
 void Mesh::Bind()
