@@ -6,8 +6,14 @@
 #include <gtc/type_ptr.hpp>
 #include "Debuger.h"
 
+
 Shader::Shader()
 {
+}
+
+Shader::Shader(const std::string& vertName, const std::string& fragName)
+{
+	Load(vertName, fragName);
 }
 
 Shader::~Shader()

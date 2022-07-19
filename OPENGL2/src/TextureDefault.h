@@ -1,13 +1,13 @@
 #pragma once
 #include <string>
 
-class Texture
+class TextureDefault
 {
 	
 
 public:
-	Texture();
-	~Texture();
+	TextureDefault();
+	~TextureDefault();
 	void Load(std::string fileName);
 	void Unload();
 	void SetActive();

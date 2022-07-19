@@ -1,7 +1,7 @@
 #pragma once
 #include <list>
 #include <ext/matrix_float4x4.hpp>
-
+#include <unordered_map>
 class Renderer
 {
 public:
@@ -17,7 +17,9 @@ public:
 private:
 	
 private:
+	class Shader* _basicShader;
 	std::list<class Mesh*>_meshes;
+	std::list<class Model*> models;
 	class Mesh * _lightMesh;
 	glm::mat4 _perspectiveMatrix;
 	glm::mat4 _orthographicMatrix;

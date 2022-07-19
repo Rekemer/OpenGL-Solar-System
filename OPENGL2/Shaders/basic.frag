@@ -2,6 +2,11 @@
 
 struct Material
 {
+    sampler2D texture_diffuse1;
+    sampler2D texture_diffuse2;
+    sampler2D texture_diffuse3;
+    sampler2D texture_specular1;
+    sampler2D texture_specular2;
 	sampler2D diffuse;
     vec3 specular;
     float shininess;
@@ -58,31 +63,39 @@ vec3 CalcSpotLight( SpotLight spotLight,vec3  normal, vec3 fragPos, vec3 viewDir
 
 uniform Light light;
 uniform Material material;
+
 uniform vec3 cameraPos;
 
 in vec2 diffuseTexCoords;
 out vec4 outColor;
-in vec2 fragTexCoord;
+
 in vec3 normal;
 in vec3 lightPosition;
 in vec3 fragPos;
-uniform sampler2D uTexture;
-uniform vec3 lightColor;
+
+
+uniform sampler2D texture_diffuse1;
+uniform sampler2D texture_diffuse2;
+uniform sampler2D texture_diffuse3;
+uniform sampler2D texture_specular1;
+uniform sampler2D texture_specular2;
+
+
 void main()
 {
 	
     // properties
-    vec3 norm = normalize(normal);
-    vec3 viewDir = normalize(cameraPos - fragPos);
-
-    // phase 1: Directional lighting
-    vec3 result = CalcDirLight(dirLight, norm, viewDir);
-    // phase 2: Point lights
-    for(int i = 0; i < NR_POINT_LIGHTS; i++)
-      result += CalcPointLight(pointLights[i], norm, fragPos, viewDir);    
-    // phase 3: Spot light
-    result += CalcSpotLight(spotLight, norm, fragPos, viewDir);        
-    outColor = glm::vec4(result,1.0f);
+//    vec3 norm = normalize(normal);
+//    vec3 viewDir = normalize(cameraPos - fragPos);
+//
+//    // phase 1: Directional lighting
+//    vec3 result = CalcDirLight(dirLight, norm, viewDir);
+//    // phase 2: Point lights
+//    for(int i = 0; i < NR_POINT_LIGHTS; i++)
+//      result += CalcPointLight(pointLights[i], norm, fragPos, viewDir);    
+//    // phase 3: Spot light
+//    result += CalcSpotLight(spotLight, norm, fragPos, viewDir);
+    outColor = texture(material.texture_diffuse1,diffuseTexCoords);
 
 }
 

@@ -7,13 +7,12 @@
 
 Camera::Camera(GLFWwindow* window)
 {
-	_window = window;
+    _window = window;
     int width, height;
-    glfwGetWindowSize(_window,&width, &height);
+    glfwGetWindowSize(_window, &width, &height);
     _lastX = width / 2.f;
-    _lastY = height/ 2.f;
+    _lastY = height / 2.f;
 }
-
 void Camera::Update()
 {
     float currentFrame = glfwGetTime();

@@ -1,26 +1,62 @@
 #pragma once
+#include <vector>
 #include <xstring>
 #include <ext/matrix_float4x4.hpp>
 
 #include "Entity.h"
 
+#define MAX_BONE_INFLUENCE 4
+	struct Vertex {
+		// position
+		glm::vec3 Position;
+		// normal
+		glm::vec3 Normal;
+		// texCoords
+		glm::vec2 TexCoords;
+		// tangent
+		glm::vec3 Tangent;
+		// bitangent
+		glm::vec3 Bitangent;
+		//bone indexes which will influence this vertex
+		int m_BoneIDs[MAX_BONE_INFLUENCE];
+		//weights from each bone
+		float m_Weights[MAX_BONE_INFLUENCE];
+	};
+
+
+struct Texture {
+	unsigned int id;
+	std::string type;
+	std::string path;
+};
+
+
 class Mesh : public Entity
 {
 public:
 	Mesh(class Renderer*);
+	Mesh(std::vector<Vertex>& vertices, std::vector<unsigned int> indices, std::vector<Texture>& textures,Renderer* renderer);
 	~Mesh();
+	void Draw(class Shader& shader);
 	void Bind();
 	void LoadShader(const std::string& vertShaderPath, const std::string& fragShaderPath);
 	void LoadTexture(std::string filepath);
 	void Load(const float* verticies, const int  numVerticies, const int* indicies, const int  numInd);
+	void Load(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures);
 	int GetNumIndices();
+	void SetupMesh();
 	class Shader* GetShader() { return _shader; }
 private:
 private:
 	class VertexArray* _va;
 	
 	class Shader* _shader;
-	class Texture* _texture;
+	class TextureDefault* _texture;
 	class Renderer* _renderer;
+
+	// mesh data
+	std::vector<Vertex>       vertices;
+	std::vector<unsigned int> indices;
+	std::vector<Texture>      textures;
 };
 

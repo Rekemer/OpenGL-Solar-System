@@ -7,6 +7,7 @@ class Shader
 {
 public:
 	Shader();
+	Shader(const std::string& vertName, const std::string& fragName);
 	~Shader();
 	void SetActive();
 	void Unload();
@@ -15,6 +16,10 @@ public:
 	void SetVectorUniform(const char* name, const glm::vec3& vec);
 	void SetVectorUniform(const char* name, float x, float y, float z);
 	void SetFloatUniform(const char* name, const float value);
+	void setInt(const std::string& name, int value) const
+	{
+		glUniform1i(glGetUniformLocation(mShaderProgram, name.c_str()), value);
+	}
 private:
 	bool CompileShader(const std::string& fileName,
 		GLenum shaderType, GLuint& outShader);

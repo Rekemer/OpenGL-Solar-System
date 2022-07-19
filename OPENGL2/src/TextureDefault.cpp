@@ -1,20 +1,20 @@
-#include "Texture.h"
+#include "TextureDefault.h"
 
 #include <glew.h>
 
 #include "SOIL.h"
 #include "Rendering/Debuger.h"
 
-Texture::Texture()
+TextureDefault::TextureDefault()
 {
 }
 
-Texture::~Texture()
+TextureDefault::~TextureDefault()
 {
 	Unload();
 }
 
-void Texture::Load(std::string fileName)
+void TextureDefault::Load(std::string fileName)
 {
 	int channels = 0;
 
@@ -60,12 +60,12 @@ void Texture::Load(std::string fileName)
 	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
 }
 
-void Texture::Unload()
+void TextureDefault::Unload()
 {
 	GLCall(glDeleteTextures(1, &_textureID));
 }
 
-void Texture::SetActive()
+void TextureDefault::SetActive()
 {
 	GLCall(glBindTexture(GL_TEXTURE_2D, _textureID));
 }

@@ -78,15 +78,15 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(SolutionDir)Dependencies\SDL\include;$(SolutionDir)Dependencies\GLEW\include;$(SolutionDir)Dependencies\GLFW\include;$(SolutionDir)Dependencies\SOIL\include\SOIL;$(SolutionDir)Dependencies\glm;$(SolutionDir)Dependencies\ImGui;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)Dependencies\SDL\lib\x64;$(SolutionDir)Dependencies\GLEW\lib\x64;$(SolutionDir)Dependencies\GLFW\lib-vc2019;$(SolutionDir)Dependencies\SOIL\lib\win\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)Dependencies\SDL\include;$(SolutionDir)Dependencies\GLEW\include;$(SolutionDir)Dependencies\GLFW\include;$(SolutionDir)Dependencies\SOIL\include\SOIL;$(SolutionDir)Dependencies\glm;$(SolutionDir)Dependencies\ImGui;$(SolutionDir)Dependencies\Assimp\include\assimp;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)Dependencies\SDL\lib\x64;$(SolutionDir)Dependencies\GLEW\lib\x64;$(SolutionDir)Dependencies\GLFW\lib-vc2019;$(SolutionDir)Dependencies\SOIL\lib\win\x64;$(SolutionDir)Dependencies\Assimp\lib;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)Intermediates\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(SolutionDir)Dependencies\SDL\include;$(SolutionDir)Dependencies\GLEW\include;$(SolutionDir)Dependencies\GLFW\include;$(SolutionDir)Dependencies\SOIL\include\SOIL;$(SolutionDir)Dependencies\glm;$(SolutionDir)Dependencies\ImGui;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)Dependencies\SDL\lib\x64;$(SolutionDir)Dependencies\GLEW\lib\x64;$(SolutionDir)Dependencies\GLFW\lib-vc2019;$(SolutionDir)Dependencies\SOIL\lib\win\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)Dependencies\SDL\include;$(SolutionDir)Dependencies\GLEW\include;$(SolutionDir)Dependencies\GLFW\include;$(SolutionDir)Dependencies\SOIL\include\SOIL;$(SolutionDir)Dependencies\glm;$(SolutionDir)Dependencies\ImGui;$(SolutionDir)Dependencies\Assimp\include\assimp;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)Dependencies\SDL\lib\x64;$(SolutionDir)Dependencies\GLEW\lib\x64;$(SolutionDir)Dependencies\GLFW\lib-vc2019;$(SolutionDir)Dependencies\SOIL\lib\win\x64;$(SolutionDir)Dependencies\Assimp\lib;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)Intermediates\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
@@ -128,7 +128,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SOIL.lib;glfw3.lib;glew32.lib;SDL2.lib;SDL2main.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SOIL.lib;glfw3.lib;glew32.lib;SDL2.lib;SDL2main.lib;opengl32.lib;assimp-vc140-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -145,10 +145,11 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SOIL.lib;glfw3.lib;glew32.lib;SDL2.lib;SDL2main.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SOIL.lib;glfw3.lib;glew32.lib;SDL2.lib;SDL2main.lib;opengl32.lib;assimp-vc140-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Entity\Model.cpp" />
     <ClCompile Include="src\Entity\Camera.cpp" />
     <ClCompile Include="src\Entity\Entity.cpp" />
     <ClCompile Include="src\Entity\Mesh.cpp" />
@@ -159,9 +160,10 @@
     <ClCompile Include="src\Rendering\Debuger.cpp" />
     <ClCompile Include="src\Rendering\Renderer.cpp" />
     <ClCompile Include="src\Rendering\VertexArray.cpp" />
-    <ClCompile Include="src\Texture.cpp" />
+    <ClCompile Include="src\TextureDefault.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Entity\Model.h" />
     <ClInclude Include="src\Entity\Camera.h" />
     <ClInclude Include="src\Entity\Entity.h" />
     <ClInclude Include="src\Entity\Mesh.h" />
@@ -171,32 +173,53 @@
     <ClInclude Include="src\Rendering\Debuger.h" />
     <ClInclude Include="src\Rendering\Renderer.h" />
     <ClInclude Include="src\Rendering\VertexArray.h" />
-    <ClInclude Include="src\Texture.h" />
+    <ClInclude Include="src\TextureDefault.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="res\Models\Cat\Cat.mtl" />
+    <None Include="res\Models\Backpack\backpack.mtl" />
+    <None Include="res\Models\Coin.fbx" />
     <None Include="Shaders\basic.frag" />
     <None Include="Shaders\basic.vert" />
     <None Include="Shaders\light.frag" />
+    <Text Include="res\Models\Backpack\source_attribution.txt" />
     <Text Include="Shaders\light.vert">
       <FileType>Document</FileType>
     </Text>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="res\metal\Material_2079.jpg" />
-    <Image Include="res\metal\Metal_006_ambientOcclusion.jpg" />
-    <Image Include="res\metal\Metal_006_basecolor.jpg" />
-    <Image Include="res\metal\Metal_006_height.png" />
-    <Image Include="res\metal\Metal_006_metallic.jpg" />
-    <Image Include="res\metal\Metal_006_normal.jpg" />
-    <Image Include="res\metal\Metal_006_roughness.jpg" />
-    <Image Include="res\snow\Material_394.png" />
-    <Image Include="res\Morgana.jpg" />
-    <Image Include="res\snow\Snow_002_COLOR.jpg" />
-    <Image Include="res\snow\Snow_002_DISP.png" />
-    <Image Include="res\snow\Snow_002_NORM.jpg" />
-    <Image Include="res\snow\Snow_002_OCC.jpg" />
-    <Image Include="res\snow\Snow_002_ROUGH.jpg" />
-    <Image Include="res\Wall.png" />
+    <Image Include="res\Models\Cat\bump.jpg" />
+    <Image Include="res\Models\Cat\diffuse.jpg" />
+    <Image Include="res\Models\Backpack\ao.jpg" />
+    <Image Include="res\Models\Backpack\diffuse.jpg" />
+    <Image Include="res\Models\Backpack\normal.png" />
+    <Image Include="res\Models\Backpack\roughness.jpg" />
+    <Image Include="res\Models\Backpack\specular.jpg" />
+    <Image Include="res\Textures\metal\Material_2079.jpg" />
+    <Image Include="res\Textures\metal\Metal_006_ambientOcclusion.jpg" />
+    <Image Include="res\Textures\metal\Metal_006_basecolor.jpg" />
+    <Image Include="res\Textures\metal\Metal_006_height.png" />
+    <Image Include="res\Textures\metal\Metal_006_metallic.jpg" />
+    <Image Include="res\Textures\metal\Metal_006_normal.jpg" />
+    <Image Include="res\Textures\metal\Metal_006_roughness.jpg" />
+    <Image Include="res\Textures\snow\Material_394.png" />
+    <Image Include="res\Textures\Morgana.jpg" />
+    <Image Include="res\Textures\snow\Snow_002_COLOR.jpg" />
+    <Image Include="res\Textures\snow\Snow_002_DISP.png" />
+    <Image Include="res\Textures\snow\Snow_002_NORM.jpg" />
+    <Image Include="res\Textures\snow\Snow_002_OCC.jpg" />
+    <Image Include="res\Textures\snow\Snow_002_ROUGH.jpg" />
+    <Image Include="res\Textures\Wall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\Models\Backpack\backpack.obj">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\Models\Cat\Cat.obj">
+      <FileType>Document</FileType>
+    </None>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

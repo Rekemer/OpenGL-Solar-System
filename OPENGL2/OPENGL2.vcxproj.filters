@@ -39,13 +39,16 @@
     <ClCompile Include="src\Entity\Mesh.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\Texture.cpp">
+    <ClCompile Include="src\TextureDefault.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="src\Entity\Entity.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="src\Entity\Camera.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Entity\Model.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>
@@ -71,7 +74,7 @@
     <ClInclude Include="src\Entity\Mesh.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\Texture.h">
+    <ClInclude Include="src\TextureDefault.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="src\Entity\Entity.h">
@@ -80,60 +83,90 @@
     <ClInclude Include="src\Entity\Camera.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
+    <ClInclude Include="src\Entity\Model.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\basic.vert" />
     <None Include="Shaders\basic.frag" />
     <None Include="Shaders\light.frag" />
+    <None Include="res\Models\Coin.fbx" />
+    <None Include="res\Models\Backpack\backpack.mtl" />
+    <None Include="res\Models\Backpack\backpack.obj" />
+    <None Include="res\Models\Cat\Cat.mtl" />
+    <None Include="res\Models\Cat\Cat.obj" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="res\Wall.png">
+    <Image Include="res\Textures\Wall.png">
       <Filter>Файлы ресурсов</Filter>
     </Image>
-    <Image Include="res\Morgana.jpg">
+    <Image Include="res\Textures\Morgana.jpg">
       <Filter>Файлы ресурсов</Filter>
     </Image>
-    <Image Include="res\snow\Snow_002_ROUGH.jpg">
+    <Image Include="res\Textures\snow\Snow_002_ROUGH.jpg">
       <Filter>Файлы ресурсов</Filter>
     </Image>
-    <Image Include="res\snow\Snow_002_OCC.jpg">
+    <Image Include="res\Textures\snow\Snow_002_OCC.jpg">
       <Filter>Файлы ресурсов</Filter>
     </Image>
-    <Image Include="res\snow\Snow_002_DISP.png">
+    <Image Include="res\Textures\snow\Snow_002_DISP.png">
       <Filter>Файлы ресурсов</Filter>
     </Image>
-    <Image Include="res\snow\Snow_002_NORM.jpg">
+    <Image Include="res\Textures\snow\Snow_002_NORM.jpg">
       <Filter>Файлы ресурсов</Filter>
     </Image>
-    <Image Include="res\snow\Snow_002_COLOR.jpg">
+    <Image Include="res\Textures\snow\Snow_002_COLOR.jpg">
       <Filter>Файлы ресурсов</Filter>
     </Image>
-    <Image Include="res\snow\Material_394.png">
+    <Image Include="res\Textures\snow\Material_394.png">
       <Filter>Файлы ресурсов</Filter>
     </Image>
-    <Image Include="res\metal\Metal_006_roughness.jpg">
+    <Image Include="res\Textures\metal\Metal_006_roughness.jpg">
       <Filter>Файлы ресурсов</Filter>
     </Image>
-    <Image Include="res\metal\Material_2079.jpg">
+    <Image Include="res\Textures\metal\Material_2079.jpg">
       <Filter>Файлы ресурсов</Filter>
     </Image>
-    <Image Include="res\metal\Metal_006_ambientOcclusion.jpg">
+    <Image Include="res\Textures\metal\Metal_006_ambientOcclusion.jpg">
       <Filter>Файлы ресурсов</Filter>
     </Image>
-    <Image Include="res\metal\Metal_006_basecolor.jpg">
+    <Image Include="res\Textures\metal\Metal_006_basecolor.jpg">
       <Filter>Файлы ресурсов</Filter>
     </Image>
-    <Image Include="res\metal\Metal_006_height.png">
+    <Image Include="res\Textures\metal\Metal_006_height.png">
       <Filter>Файлы ресурсов</Filter>
     </Image>
-    <Image Include="res\metal\Metal_006_metallic.jpg">
+    <Image Include="res\Textures\metal\Metal_006_metallic.jpg">
       <Filter>Файлы ресурсов</Filter>
     </Image>
-    <Image Include="res\metal\Metal_006_normal.jpg">
+    <Image Include="res\Textures\metal\Metal_006_normal.jpg">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="res\Models\Backpack\ao.jpg">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="res\Models\Backpack\diffuse.jpg">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="res\Models\Backpack\normal.png">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="res\Models\Backpack\roughness.jpg">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="res\Models\Backpack\specular.jpg">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="res\Models\Cat\bump.jpg">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="res\Models\Cat\diffuse.jpg">
       <Filter>Файлы ресурсов</Filter>
     </Image>
   </ItemGroup>
   <ItemGroup>
     <Text Include="Shaders\light.vert" />
+    <Text Include="res\Models\Backpack\source_attribution.txt" />
   </ItemGroup>
 </Project>

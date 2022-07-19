@@ -1,9 +1,10 @@
 #pragma once
+#include <vector>
 
 class VertexArray
 {
 public:
-	VertexArray(const float* verticies, const int  numVerticies, const int* indicies, const int  numInd);
+	VertexArray(const std::vector<struct Vertex>& verticies, const std::vector<unsigned int >& indicies);
 	~VertexArray();
 
 	void Bind();
