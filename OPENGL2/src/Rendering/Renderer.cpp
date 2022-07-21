@@ -17,7 +17,7 @@
 
 #include <string>
 #include <cstdlib>
-
+#include "../Entity/Sphere.h"
 
 
 
@@ -41,20 +41,21 @@ glm::vec3 pointLightPositions[] = {
 void Renderer::Draw()
 {
 	glEnable(GL_DEPTH_TEST);
-	GLCall(glClearColor(239.f/225.f, 92 / 225.f, 229 / 225.f,1.0f));
+	GLCall(glClearColor(135.f/225.f, 128 / 225.f, 126 / 225.f,1.0f));
 	GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+	float time = (float)glfwGetTime();
 	static int a =0;
 	_camera->Update();
-	_basicShader->SetActive();
-	
+	_basicShader->Bind();
+	_basicShader->SetVectorUniform("cameraPos", _camera->GetPosition());
 
 	for (auto model : models)
 	{
 		model->Draw(*_basicShader);
 	}
+	_sphere->Draw(*_basicShader);
 
-
-	//float time = (float)glfwGetTime();
+	
 	//for (auto mesh : _meshes)
 	//{
 	//	mesh->ComputeWorldTransform();
@@ -198,12 +199,13 @@ void Renderer::Init()
 	};
 	//camera
 	_camera = new Camera(_window);
-	_camera->SetPosition(glm::vec3(0.f, 0.f, 5.f));
+	_camera->SetPosition(glm::vec3(0.f, 0.f,20.f));
 	_basicShader = new Shader("Shaders/basic.vert", "Shaders/basic.frag");
 	//std::string path("res/Models/Backpack/backpack.obj");
 	std::string path("res/Models/Cat/cat.obj");
-	Model *model = new Model(path,this);
-	models.emplace_back(model);
+	//Model *model = new Model(path,this);
+	//models.emplace_back(model);
+	_sphere = new Sphere(48,this);
 	// just objects
 	//for (int i= 0; i != 5; i++)
 	//{

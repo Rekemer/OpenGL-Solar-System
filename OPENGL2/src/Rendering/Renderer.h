@@ -25,5 +25,6 @@ private:
 	glm::mat4 _orthographicMatrix;
 	class GLFWwindow* _window;
 	class Camera* _camera;
+	class Sphere* _sphere;
 };
 

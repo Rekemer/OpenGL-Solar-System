@@ -52,7 +52,7 @@ void Shader::SetFloatUniform(const char* name, float value)
 	glUniform1f(loc, value);
 }
 
-void Shader::SetActive()
+void Shader::Bind()
 {
 	GLCall(glUseProgram(mShaderProgram));
 }

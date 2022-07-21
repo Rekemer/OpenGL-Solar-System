@@ -26,26 +26,10 @@ void main()
 {
     vec2 texcoord = vec2(texCoord.x, texCoord.y);
 	diffuseTexCoords = texcoord;
-	float displacementX =  sin(vertPos.x * 3)*0.5 + 1;
-	float displacement =   sin(vertPos.x * 3)*0.5 + 1;
-	vec3 dipls = vec3(aNormal.x *displacementX,aNormal.y *  displacement, aNormal.z *  displacement);
-	vec3 newPosition = vertPos + dipls;
-
-	float t = clamp( inverseLerp(0.2,0.45,texcoord.x), 0,1);
-	float t1 = clamp( inverseLerp(0.8,0.1,texcoord.y), 0,1);
-	vec4 pos = vec4(newPosition  ,1.0);
-
-	
-	//pos.x = sin(pos.x * 10);
-
-	
-
-	gl_Position =projMatrix *viewMatrix* worldMatrix * pos;
 	normal = aNormal;
-	
-
-	
+	vec4 pos = vec4(vertPos  ,1.0);
 	fragPos = vec3(worldMatrix * pos);
+	gl_Position =projMatrix *viewMatrix* worldMatrix * pos;
 
 }
 

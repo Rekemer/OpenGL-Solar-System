@@ -9,7 +9,7 @@ public:
 	Shader();
 	Shader(const std::string& vertName, const std::string& fragName);
 	~Shader();
-	void SetActive();
+	void Bind();
 	void Unload();
 	bool Load(const std::string& vertName, const std::string& fragName);
 	void SetMatrixUniform(const char* name, const glm::mat4& matrix);

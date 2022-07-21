@@ -7,6 +7,9 @@
 #include <SOIL.h>
 #include <glew.h>
 #include "../Rendering/Debuger.h"
+#include "../Rendering/Renderer.h"
+
+
 void Model::Draw(Shader& shader)
 {
      for (unsigned int i = 0; i < meshes.size(); i++)
@@ -126,7 +129,7 @@ std::vector<Texture> Model::loadMaterialTextures(aiMaterial* mat, aiTextureType 
         if (!skip)
         {   // if texture hasn't been loaded already, load it
             Texture texture;
-            texture.id = Load(directory + '/' + str.C_Str());
+            texture.id = LoadTexture(directory + '/' + str.C_Str());
             texture.type = typeName;
             texture.path = str.C_Str();
             textures.push_back(texture);
@@ -136,7 +139,7 @@ std::vector<Texture> Model::loadMaterialTextures(aiMaterial* mat, aiTextureType 
     return textures;
 }
 
-unsigned int Model::Load(std::string fileName)
+unsigned int Model::LoadTexture(std::string fileName)
 {
     int channels = 0;
 

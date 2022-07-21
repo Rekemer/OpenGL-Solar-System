@@ -35,6 +35,10 @@ void TextureDefault::Load(std::string fileName)
 	{
 		format = GL_RGBA;
 	}
+	else if (channels == 1)
+	{
+		format = GL_RED;
+	}
 	GLCall(glGenTextures(1, &_textureID));
 	GLCall(glBindTexture(GL_TEXTURE_2D, _textureID));
 
@@ -65,7 +69,7 @@ void TextureDefault::Unload()
 	GLCall(glDeleteTextures(1, &_textureID));
 }
 
-void TextureDefault::SetActive()
+void TextureDefault::Bind()
 {
 	GLCall(glBindTexture(GL_TEXTURE_2D, _textureID));
 }

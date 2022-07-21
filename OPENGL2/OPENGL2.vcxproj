@@ -149,6 +149,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Entity\Sphere.cpp" />
     <ClCompile Include="src\Entity\Model.cpp" />
     <ClCompile Include="src\Entity\Camera.cpp" />
     <ClCompile Include="src\Entity\Entity.cpp" />
@@ -163,6 +164,7 @@
     <ClCompile Include="src\TextureDefault.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Entity\Sphere.h" />
     <ClInclude Include="src\Entity\Model.h" />
     <ClInclude Include="src\Entity\Camera.h" />
     <ClInclude Include="src\Entity\Entity.h" />
@@ -202,6 +204,8 @@
     <Image Include="res\Textures\metal\Metal_006_metallic.jpg" />
     <Image Include="res\Textures\metal\Metal_006_normal.jpg" />
     <Image Include="res\Textures\metal\Metal_006_roughness.jpg" />
+    <Image Include="res\Textures\Planets\Earth\earth_night.jpg" />
+    <Image Include="res\Textures\Planets\Earth\earth_specular.jpg" />
     <Image Include="res\Textures\snow\Material_394.png" />
     <Image Include="res\Textures\Morgana.jpg" />
     <Image Include="res\Textures\snow\Snow_002_COLOR.jpg" />

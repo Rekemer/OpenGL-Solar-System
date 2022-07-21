@@ -10,7 +10,7 @@ public:
 	~TextureDefault();
 	void Load(std::string fileName);
 	void Unload();
-	void SetActive();
+	void Bind();
 private:
 private:
 	unsigned int _textureID;

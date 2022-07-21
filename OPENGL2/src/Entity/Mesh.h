@@ -45,13 +45,11 @@ public:
 	void Load(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures);
 	int GetNumIndices();
 	void SetupMesh();
-	class Shader* GetShader() { return _shader; }
+	
 private:
 private:
 	class VertexArray* _va;
-	
-	class Shader* _shader;
-	class TextureDefault* _texture;
+
 	class Renderer* _renderer;
 
 	// mesh data

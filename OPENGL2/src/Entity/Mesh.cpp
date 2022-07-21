@@ -88,11 +88,11 @@ void Mesh::Bind()
 	//_va->Bind();
 	//if (_texture !=nullptr)
 	//{
-	//	_texture->SetActive();
+	//	_texture->Bind();
 	//}
 	//if (_shader != nullptr)
 	//{
-	//	_shader->SetActive();
+	//	_shader->Bind();
 	//	_shader->SetMatrixUniform("worldMatrix", _worldMat);
 	//	_shader->SetMatrixUniform("projMatrix", _renderer->GetPerspectiveMatrix());
 	//	// camera/view transformation
@@ -103,14 +103,6 @@ void Mesh::Bind()
 }
 
 
-void Mesh::LoadShader(const std::string& vertShaderPath, const std::string& fragShaderPath)
-{
-	_shader = new Shader();
-	if (!_shader->Load(vertShaderPath, fragShaderPath))
-	{
-		std::cout << "failed to load shaders" << "\n";
-	}
-}
 
 void Mesh::LoadTexture(const std::string filepath)
 {
@@ -129,3 +121,5 @@ int Mesh::GetNumIndices()
 {
 	return _va->GetNumIndices();
 }
+
+
