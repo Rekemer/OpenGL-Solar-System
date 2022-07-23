@@ -102,8 +102,8 @@
     <None Include="res\Models\Backpack\backpack.obj" />
     <None Include="res\Models\Cat\Cat.mtl" />
     <None Include="res\Models\Cat\Cat.obj" />
-    <None Include="res\Models\DefaultModels\planet.mtl" />
-    <None Include="res\Models\defaultModels\planet.obj" />
+    <None Include="res\Models\Cosmos\planet.mtl" />
+    <None Include="res\Models\Cosmos\planet.obj" />
     <None Include="res\Models\DefaultModels\Crate1.mtl" />
     <None Include="res\Models\DefaultModels\cube.mtl" />
     <None Include="res\Models\DefaultModels\Crate1.obj" />
@@ -176,10 +176,10 @@
     <Image Include="res\Models\Cat\diffuse.jpg">
       <Filter>Файлы ресурсов</Filter>
     </Image>
-    <Image Include="res\Textures\Planets\Earth\earth_night.jpg">
+    <Image Include="res\Models\Cosmos\Planets\Earth\earth_night.jpg">
       <Filter>Файлы ресурсов</Filter>
     </Image>
-    <Image Include="res\Textures\Planets\Earth\earth_specular.jpg">
+    <Image Include="res\Models\Cosmos\Planets\Earth\earth_specular.jpg">
       <Filter>Файлы ресурсов</Filter>
     </Image>
     <Image Include="res\Models\DefaultModels\crate_1.jpg">
@@ -188,7 +188,19 @@
     <Image Include="res\Models\DefaultModels\mars.png">
       <Filter>Файлы ресурсов</Filter>
     </Image>
-    <Image Include="res\Models\DefaultModels\stars_milky_way.jpg">
+    <Image Include="res\Models\Cosmos\Sky\stars_milky_way.jpg">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="res\Models\Cosmos\Sky\8k_stars_milky_way.jpg">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="res\Models\Cosmos\Planets\Earth\earth_day.jpg">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="res\Models\Cosmos\Planets\moon.jpg">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="res\Models\Cosmos\Sun\sun.jpg">
       <Filter>Файлы ресурсов</Filter>
     </Image>
   </ItemGroup>

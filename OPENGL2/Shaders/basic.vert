@@ -24,7 +24,7 @@ uniform mat4 projMatrix;
 uniform mat4 viewMatrix;
 void main()
 {
-    vec2 texcoord = vec2(texCoord.x, texCoord.y);
+    vec2 texcoord = vec2(texCoord.x, 1-texCoord.y);
 	diffuseTexCoords = texcoord;
 	normal = aNormal;
 	vec4 pos = vec4(vertPos  ,1.0);

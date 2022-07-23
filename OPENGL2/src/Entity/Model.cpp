@@ -82,9 +82,6 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
         else
             vertex.TexCoords = glm::vec2(0.0f, 0.0f);
 
-
-        // process vertex positions, normals and texture coordinates
-       // [...]
         vertices.push_back(vertex);
     }
     // process indices
@@ -95,8 +92,7 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
             indices.push_back(face.mIndices[j]);
     }
     // process material
-
-    if (mesh->mMaterialIndex >= 0)
+	if (mesh->mMaterialIndex >= 0 && !_isPrefab)
     {
         aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
         std::vector<Texture> diffuseMaps = loadMaterialTextures(material,
@@ -138,6 +134,16 @@ std::vector<Texture> Model::loadMaterialTextures(aiMaterial* mat, aiTextureType 
         }
     }
     return textures;
+}
+
+void Model::SetTexture(std::string& path, std::string& type)
+{
+    Texture texture;
+    texture.id = LoadTexture(path);
+    texture.type = type;
+    texture.path = path;
+   // textures.push_back(texture);
+    textures_loaded.push_back(texture); // add to loaded textures
 }
 
 unsigned int Model::LoadTexture(std::string fileName)

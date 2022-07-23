@@ -183,7 +183,7 @@
     <None Include="res\Models\Coin.fbx" />
     <None Include="res\Models\DefaultModels\Crate1.mtl" />
     <None Include="res\Models\DefaultModels\cube.mtl" />
-    <None Include="res\Models\DefaultModels\planet.mtl" />
+    <None Include="res\Models\Cosmos\planet.mtl" />
     <None Include="Shaders\basic.frag" />
     <None Include="Shaders\basic.vert" />
     <None Include="Shaders\light.frag" />
@@ -200,6 +200,9 @@
     <Image Include="res\Models\Backpack\normal.png" />
     <Image Include="res\Models\Backpack\roughness.jpg" />
     <Image Include="res\Models\Backpack\specular.jpg" />
+    <Image Include="res\Models\Cosmos\Planets\Earth\earth_day.jpg" />
+    <Image Include="res\Models\Cosmos\Planets\moon.jpg" />
+    <Image Include="res\Models\Cosmos\Sun\sun.jpg" />
     <Image Include="res\Models\DefaultModels\crate_1.jpg" />
     <Image Include="res\Models\DefaultModels\mars.png" />
     <Image Include="res\Textures\metal\Material_2079.jpg" />
@@ -209,9 +212,10 @@
     <Image Include="res\Textures\metal\Metal_006_metallic.jpg" />
     <Image Include="res\Textures\metal\Metal_006_normal.jpg" />
     <Image Include="res\Textures\metal\Metal_006_roughness.jpg" />
-    <Image Include="res\Textures\Planets\Earth\earth_night.jpg" />
-    <Image Include="res\Textures\Planets\Earth\earth_specular.jpg" />
-    <Image Include="res\Models\DefaultModels\stars_milky_way.jpg" />
+    <Image Include="res\Models\Cosmos\Planets\Earth\earth_night.jpg" />
+    <Image Include="res\Models\Cosmos\Planets\Earth\earth_specular.jpg" />
+    <Image Include="res\Models\Cosmos\Sky\stars_milky_way.jpg" />
+    <Image Include="res\Models\Cosmos\Sky\8k_stars_milky_way.jpg" />
     <Image Include="res\Textures\snow\Material_394.png" />
     <Image Include="res\Textures\Morgana.jpg" />
     <Image Include="res\Textures\snow\Snow_002_COLOR.jpg" />
@@ -232,7 +236,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="res\Models\DefaultModels\planet.obj">
+    <None Include="res\Models\Cosmos\planet.obj">
       <FileType>Document</FileType>
     </None>
   </ItemGroup>

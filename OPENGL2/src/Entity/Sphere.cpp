@@ -52,10 +52,10 @@ void Sphere::Init(int prec)
 
 	}
 	_va = new VertexArray(vertices, indices);
-	_texture = new TextureDefault();
+	
 	_textureSpecular = new TextureDefault();
-	_texture->Load("res/Textures/Planets/Earth/earth_night.jpg");
-	_textureSpecular->Load("res/Textures/Planets/Earth/earth_specular.jpg");
+	
+	//_textureSpecular->Load("res/Textures/Planets/Earth/earth_specular.jpg");
 
 }
 
@@ -73,15 +73,21 @@ void Sphere::Draw(Shader& shader)
 	shader.SetVectorUniform("material.specular", glm::vec3(0.8, 0.8, 0.8));
 	shader.SetFloatUniform("material.shininess", 32.0f);
 	
-	auto dir = glm::vec4(-0.0f, 0.0f, 1.0f, 1.0f);
+	/*auto dir = glm::vec4(-0.0f, 0.0f, 1.0f, 1.0f);
 	shader.SetVectorUniform("dirLight.direction", (glm::vec3)dir);
 	shader.SetVectorUniform("dirLight.ambient", glm::vec3(0.2, 0.2, 0.2));
 	shader.SetVectorUniform("dirLight.diffuse", glm::vec3(0.6f, 0.6f, 0.6f));
-	shader.SetVectorUniform("dirLight.specular", glm::vec3(1.0f, 1.0f, 1.0f));
+	shader.SetVectorUniform("dirLight.specular", glm::vec3(1.0f, 1.0f, 1.0f));*/
 
 	_texture->Bind();
-	glActiveTexture(GL_TEXTURE1);
-	_textureSpecular->Bind();
+	//glActiveTexture(GL_TEXTURE1);
+	//_textureSpecular->Bind();
 	_va->Bind();
 	GLCall(glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0));
+}
+
+void Sphere::SetTexture(std::string& path)
+{
+	_texture = new TextureDefault();
+	_texture->Load(path);
 }

@@ -2,6 +2,8 @@
 #include <list>
 #include <ext/matrix_float4x4.hpp>
 #include <unordered_map>
+
+
 class Renderer
 {
 public:
@@ -20,11 +22,12 @@ private:
 	class Shader* _basicShader;
 	std::list<class Mesh*>_meshes;
 	std::list<class Model*> models;
+	std::vector<class Sphere*> spheres;
+	class Sphere* _skybox;
 	class Mesh * _lightMesh;
 	glm::mat4 _perspectiveMatrix;
 	glm::mat4 _orthographicMatrix;
 	class GLFWwindow* _window;
-	class Camera* _camera;
-	class Sphere* _sphere;
+	class Camera* _camera;	
 };
 

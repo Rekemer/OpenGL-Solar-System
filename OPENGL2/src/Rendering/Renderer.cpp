@@ -57,14 +57,16 @@ void Renderer::Draw()
 	auto iter = models.begin();
 	//auto pos = (*iter)->GetPosition();
 //	PrintVec(pos);
-	for (auto model : models)
+	for (auto sphere : spheres)
 	{
-		model->SetPosition(_camera->GetPosition());
-		model->ComputeWorldTransform();
-		model->Draw(*_basicShader);
+		sphere->Draw(*_basicShader);
 	}
-	if (_sphere != nullptr)
-	_sphere->Draw(*_basicShader);
+	if (_skybox != nullptr)
+	{
+		_skybox->SetPosition(_camera->GetPosition());
+		_skybox->Draw(*_basicShader);
+	}
+		
 
 	
 	
@@ -141,13 +143,31 @@ void Renderer::Init()
 	_basicShader = new Shader("Shaders/basic.vert", "Shaders/basic.frag");
 	//std::string path("res/Models/Backpack/backpack.obj");
 	//std::string path("res/Models/Cat/cat.obj");
-	std::string path("res/Models/DefaultModels/planet.obj");
-	Model *model = new Model(path,this);
-		models.emplace_back(model);
-		//model->SetPosition(_camera->GetPosition() - glm::vec3(0.f, 0.f, 20.f));
-		//model->SetScale(glm::vec3(3.0f, 3.0f, 3.0f));
-		//model->ComputeWorldTransform();
-	//_sphere = new Sphere(48, this);
+	//std::string path("res/Models/Cosmos/planet.obj");
+	//Model *model = new Model(path,this, true);
+	//	models.emplace_back(model);
+
+	//	model->SetPosition(_camera->GetPosition() - glm::vec3(0.f, 0.f, 20.f));
+	//	//model->SetScale(glm::vec3(3.0f, 3.0f, 3.0f));
+	//	model->ComputeWorldTransform();
+	//	std::string path1 = "C:/dev/OPENGL/OPENGL2/OPENGL2/OPENGL2/res/Models/Cosmos/Earth/earth_daymap.jpg";
+	//	std::string type = "texture_diffuse";
+	//	model->SetTexture(path1,type );
+	auto sphere = new Sphere(48, this);
+	//std::string path1 = "res/Models/Cosmos/Planets/Earth/earth_day.jpg";
+	//std::string path1 = "res/Models/Cosmos/Planets/moon.jpg";
+	std::string path1 = "res/Models/Cosmos/Sun/sun.jpg";
+	sphere->SetTexture(path1);
+	spheres.emplace_back(sphere);
+
+
+	std::string path2 = "res/Models/Cosmos/Sky/8k_stars_milky_way.jpg";
+	 _skybox = new Sphere(48, this);
+	 _skybox->SetTexture(path2);
+	 _skybox->SetScale(glm::vec3(100.0f, 100.0f, 100.0f));
+	
+	
+	//spheres.emplace_back(sphere);
 
 	//_sphere = new Sphere(48,this);
 	// just objects

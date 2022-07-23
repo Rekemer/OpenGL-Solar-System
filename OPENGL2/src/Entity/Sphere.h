@@ -12,6 +12,7 @@ public:
 	void Init(int precision);
 	~Sphere();
 	void Draw(class Shader& shader);
+	void SetTexture(std::string& path);
 private:
 	int numVertices;
 	int numIndices;
