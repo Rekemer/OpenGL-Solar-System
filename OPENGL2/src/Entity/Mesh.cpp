@@ -13,6 +13,9 @@
 #include <Importer.hpp>
 #include <scene.h>
 #include <postprocess.h>
+
+#include "Model.h"
+
 Mesh::Mesh(Renderer* renderer): Entity()
 {
 	_renderer = renderer;
@@ -36,12 +39,12 @@ Mesh::~Mesh()
 	//_va = nullptr;
 }
 
-void Mesh::Draw(Shader& shader)
+void Mesh::Draw(Shader& shader, Model& model)
 {
 	unsigned int diffuseNr = 1;
 	unsigned int specularNr = 1;
 
-	shader.SetMatrixUniform("worldMatrix", _worldMat);
+	shader.SetMatrixUniform("worldMatrix", model.GetWorldMatrix());
 	shader.SetMatrixUniform("projMatrix", _renderer->GetPerspectiveMatrix());
 	// camera/view transformation
 	shader.SetMatrixUniform("viewMatrix", _renderer->GetCamera()->GetViewMatrix());

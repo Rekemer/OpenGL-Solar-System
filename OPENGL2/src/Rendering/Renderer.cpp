@@ -38,6 +38,11 @@ glm::vec3 pointLightPositions[] = {
 		glm::vec3(5.0f,  2.0f, 6.0f),
 		glm::vec3(0.0f,  1.2f, 8.0f)
 };
+
+void PrintVec(glm::vec3 pos)
+{
+	std::cout << pos.x << " " << pos.y << " " << pos.z << "\n";
+}
 void Renderer::Draw()
 {
 	glEnable(GL_DEPTH_TEST);
@@ -48,88 +53,21 @@ void Renderer::Draw()
 	_camera->Update();
 	_basicShader->Bind();
 	_basicShader->SetVectorUniform("cameraPos", _camera->GetPosition());
-
+	auto pos = _camera->GetPosition();
+	auto iter = models.begin();
+	//auto pos = (*iter)->GetPosition();
+//	PrintVec(pos);
 	for (auto model : models)
 	{
+		model->SetPosition(_camera->GetPosition());
+		model->ComputeWorldTransform();
 		model->Draw(*_basicShader);
 	}
+	if (_sphere != nullptr)
 	_sphere->Draw(*_basicShader);
 
 	
-	//for (auto mesh : _meshes)
-	//{
-	//	mesh->ComputeWorldTransform();
-	//	mesh->Bind();
-	//	//_mesh->GetShader()->SetVectorUniform("material.ambient", glm::vec3(0.2, 0.8, 0.5));
-	//	//_mesh->GetShader()->SetVectorUniform("material.diffuse", glm::vec3(0.2, 0.8, 0.5));
-	//	mesh->GetShader()->SetVectorUniform("material.specular", glm::vec3(0.8, 0.8, 0.8));
-	//	mesh->GetShader()->SetFloatUniform("material.shininess", 32.0f);
-
-	//	mesh->GetShader()->SetVectorUniform("dirLight.ambient", glm::vec3(0.2, 0.2, 0.2));
-	//	mesh->GetShader()->SetVectorUniform("dirLight.diffuse", glm::vec3(0.6f, 0.6f, 0.6f)); // darken diffuse light a bit
-	//	mesh->GetShader()->SetVectorUniform("dirLight.specular", glm::vec3(1.0f, 1.0f, 1.0f));
-	//	//mesh->GetShader()->SetVectorUniform("light.position", _lightMesh->GetPosition());
-
-	//	auto dir = glm::vec4(-0.5f, 1.0f, -1.0f, 1.0f) ;
-	////	std::cout << dir.x << " " << dir.y << " " << dir.z << "\n";
-	//	mesh->GetShader()->SetVectorUniform("dirLight.direction", (glm::vec3)dir);
-	//	//mesh->GetShader()->SetFloatUniform("light.cutOff", glm::cos(glm::radians(12.5f)));
-	//	//mesh->GetShader()->SetVectorUniform("cameraPos", _camera->GetPosition());
-
-	//	 // point light 1
-	//	mesh->GetShader()->SetVectorUniform("pointLights[0].position", pointLightPositions[0]);
-	//	mesh->GetShader()->SetVectorUniform("pointLights[0].ambient", 0.05f, 0.05f, 0.05f);
-	//	mesh->GetShader()->SetVectorUniform("pointLights[0].diffuse", 0.0f, 0.8f, 0.0f);
-	//	//mesh->GetShader()->SetVectorUniform("pointLights[0].specular", 1.0f, 1.0f, 1.0f);
-	//	mesh->GetShader()->SetFloatUniform("pointLights[0].constant", 1.0f);
-	//	mesh->GetShader()->SetFloatUniform("pointLights[0].linear", 0.09f);
-	//	mesh->GetShader()->SetFloatUniform("pointLights[0].quadratic", 0.032f);
-	//	//mesh->GetShader()->2
-	//	mesh->GetShader()->SetVectorUniform("pointLights[1].position", pointLightPositions[1]);
-	//	mesh->GetShader()->SetVectorUniform("pointLights[1].ambient", 0.05f, 0.05f, 0.05f);
-	//	mesh->GetShader()->SetVectorUniform("pointLights[1].diffuse", 0.0f, 0.8f, 0.0f);
-	//	//mesh->GetShader()->SetVectorUniform("pointLights[1].specular", 1.0f, 1.0f, 1.0f);
-	//	mesh->GetShader()->SetFloatUniform("pointLights[1].constant", 1.0f);
-	//	mesh->GetShader()->SetFloatUniform("pointLights[1].linear", 0.09f);
-	//	mesh->GetShader()->SetFloatUniform("pointLights[1].quadratic", 0.032f);
-	//	//mesh->GetShader()->3
-	//	mesh->GetShader()->SetVectorUniform("pointLights[2].position", pointLightPositions[2]);
-	//	mesh->GetShader()->SetVectorUniform("pointLights[2].ambient", 0.05f, 0.05f, 0.05f);
-	//	mesh->GetShader()->SetVectorUniform("pointLights[2].diffuse", 0.0f, 0.8f, 0.0f);
-	//	//mesh->GetShader()->SetVectorUniform("pointLights[2].specular", 1.0f, 1.0f, 1.0f);
-	//	mesh->GetShader()->SetFloatUniform("pointLights[2].constant", 1.0f);
-	//	mesh->GetShader()->SetFloatUniform("pointLights[2].linear", 0.09f);
-	//	mesh->GetShader()->SetFloatUniform("pointLights[2].quadratic", 0.032f);
-	//	//mesh->GetShader()->4
-	//	mesh->GetShader()->SetVectorUniform("pointLights[3].position", pointLightPositions[3]);
-	//	mesh->GetShader()->SetVectorUniform("pointLights[3].ambient", 0.05f, 0.05f, 0.05f);
-	//	mesh->GetShader()->SetVectorUniform("pointLights[3].diffuse", 0.0f, 0.8f, 0.0f);
-	//	//mesh->GetShader()->SetVectorUniform("pointLights[3].specular", 1.0f, 1.0f, 1.0f);
-	//	mesh->GetShader()->SetFloatUniform("pointLights[3].constant", 1.0f);
-	//	mesh->GetShader()->SetFloatUniform("pointLights[3].linear", 0.09f);
-	//	mesh->GetShader()->SetFloatUniform("pointLights[3].quadratic", 0.032f);
-
-	//	auto front = glm::vec4(0.0f, 0.0f, -1.f,1.0f) * _camera->GetViewMatrix();
-	//	mesh->GetShader()->SetVectorUniform("spotLight.position", _camera->GetPosition());
-	//	mesh->GetShader()->SetVectorUniform("spotLight.direction", (glm::vec3)front);
-	//	mesh->GetShader()->SetVectorUniform("spotLight.ambient", 0.0f, 0.0f, 0.0f);
-	//	mesh->GetShader()->SetVectorUniform("spotLight.diffuse", 1.0f, 1.0f, 1.0f);
-	//	mesh->GetShader()->SetVectorUniform("spotLight.specular", 1.0f, 1.0f, 1.0f);
-	//	mesh->GetShader()->SetFloatUniform("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
-
-	//	// Draw
-	//	GLCall(glDrawArrays(GL_TRIANGLES, 0, 36););
-	//}
 	
-
-
-	//
-	//_lightMesh->SetPosition(glm::vec3(cos(time) *4.f, 2.f, sin(time) * 4.f));
-	//_lightMesh->ComputeWorldTransform();
-	//_lightMesh->Bind();
-	//auto lightShader = _lightMesh->GetShader();
-	//
-	//GLCall(glDrawArrays(GL_TRIANGLES, 0, 36););
 }
 
 
@@ -178,7 +116,7 @@ void Renderer::Init()
 	-0.5f,  0.5f,  0.5f,  0.0f, 0.0f, 0.0f,  1.0f,  0.0f,
 	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f, 0.0f,  1.0f,  0.0f
 	};
-	std::cout << sizeof(vertexBuffer);
+	
 	
 	const int indicies[] = {
 		2,1,0 ,
@@ -202,10 +140,16 @@ void Renderer::Init()
 	_camera->SetPosition(glm::vec3(0.f, 0.f,20.f));
 	_basicShader = new Shader("Shaders/basic.vert", "Shaders/basic.frag");
 	//std::string path("res/Models/Backpack/backpack.obj");
-	std::string path("res/Models/Cat/cat.obj");
-	//Model *model = new Model(path,this);
-	//models.emplace_back(model);
-	_sphere = new Sphere(48,this);
+	//std::string path("res/Models/Cat/cat.obj");
+	std::string path("res/Models/DefaultModels/planet.obj");
+	Model *model = new Model(path,this);
+		models.emplace_back(model);
+		//model->SetPosition(_camera->GetPosition() - glm::vec3(0.f, 0.f, 20.f));
+		//model->SetScale(glm::vec3(3.0f, 3.0f, 3.0f));
+		//model->ComputeWorldTransform();
+	//_sphere = new Sphere(48, this);
+
+	//_sphere = new Sphere(48,this);
 	// just objects
 	//for (int i= 0; i != 5; i++)
 	//{

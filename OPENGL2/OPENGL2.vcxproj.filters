@@ -102,6 +102,12 @@
     <None Include="res\Models\Backpack\backpack.obj" />
     <None Include="res\Models\Cat\Cat.mtl" />
     <None Include="res\Models\Cat\Cat.obj" />
+    <None Include="res\Models\DefaultModels\planet.mtl" />
+    <None Include="res\Models\defaultModels\planet.obj" />
+    <None Include="res\Models\DefaultModels\Crate1.mtl" />
+    <None Include="res\Models\DefaultModels\cube.mtl" />
+    <None Include="res\Models\DefaultModels\Crate1.obj" />
+    <None Include="res\Models\DefaultModels\cube.obj" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\Textures\Wall.png">
@@ -174,6 +180,15 @@
       <Filter>Файлы ресурсов</Filter>
     </Image>
     <Image Include="res\Textures\Planets\Earth\earth_specular.jpg">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="res\Models\DefaultModels\crate_1.jpg">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="res\Models\DefaultModels\mars.png">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="res\Models\DefaultModels\stars_milky_way.jpg">
       <Filter>Файлы ресурсов</Filter>
     </Image>
   </ItemGroup>

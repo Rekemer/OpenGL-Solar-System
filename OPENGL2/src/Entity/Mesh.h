@@ -37,7 +37,7 @@ public:
 	Mesh(class Renderer*);
 	Mesh(std::vector<Vertex>& vertices, std::vector<unsigned int> indices, std::vector<Texture>& textures,Renderer* renderer);
 	~Mesh();
-	void Draw(class Shader& shader);
+	void Draw(class Shader& shader, class Model& model);
 	void Bind();
 	void LoadShader(const std::string& vertShaderPath, const std::string& fragShaderPath);
 	void LoadTexture(std::string filepath);

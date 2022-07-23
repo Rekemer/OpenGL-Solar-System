@@ -6,18 +6,18 @@
 #include "Entity.h"
 struct Texture;
 
-class Model
+class Model : public Entity
 {
 public:
-    
+
     Model(std::string& path, class Renderer* renderer)
     {
         this->renderer = renderer;
         loadModel(path);
     }
 
-    static Model GenerateSphere(class Renderer* renderer);
     void Draw(class Shader& shader);
+
 private:
     // model data
     std::vector<class Mesh> meshes;

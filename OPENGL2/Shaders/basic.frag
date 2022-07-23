@@ -73,14 +73,6 @@ in vec3 normal;
 in vec3 lightPosition;
 in vec3 fragPos;
 
-
-//uniform sampler2D texture_diffuse1;
-//uniform sampler2D texture_diffuse2;
-//uniform sampler2D texture_diffuse3;
-//uniform sampler2D texture_specular1;
-//uniform sampler2D texture_specular2;
-
-
 void main()
 {
 	
@@ -95,9 +87,9 @@ void main()
 //      result += CalcPointLight(pointLights[i], norm, fragPos, viewDir);    
 //    // phase 3: Spot light
 //    result += CalcSpotLight(spotLight, norm, fragPos, viewDir);
-    outColor = vec4(result,1.0f);
-   // outColor = texture(material.texture_diffuse1,diffuseTexCoords);
-   // outColor = vec4(0,0,0,1);
+    //outColor = vec4(result,1.0f);
+   outColor = texture(material.texture_diffuse1,diffuseTexCoords);
+  
 
 }
 
