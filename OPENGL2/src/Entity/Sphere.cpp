@@ -79,8 +79,9 @@ void Sphere::Draw(Shader& shader)
 	shader.SetVectorUniform("dirLight.diffuse", glm::vec3(0.6f, 0.6f, 0.6f));
 	shader.SetVectorUniform("dirLight.specular", glm::vec3(1.0f, 1.0f, 1.0f));*/
 
+	glActiveTexture(GL_TEXTURE0);
 	_texture->Bind();
-	//glActiveTexture(GL_TEXTURE1);
+	
 	//_textureSpecular->Bind();
 	_va->Bind();
 	GLCall(glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0));
@@ -90,4 +91,47 @@ void Sphere::SetTexture(std::string& path)
 {
 	_texture = new TextureDefault();
 	_texture->Load(path);
+}
+
+void Sphere::AddSatellite(Sphere* satellite, float speed, float r)
+{
+	satellite->radiusSatelite = r;
+	satellite->speedSatelite = speed;
+	s_satellites.emplace_back(satellite);
+}
+
+void Sphere::AddSatellite(Model* satellite, float speed, float r )
+{
+	m_satellites.emplace_back(satellite);
+}
+
+void Sphere::Update(float time)
+{
+	UpdateSelfRot(time);
+	UpdateSatellites(time);
+	if (radiusSatelite > 0.3f)
+	{
+		auto omega = speedSatelite / radiusSatelite;
+
+		std::cout << time << std::endl;
+		auto xSpeed = radiusSatelite * sin(currentAngle + omega * time);
+		auto zSpeed = radiusSatelite * cos(currentAngle + omega * time);
+		currentAngle = currentAngle + omega * time;
+		auto x = xSpeed;
+		auto z = zSpeed;
+		SetPosition(x, GetPosition().y, z);
+	}
+	
+	
+}
+void Sphere::UpdateSatellites(float time)
+{
+	for (auto satellite : s_satellites)
+	{
+		satellite->Update(time);
+	}
+}
+void Sphere::UpdateSelfRot(float time)
+{
+	SetRotation(GetRotation().x + time * selfRotationSpeed, GetRotation().y, GetRotation().z);
 }

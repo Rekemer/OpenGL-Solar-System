@@ -11,6 +11,7 @@ public:
 	~Renderer();
 	void Draw();
 	void Init();
+	void LoadSolarSystem();
 	class GLFWwindow* GetWindow() { return _window; }
 	glm::mat4 GetPerspectiveMatrix()const { return _perspectiveMatrix; }
 	glm::mat4 GetOrthographicMatrix()const { return _orthographicMatrix; }
@@ -25,9 +26,11 @@ private:
 	std::vector<class Sphere*> spheres;
 	class Sphere* _skybox;
 	class Mesh * _lightMesh;
+	class Sphere* sun;
 	glm::mat4 _perspectiveMatrix;
 	glm::mat4 _orthographicMatrix;
 	class GLFWwindow* _window;
-	class Camera* _camera;	
+	class Camera* _camera;
+	float lastFrameTimeStart;
 };
 

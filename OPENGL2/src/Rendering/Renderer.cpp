@@ -2,6 +2,8 @@
 #include <glew.h>
 #include "Renderer.h"
 
+ const glm::vec3 nullVec = glm::vec3(0.f, 0.f, 0.f);
+
 #include <glfw3.h>
 #include <ext/matrix_clip_space.hpp>
 
@@ -48,7 +50,10 @@ void Renderer::Draw()
 	glEnable(GL_DEPTH_TEST);
 	GLCall(glClearColor(135.f/225.f, 128 / 225.f, 126 / 225.f,1.0f));
 	GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
-	float time = (float)glfwGetTime();
+	float timeAppStart = (float)glfwGetTime();
+	float deltaTime = (timeAppStart - lastFrameTimeStart) / 1000.0f;
+	lastFrameTimeStart = timeAppStart;
+	deltaTime = 0.001f;
 	static int a =0;
 	_camera->Update();
 	_basicShader->Bind();
@@ -57,8 +62,18 @@ void Renderer::Draw()
 	auto iter = models.begin();
 	//auto pos = (*iter)->GetPosition();
 //	PrintVec(pos);
+
+
+	PrintVec(spheres[0]->GetPosition());
+
+	for (auto model : models)
+	{
+		model->Draw(*_basicShader);
+	}
+
 	for (auto sphere : spheres)
 	{
+		sphere->Update(deltaTime);
 		sphere->Draw(*_basicShader);
 	}
 	if (_skybox != nullptr)
@@ -141,11 +156,13 @@ void Renderer::Init()
 	_camera = new Camera(_window);
 	_camera->SetPosition(glm::vec3(0.f, 0.f,20.f));
 	_basicShader = new Shader("Shaders/basic.vert", "Shaders/basic.frag");
+
+	LoadSolarSystem();
+
 	//std::string path("res/Models/Backpack/backpack.obj");
 	//std::string path("res/Models/Cat/cat.obj");
 	//std::string path("res/Models/Cosmos/planet.obj");
-	//Model *model = new Model(path,this, true);
-	//	models.emplace_back(model);
+	
 
 	//	model->SetPosition(_camera->GetPosition() - glm::vec3(0.f, 0.f, 20.f));
 	//	//model->SetScale(glm::vec3(3.0f, 3.0f, 3.0f));
@@ -153,18 +170,13 @@ void Renderer::Init()
 	//	std::string path1 = "C:/dev/OPENGL/OPENGL2/OPENGL2/OPENGL2/res/Models/Cosmos/Earth/earth_daymap.jpg";
 	//	std::string type = "texture_diffuse";
 	//	model->SetTexture(path1,type );
-	auto sphere = new Sphere(48, this);
+	
 	//std::string path1 = "res/Models/Cosmos/Planets/Earth/earth_day.jpg";
 	//std::string path1 = "res/Models/Cosmos/Planets/moon.jpg";
-	std::string path1 = "res/Models/Cosmos/Sun/sun.jpg";
-	sphere->SetTexture(path1);
-	spheres.emplace_back(sphere);
+	
 
 
-	std::string path2 = "res/Models/Cosmos/Sky/8k_stars_milky_way.jpg";
-	 _skybox = new Sphere(48, this);
-	 _skybox->SetTexture(path2);
-	 _skybox->SetScale(glm::vec3(100.0f, 100.0f, 100.0f));
+	
 	
 	
 	//spheres.emplace_back(sphere);
@@ -194,6 +206,50 @@ void Renderer::Init()
 	//_lightMesh->LoadShader("Shaders/light.vert", "Shaders/light.frag");
 	//_lightMesh->SetPosition(glm::vec3(4.f, 2.f, 4.f));
 
+}
 
+void Renderer::LoadSolarSystem()
+{
+	// add skybox
+	std::string path = "res/Models/Cosmos/Sky/8k_stars_milky_way.jpg";
+	_skybox = new Sphere(48, this);
+	_skybox->SetTexture(path);
+	_skybox->SetScale(glm::vec3(100.0f, 100.0f, 100.0f));
+
+	// add planets
+
+	sun = new Sphere(48, this);
+	path = "res/Models/Cosmos/Sun/sun.jpg";
+	sun->SetTexture(path);
+	spheres.emplace_back(sun);
+	sun->SetScale(2.5f, 2.5f,2.5f);
+
+
+	auto earth = new Sphere(48, this);
+	path = "res/Models/Cosmos/Planets/Earth/earth_day.jpg";
+	earth->SetTexture(path);
+	spheres.emplace_back(earth);
+	earth->SetPosition(0,0,0);
+
+
+
+	auto moon = new Sphere(48, this);
+	path = "res/Models/Cosmos/Planets/moon.jpg";
+	moon->SetTexture(path);
+	spheres.emplace_back(moon);
+	moon->SetScale(0.5f, 0.5f, 0.5f);
+	moon->SetPosition(0, 0, 0);
+
+	sun->selfRotationSpeed = earth->selfRotationSpeed
+	= moon->selfRotationSpeed = 100;
+	sun->AddSatellite(moon, 20,6);
+	sun->AddSatellite(earth, 20,4);
+
+
+	path = "res/Models/Cosmos/Rock/rock.obj";
+	Model* model = new Model(path, this);
+	models.emplace_back(model);
+	model->SetPosition(9, 0, 0);
+	model->SetScale(0.4f, 0.4f, 0.4f);
 
 }

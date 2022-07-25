@@ -19,6 +19,24 @@ void Entity::SetScale(glm::vec3 scale)
 	_recomputeWorldMat = true;
 }
 
+
+void Entity::SetPosition(float x,float y,float z)
+{
+	_position = glm::vec3(x,y,z);
+	_recomputeWorldMat = true;
+}
+
+void Entity::SetRotation(float x,float y,float z)
+{
+	_rotation = glm::vec3(x, y, z);
+	_recomputeWorldMat = true;
+}
+void Entity::SetScale(float x,float y,float z)
+{
+	_scale = glm::vec3(x, y, z);
+	_recomputeWorldMat = true;
+}
+
 Entity::Entity() :
 _position(glm::vec3(0.0f, 0.0f, 0.0f)),
 _rotation(glm::vec3(0.0f, 0.0f, 0.0f)),

@@ -8,11 +8,22 @@
 class Sphere:public Entity
 {
 public:
+	float currentAngle;
+	float speedSatelite;
+	std::vector<class Model*> m_satellites;
+	std::vector<class Sphere*> s_satellites;
+	float radiusSatelite;
+	float selfRotationSpeed;
 	Sphere(int precision, Renderer* renderer);
 	void Init(int precision);
 	~Sphere();
 	void Draw(class Shader& shader);
 	void SetTexture(std::string& path);
+	void AddSatellite(Sphere* satellite, float speed,float radius = 3);
+	void AddSatellite(Model* satellite, float speed,float radius = 3);
+	void Update(float time);
+	void UpdateSatellites(float time);
+	void UpdateSelfRot(float time);
 private:
 	int numVertices;
 	int numIndices;
@@ -24,5 +35,6 @@ private:
 	class TextureDefault* _texture;
 	class TextureDefault* _textureSpecular;
 	class Renderer* _renderer;
+	
 };
 

@@ -89,6 +89,8 @@ void main()
 //    result += CalcSpotLight(spotLight, norm, fragPos, viewDir);
     //outColor = vec4(result,1.0f);
    outColor = texture(material.texture_diffuse1,diffuseTexCoords);
+ //  vec4 color = vec4(1.0f,1.0f,1.0f,1.0f);
+   //outColor = color;
   
 
 }

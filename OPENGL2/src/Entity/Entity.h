@@ -5,11 +5,15 @@ class Entity
 public:
 	Entity();
 	void SetScale(glm::vec3 scale);
+	void SetPosition(float x, float y, float z);
+	void SetRotation(float x, float y, float z);
+	void SetScale(float x, float y, float z);
 	glm::mat4 GetWorldMatrix() const { return _worldMat; }
 	void SetPosition(glm::vec3 pos);
 	void SetRotation(glm::vec3 rot);
 	void ComputeWorldTransform();
 	glm::vec3 GetPosition() { return _position; }
+	glm::vec3 GetRotation() { return _rotation; }
 private:
 protected:
 	
