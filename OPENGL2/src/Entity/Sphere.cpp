@@ -95,6 +95,7 @@ void Sphere::SetTexture(std::string& path)
 
 void Sphere::AddSatellite(Sphere* satellite, float speed, float r)
 {
+	satellite->owner = this;
 	satellite->radiusSatelite = r;
 	satellite->speedSatelite = speed;
 	s_satellites.emplace_back(satellite);
@@ -119,7 +120,8 @@ void Sphere::Update(float time)
 		currentAngle = currentAngle + omega * time;
 		auto x = xSpeed;
 		auto z = zSpeed;
-		SetPosition(x, GetPosition().y, z);
+		auto ownerPos = owner->GetPosition();
+		SetPosition(x+ ownerPos.x, GetPosition().y, z+ ownerPos.z);
 	}
 	
 	

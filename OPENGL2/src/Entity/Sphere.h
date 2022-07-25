@@ -14,6 +14,7 @@ public:
 	std::vector<class Sphere*> s_satellites;
 	float radiusSatelite;
 	float selfRotationSpeed;
+	Sphere* owner;
 	Sphere(int precision, Renderer* renderer);
 	void Init(int precision);
 	~Sphere();

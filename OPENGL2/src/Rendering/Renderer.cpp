@@ -223,7 +223,7 @@ void Renderer::LoadSolarSystem()
 	sun->SetTexture(path);
 	spheres.emplace_back(sun);
 	sun->SetScale(2.5f, 2.5f,2.5f);
-
+	sun->SetPosition(2, 0, 0);
 
 	auto earth = new Sphere(48, this);
 	path = "res/Models/Cosmos/Planets/Earth/earth_day.jpg";
@@ -244,7 +244,7 @@ void Renderer::LoadSolarSystem()
 	= moon->selfRotationSpeed = 100;
 	sun->AddSatellite(moon, 20,6);
 	sun->AddSatellite(earth, 20,4);
-
+	earth->AddSatellite(moon, 20, 6);
 
 	path = "res/Models/Cosmos/Rock/rock.obj";
 	Model* model = new Model(path, this);
