@@ -187,6 +187,8 @@
     <None Include="res\Models\Cosmos\planet.mtl" />
     <None Include="Shaders\basic.frag" />
     <None Include="Shaders\basic.vert" />
+    <None Include="Shaders\instance.frag" />
+    <None Include="Shaders\instance.vert" />
     <None Include="Shaders\light.frag" />
     <Text Include="res\Models\Backpack\source_attribution.txt" />
     <Text Include="Shaders\light.vert">

@@ -56,17 +56,26 @@ void Renderer::Draw()
 	deltaTime = 0.001f;
 	static int a =0;
 	_camera->Update();
-	_basicShader->Bind();
-	_basicShader->SetVectorUniform("cameraPos", _camera->GetPosition());
+	
 	auto pos = _camera->GetPosition();
 	auto iter = models.begin();
-	//auto pos = (*iter)->GetPosition();
+	
 
+	//_instanceShader->Bind();
+	//_instanceShader->SetVectorUniform("cameraPos", _camera->GetPosition());
+	
 
-	for (auto model : models)
-	{
-		model->Draw(*_basicShader);
-	}
+	PrintVec(transforms[0]->GetPosition());
+	
+
+	_basicShader->Bind();
+	_basicShader->SetVectorUniform("cameraPos", _camera->GetPosition());
+
+	models[0]->Update(deltaTime, transforms );
+	models[0]->DrawInstance(*_basicShader, transforms );
+
+	
+
 
 	for (auto sphere : spheres)
 	{
@@ -151,59 +160,14 @@ void Renderer::Init()
 	};
 	//camera
 	_camera = new Camera(_window);
-	_camera->SetPosition(glm::vec3(0.f, 50.f,0.f));
+	_camera->SetPosition(glm::vec3(0.f, 10.f,0.f));
 	_basicShader = new Shader("Shaders/basic.vert", "Shaders/basic.frag");
-
+	_instanceShader = new Shader("Shaders/instance.vert", "Shaders/instance.frag");
 	LoadSolarSystem();
 
-	//std::string path("res/Models/Backpack/backpack.obj");
-	//std::string path("res/Models/Cat/cat.obj");
-	//std::string path("res/Models/Cosmos/planet.obj");
-	
-
-	//	model->SetPosition(_camera->GetPosition() - glm::vec3(0.f, 0.f, 20.f));
-	//	//model->SetScale(glm::vec3(3.0f, 3.0f, 3.0f));
-	//	model->ComputeWorldTransform();
-	//	std::string path1 = "C:/dev/OPENGL/OPENGL2/OPENGL2/OPENGL2/res/Models/Cosmos/Earth/earth_daymap.jpg";
-	//	std::string type = "texture_diffuse";
-	//	model->SetTexture(path1,type );
-	
-	//std::string path1 = "res/Models/Cosmos/Planets/Earth/earth_day.jpg";
-	//std::string path1 = "res/Models/Cosmos/Planets/moon.jpg";
-	
-
-
-	
-	
-	
-	//spheres.emplace_back(sphere);
-
-	//_sphere = new Sphere(48,this);
-	// just objects
-	//for (int i= 0; i != 5; i++)
-	//{
-	//	for (int j = 5; j!= 0; j--)
-	//	{
-	//		auto _mesh = new Mesh(this);
-	//		_mesh->Load(vertexBuffer, 36, indicies, 26);
-	//		_mesh->LoadShader("Shaders/basic.vert", "Shaders/basic.frag");
-	//		_mesh->LoadTexture("res/Morgana.jpg");
-	//		_mesh->SetPosition(glm::vec3(i *2, 0, j * 2));
-	//		_meshes.emplace_back(_mesh);
-	//		std::cout << i << " " << j << "\n";
-	//	}
-	//	
-	//	
-	//}
-	//
-	
-	//// light source
-	//_lightMesh = new Mesh(this);
-	//_lightMesh->Load(vertexBuffer, 36, indicies, 26);
-	//_lightMesh->LoadShader("Shaders/light.vert", "Shaders/light.frag");
-	//_lightMesh->SetPosition(glm::vec3(4.f, 2.f, 4.f));
-
 }
+
+
 
 void Renderer::LoadSolarSystem()
 {
@@ -303,13 +267,21 @@ void Renderer::LoadSolarSystem()
 	sun->AddSatellite(saturn, 10 * GetRandomNumber(),20);
 	sun->AddSatellite(uranus, 10 * GetRandomNumber(),25);
 	sun->AddSatellite(neptune, 10* GetRandomNumber(),29);
-	
-	
 
-	/*path = "res/Models/Cosmos/Rock/rock.obj";
-	Model* model = new Model(path, this);
-	models.emplace_back(model);
-	model->SetPosition(9, 0, 0);
-	model->SetScale(0.4f, 0.4f, 0.4f);*/
+	for (int i =0; i<rocksAmount; i++)
+	{
+		Entity* e = new Entity();
+		e->ComputeWorldTransform();
+		transforms.push_back(e);
+	}
+	
+	//std::fill(transforms, transforms + rocksAmount, glm::mat4(1.0f));
+	path = "res/Models/Cosmos/Rock/rock.obj";
+	//path = "res/Models/Backpack/backpack.obj";
+	Model* rock = new Model(path, this, transforms.size(),false);
+	models.emplace_back(rock);
+	rock->SetPosition(9, 0, 0);
+	rock->SetScale(0.1f, 0.1f, 0.1f);
+	sun->AddSatellite(rock, 10 * GetRandomNumber(),5);
 
 }

@@ -26,12 +26,13 @@ public:
 		return dist(e);
 		
 	}
-private:
 	
 private:
+	unsigned int rocksAmount =10;
+	class std::vector<class Entity*> transforms;
 	class Shader* _basicShader;
-	std::list<class Mesh*>_meshes;
-	std::list<class Model*> models;
+	std::vector<class Mesh*>_meshes;
+	std::vector<class Model*> models;
 	std::vector<class Sphere*> spheres;
 	class Sphere* _skybox;
 	class Mesh * _lightMesh;
@@ -43,5 +44,6 @@ private:
 	float lastFrameTimeStart;
 	std::random_device rand;
 	std::mt19937 e{ rand() };
+	Shader* _instanceShader;
 };
 

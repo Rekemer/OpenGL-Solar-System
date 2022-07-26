@@ -7,6 +7,8 @@ struct Vertex;
 
 VertexArray::VertexArray(const std::vector<Vertex>& verticies, const std::vector<unsigned int >& indicies)
 {
+	_numInd = indicies.size();
+	_numVert = verticies.size();
 	// Create vertexArray object
 	GLCall(glGenVertexArrays(1, &va));
 	GLCall(glBindVertexArray(va));

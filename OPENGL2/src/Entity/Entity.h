@@ -14,13 +14,14 @@ public:
 	void ComputeWorldTransform();
 	glm::vec3 GetPosition() { return _position; }
 	glm::vec3 GetRotation() { return _rotation; }
+	glm::mat4 _worldMat;
 private:
 protected:
 	
 	glm::vec3 _position;
 	glm::vec3 _rotation;
 	glm::vec3 _scale;
-	glm::mat4 _worldMat;
+	
 	bool _recomputeWorldMat;
 	
 };

@@ -110,6 +110,8 @@
     <None Include="res\Models\DefaultModels\cube.obj" />
     <None Include="res\Models\Cosmos\Rock\rock.mtl" />
     <None Include="res\Models\Cosmos\Rock\rock.obj" />
+    <None Include="Shaders\instance.vert" />
+    <None Include="Shaders\instance.frag" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\Textures\Wall.png">

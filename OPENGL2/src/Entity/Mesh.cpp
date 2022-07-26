@@ -35,8 +35,8 @@ Mesh::Mesh(std::vector<Vertex>& vertices,
 
 Mesh::~Mesh()
 {
-	//delete _va;
-	//_va = nullptr;
+	delete _va;
+	_va = nullptr;
 }
 
 void Mesh::Draw(Shader& shader, Model& model)
@@ -44,7 +44,7 @@ void Mesh::Draw(Shader& shader, Model& model)
 	unsigned int diffuseNr = 1;
 	unsigned int specularNr = 1;
 
-	shader.SetMatrixUniform("worldMatrix", model.GetWorldMatrix());
+	//shader.SetMatrixUniform("worldMatrix", model.GetWorldMatrix());
 	shader.SetMatrixUniform("projMatrix", _renderer->GetPerspectiveMatrix());
 	// camera/view transformation
 	shader.SetMatrixUniform("viewMatrix", _renderer->GetCamera()->GetViewMatrix());
@@ -88,21 +88,36 @@ void Mesh::SetupMesh()
     
 }
 
-void Mesh::Bind()
+
+
+void Mesh::Bind(Shader&shader, glm::mat4& world)
 {
-	//_va->Bind();
-	//if (_texture !=nullptr)
-	//{
-	//	_texture->Bind();
-	//}
-	//if (_shader != nullptr)
-	//{
-	//	_shader->Bind();
-	//	_shader->SetMatrixUniform("worldMatrix", _worldMat);
-	//	_shader->SetMatrixUniform("projMatrix", _renderer->GetPerspectiveMatrix());
-	//	// camera/view transformation
-	//	_shader->SetMatrixUniform("viewMatrix", _renderer->GetCamera()->GetViewMatrix());
-	//}
+	unsigned int diffuseNr = 1;
+	unsigned int specularNr = 1;
+
+	shader.SetMatrixUniform("worldMatrix", world);
+	shader.SetMatrixUniform("projMatrix", _renderer->GetPerspectiveMatrix());
+	// camera/view transformation
+	shader.SetMatrixUniform("viewMatrix", _renderer->GetCamera()->GetViewMatrix());
+
+	for (unsigned int i = 0; i < textures.size(); i++)
+	{
+		glActiveTexture(GL_TEXTURE0 + i); // activate proper texture unit before binding
+		// retrieve texture number (the N in diffuse_textureN)
+		std::string number;
+		std::string name = textures[i].type;
+		if (name == "texture_diffuse")
+			number = std::to_string(diffuseNr++);
+		else if (name == "texture_specular")
+			number = std::to_string(specularNr++);
+		
+		shader.setInt(("material." + name + number).c_str(), i);
+		glBindTexture(GL_TEXTURE_2D, textures[i].id);
+	}
+	
+
+	// draw mesh
+	_va->Bind();
 	
 	
 }

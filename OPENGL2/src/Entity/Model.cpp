@@ -6,19 +6,45 @@
 #include <postprocess.h>
 #include <SOIL.h>
 #include <glew.h>
+
+#include "Camera.h"
 #include "../Rendering/Debuger.h"
 #include "../Rendering/Renderer.h"
-
-
+#include "Sphere.h"
+#include "../Rendering/Shader.h"
 
 void Model::Draw(Shader& shader)
 {
+    
+
      for (unsigned int i = 0; i < meshes.size(); i++)
      {
          ComputeWorldTransform();
-         meshes[i].ComputeWorldTransform();
-         meshes[i].Draw(shader, *this);
+         meshes[i]->ComputeWorldTransform();
+         meshes[i]->Draw(shader, *this);
      }
+}
+
+void UpdateMatrix(glm::mat4* matrix, glm::vec3 pos, glm::vec3 rot, glm::vec3 scale)
+{
+
+}
+
+void Model::DrawInstance(Shader& shader,std::vector<Entity*>& transforms)
+{
+    shader.Bind();
+   
+    shader.SetMatrixUniform("projMatrix", renderer->GetPerspectiveMatrix());
+    // camera/view transformation
+    shader.SetMatrixUniform("viewMatrix", renderer->GetCamera()->GetViewMatrix());
+    for (unsigned int i = 0; i < transforms.size(); i++)
+    {
+        for (unsigned int j = 0; j < meshes.size(); j++)
+        {
+            shader.SetMatrixUniform("worldMatrix", transforms[i]->GetWorldMatrix());
+            meshes[j]->Draw(shader, *this);
+        }
+    }
 }
 
 void Model::loadModel(std::string path)
@@ -52,7 +78,7 @@ void Model::processNode(aiNode* node, const aiScene* scene)
     }
 }
 
-Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
+Mesh* Model::processMesh(aiMesh* mesh, const aiScene* scene)
 {
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
@@ -104,7 +130,7 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
         textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
     }
 
-    return Mesh(vertices, indices, textures, renderer);
+    return new  Mesh(vertices, indices, textures, renderer);
 }
 
 std::vector<Texture> Model::loadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName)
@@ -145,6 +171,60 @@ void Model::SetTexture(std::string& path, std::string& type)
     texture.path = path;
    // textures.push_back(texture);
     textures_loaded.push_back(texture); // add to loaded textures
+}
+
+
+void Model::UpdateSelfRot(float time)
+{
+    SetRotation(GetRotation().x + time * selfRotationSpeed, GetRotation().y, GetRotation().z);
+}
+void Model::UpdateSelfRot(float time,glm::mat4 worldMat )
+{
+    SetRotation(GetRotation().x + time * selfRotationSpeed, GetRotation().y, GetRotation().z);
+}
+
+void Model::UpdatePosition(float time, glm::mat4 worldMat, glm::vec3 pos)
+{
+}
+
+void Model::Update(float time, std::vector< Entity*>& transforms)
+{
+
+    for (int i = 0; i < transforms.size(); i++)
+    {
+
+
+        // calculate pos
+        // !
+        // calculate offset
+        // !
+        //UpdateSatellites(time);
+        if (radiusSatelite > 0.1f)
+        {
+            auto omega = speedSatelite / radiusSatelite;
+            auto xSpeed = (radiusSatelite+radiusOffset[i]) * sin(currentAngle[i] + omega * time);
+            auto zSpeed = (radiusSatelite+radiusOffset[i]) * cos(currentAngle[i] + omega * time);
+            currentAngle[i] = currentAngle[i] + omega * time;
+            auto x = xSpeed;
+            auto z = zSpeed;
+            auto ownerPos = owner->GetPosition();
+            auto  position = glm::vec3(x + ownerPos.x, transforms[i]->GetPosition().y, z + ownerPos.z);
+            transforms[i]->SetPosition(position);
+        }
+
+        // calculate rot
+
+        //SetRotation(GetRotation().x + time * selfRotationSpeed, GetRotation().y, GetRotation().z);
+        glm::vec3 rotation =glm::vec3(0,0,0);
+        transforms[i]->SetRotation(rotation);
+        // calculate scale
+        glm::vec3 scale = glm::vec3(0.2, 0.2, 0.2);
+        transforms[i]->SetScale(scale);
+        // update world matrix
+        transforms[i]->ComputeWorldTransform();
+
+    }
+    
 }
 
 unsigned int Model::LoadTexture(std::string fileName)

@@ -9,6 +9,9 @@ public:
 
 	void Bind();
 	int GetNumIndices()const { return _numInd; }
+	int GetVertexArrayId()const { return va; }
+	int GetVertexBufferId()const { return vb; }
+	int GetIndexBufferId()const { return ib; }
 private:
 	unsigned int va;
 	unsigned int vb;

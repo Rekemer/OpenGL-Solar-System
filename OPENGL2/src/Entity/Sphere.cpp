@@ -1,11 +1,11 @@
 #include "Sphere.h"
-
 #include "../TextureDefault.h"
 #include "../Rendering/Shader.h"
 #include "../Rendering/VertexArray.h"
 #include "../Rendering/Debuger.h"
 #include "../Rendering/Renderer.h"
 #include "Camera.h"
+#include "Model.h"
 #define PI 3.14159265358979323846
 Sphere::Sphere(int precision, Renderer* renderer) : Entity()
 {
@@ -100,10 +100,28 @@ void Sphere::AddSatellite(Sphere* satellite, float speed, float r)
 	s_satellites.emplace_back(satellite);
 }
 
+float lerp(float a, float b, float t)
+{
+	float c = (1 - t) * a + t * b;
+	return c;
+}
+
 void Sphere::AddSatellite(Model* satellite, float speed, float r )
 {
 	m_satellites.emplace_back(satellite);
+	satellite->owner = this;
+	satellite->radiusSatelite = r;
+	satellite->speedSatelite = speed;
+	
+	for (int i =0; i<satellite->radiusOffset.size(); i++)
+	{
+		float rand = _renderer->GetRandomNumber();
+		satellite->radiusOffset[i] = lerp(-2, 2, rand);
+	}
+	
 }
+
+
 
 void Sphere::Update(float time)
 {
@@ -129,6 +147,7 @@ void Sphere::UpdateSatellites(float time)
 	{
 		satellite->Update(time);
 	}
+	
 }
 void Sphere::UpdateSelfRot(float time)
 {
