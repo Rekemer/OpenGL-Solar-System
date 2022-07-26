@@ -202,7 +202,14 @@
     <Image Include="res\Models\Backpack\roughness.jpg" />
     <Image Include="res\Models\Backpack\specular.jpg" />
     <Image Include="res\Models\Cosmos\Planets\Earth\earth_day.jpg" />
+    <Image Include="res\Models\Cosmos\Planets\jupiter.jpg" />
+    <Image Include="res\Models\Cosmos\Planets\mars.jpg" />
+    <Image Include="res\Models\Cosmos\Planets\mercury.jpg" />
     <Image Include="res\Models\Cosmos\Planets\moon.jpg" />
+    <Image Include="res\Models\Cosmos\Planets\neptune.jpg" />
+    <Image Include="res\Models\Cosmos\Planets\saturn.jpg" />
+    <Image Include="res\Models\Cosmos\Planets\uranus.jpg" />
+    <Image Include="res\Models\Cosmos\Planets\venus.jpg" />
     <Image Include="res\Models\Cosmos\Rock\rock.png" />
     <Image Include="res\Models\Cosmos\Sun\sun.jpg" />
     <Image Include="res\Models\DefaultModels\crate_1.jpg" />

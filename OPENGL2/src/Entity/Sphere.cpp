@@ -6,10 +6,12 @@
 #include "../Rendering/Debuger.h"
 #include "../Rendering/Renderer.h"
 #include "Camera.h"
+#define PI 3.14159265358979323846
 Sphere::Sphere(int precision, Renderer* renderer) : Entity()
 {
 	Init(precision);
 	_renderer = renderer;
+	currentAngle = PI * 2 * renderer->GetRandomNumber();
 }
 
 void Sphere::Init(int prec)
@@ -54,9 +56,6 @@ void Sphere::Init(int prec)
 	_va = new VertexArray(vertices, indices);
 	
 	_textureSpecular = new TextureDefault();
-	
-	//_textureSpecular->Load("res/Textures/Planets/Earth/earth_specular.jpg");
-
 }
 
 Sphere::~Sphere()
@@ -113,8 +112,6 @@ void Sphere::Update(float time)
 	if (radiusSatelite > 0.3f)
 	{
 		auto omega = speedSatelite / radiusSatelite;
-
-		std::cout << time << std::endl;
 		auto xSpeed = radiusSatelite * sin(currentAngle + omega * time);
 		auto zSpeed = radiusSatelite * cos(currentAngle + omega * time);
 		currentAngle = currentAngle + omega * time;

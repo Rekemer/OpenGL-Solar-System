@@ -61,10 +61,7 @@ void Renderer::Draw()
 	auto pos = _camera->GetPosition();
 	auto iter = models.begin();
 	//auto pos = (*iter)->GetPosition();
-//	PrintVec(pos);
 
-
-	PrintVec(spheres[0]->GetPosition());
 
 	for (auto model : models)
 	{
@@ -154,7 +151,7 @@ void Renderer::Init()
 	};
 	//camera
 	_camera = new Camera(_window);
-	_camera->SetPosition(glm::vec3(0.f, 0.f,20.f));
+	_camera->SetPosition(glm::vec3(0.f, 50.f,0.f));
 	_basicShader = new Shader("Shaders/basic.vert", "Shaders/basic.frag");
 
 	LoadSolarSystem();
@@ -210,6 +207,16 @@ void Renderer::Init()
 
 void Renderer::LoadSolarSystem()
 {
+	// mercury
+	//venus
+	//Earth
+	// Mars
+	// Jupiter
+	// Saturn
+	// Uranus
+	//Neptune
+
+
 	// add skybox
 	std::string path = "res/Models/Cosmos/Sky/8k_stars_milky_way.jpg";
 	_skybox = new Sphere(48, this);
@@ -225,13 +232,27 @@ void Renderer::LoadSolarSystem()
 	sun->SetScale(2.5f, 2.5f,2.5f);
 	sun->SetPosition(2, 0, 0);
 
+
+	auto mercury = new Sphere(48, this);
+	path = "res/Models/Cosmos/Planets/mercury.jpg";
+	mercury->SetTexture(path);
+	spheres.emplace_back(mercury);
+	mercury->SetPosition(0, 0, 0);
+
+
+
+	auto venus = new Sphere(48, this);
+	path = "res/Models/Cosmos/Planets/venus.jpg";
+	venus->SetTexture(path);
+	spheres.emplace_back(venus);
+	venus->SetPosition(0, 0, 0);
+
+
 	auto earth = new Sphere(48, this);
-	path = "res/Models/Cosmos/Planets/Earth/earth_day.jpg";
+	path = "res/Models/Cosmos/Planets/Earth/earth_night.jpg";
 	earth->SetTexture(path);
 	spheres.emplace_back(earth);
 	earth->SetPosition(0,0,0);
-
-
 
 	auto moon = new Sphere(48, this);
 	path = "res/Models/Cosmos/Planets/moon.jpg";
@@ -240,16 +261,55 @@ void Renderer::LoadSolarSystem()
 	moon->SetScale(0.5f, 0.5f, 0.5f);
 	moon->SetPosition(0, 0, 0);
 
+	auto mars = new Sphere(48, this);
+	path = "res/Models/Cosmos/Planets/mars.jpg";
+	mars->SetTexture(path);
+	spheres.emplace_back(mars);
+	mars->SetPosition(0, 0, 0);
+
+	auto jupiter = new Sphere(48, this);
+	path = "res/Models/Cosmos/Planets/jupiter.jpg";
+	jupiter->SetTexture(path);
+	spheres.emplace_back(jupiter);
+	jupiter->SetPosition(0, 0, 0);
+
+	auto saturn = new Sphere(48, this);
+	path = "res/Models/Cosmos/Planets/saturn.jpg";
+	saturn->SetTexture(path);
+	spheres.emplace_back(saturn);
+	saturn->SetPosition(0, 0, 0);
+
+	auto uranus = new Sphere(48, this);
+	path = "res/Models/Cosmos/Planets/uranus.jpg";
+	uranus->SetTexture(path);
+	spheres.emplace_back(uranus);
+	uranus->SetPosition(0, 0, 0);
+
+	auto neptune = new Sphere(48, this);
+	path = "res/Models/Cosmos/Planets/neptune.jpg";
+	neptune->SetTexture(path);
+	spheres.emplace_back(neptune);
+	neptune->SetPosition(0, 0, 0);
+
 	sun->selfRotationSpeed = earth->selfRotationSpeed
 	= moon->selfRotationSpeed = 100;
-	sun->AddSatellite(moon, 20,6);
-	sun->AddSatellite(earth, 20,4);
-	earth->AddSatellite(moon, 20, 6);
+	//sun->AddSatellite(moon, 20,6);
+	sun->AddSatellite(mercury, 10 * GetRandomNumber(), 4);
+	sun->AddSatellite(venus, 10 * GetRandomNumber(), 6);
+	sun->AddSatellite(earth, 10 * GetRandomNumber(),8);
+	earth->AddSatellite(moon, 20 * GetRandomNumber(), 4);
+	sun->AddSatellite(mars, 10 * GetRandomNumber(),14);
+	sun->AddSatellite(jupiter, 10 * GetRandomNumber(),17);
+	sun->AddSatellite(saturn, 10 * GetRandomNumber(),20);
+	sun->AddSatellite(uranus, 10 * GetRandomNumber(),25);
+	sun->AddSatellite(neptune, 10* GetRandomNumber(),29);
+	
+	
 
-	path = "res/Models/Cosmos/Rock/rock.obj";
+	/*path = "res/Models/Cosmos/Rock/rock.obj";
 	Model* model = new Model(path, this);
 	models.emplace_back(model);
 	model->SetPosition(9, 0, 0);
-	model->SetScale(0.4f, 0.4f, 0.4f);
+	model->SetScale(0.4f, 0.4f, 0.4f);*/
 
 }

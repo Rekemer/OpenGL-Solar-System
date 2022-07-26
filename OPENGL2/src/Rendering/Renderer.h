@@ -1,5 +1,6 @@
 #pragma once
 #include <list>
+#include <random>
 #include <ext/matrix_float4x4.hpp>
 #include <unordered_map>
 
@@ -16,7 +17,15 @@ public:
 	glm::mat4 GetPerspectiveMatrix()const { return _perspectiveMatrix; }
 	glm::mat4 GetOrthographicMatrix()const { return _orthographicMatrix; }
 	class Camera* GetCamera() { return  _camera; }
+	float GetRandomNumber()
+	{
+		 // or std::default_random_engine e{rd()};
+		std::uniform_real_distribution<float> dist{ 0.0f, 1.0f };
 
+		// get random numbers with:
+		return dist(e);
+		
+	}
 private:
 	
 private:
@@ -32,5 +41,7 @@ private:
 	class GLFWwindow* _window;
 	class Camera* _camera;
 	float lastFrameTimeStart;
+	std::random_device rand;
+	std::mt19937 e{ rand() };
 };
 

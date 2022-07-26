@@ -208,6 +208,27 @@
     <Image Include="res\Models\Cosmos\Rock\rock.png">
       <Filter>Файлы ресурсов</Filter>
     </Image>
+    <Image Include="res\Models\Cosmos\Planets\venus.jpg">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="res\Models\Cosmos\Planets\neptune.jpg">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="res\Models\Cosmos\Planets\saturn.jpg">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="res\Models\Cosmos\Planets\uranus.jpg">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="res\Models\Cosmos\Planets\mercury.jpg">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="res\Models\Cosmos\Planets\jupiter.jpg">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="res\Models\Cosmos\Planets\mars.jpg">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <Text Include="Shaders\light.vert" />
