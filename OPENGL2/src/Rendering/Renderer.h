@@ -28,7 +28,7 @@ public:
 	}
 	
 private:
-	unsigned int rocksAmount =50;
+	unsigned int rocksAmount =700;
 	class std::vector<class Entity*> transforms;
 	class Shader* _basicShader;
 	std::vector<class Mesh*>_meshes;

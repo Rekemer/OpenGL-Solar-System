@@ -39,7 +39,7 @@ public:
 	~Mesh();
 	void Draw(class Shader& shader, class Model& model);
 	void Bind();
-	void Bind(class Shader& shader, glm::mat4& world);
+	void Bind(class Shader& shader);
 	void LoadShader(const std::string& vertShaderPath, const std::string& fragShaderPath);
 	void LoadTexture(std::string filepath);
 	void Load(const float* verticies, const int  numVerticies, const int* indicies, const int  numInd);

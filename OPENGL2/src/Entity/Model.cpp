@@ -13,6 +13,7 @@
 #include "Sphere.h"
 #include "../Rendering/Shader.h"
 
+
 void Model::Draw(Shader& shader)
 {
     
@@ -30,21 +31,41 @@ void UpdateMatrix(glm::mat4* matrix, glm::vec3 pos, glm::vec3 rot, glm::vec3 sca
 
 }
 
-void Model::DrawInstance(Shader& shader,std::vector<Entity*>& transforms)
+void Model::DrawInstance(Shader& shader)
 {
     shader.Bind();
    
     shader.SetMatrixUniform("projMatrix", renderer->GetPerspectiveMatrix());
     // camera/view transformation
     shader.SetMatrixUniform("viewMatrix", renderer->GetCamera()->GetViewMatrix());
-    for (unsigned int i = 0; i < transforms.size(); i++)
+
+    glm::mat4* mattricies = new glm::mat4[transforms.size()];
+
+    for (int i = 0; i < transforms.size(); i++)
     {
-        for (unsigned int j = 0; j < meshes.size(); j++)
-        {
-            shader.SetMatrixUniform("worldMatrix", transforms[i]->GetWorldMatrix());
-            meshes[j]->Draw(shader, *this);
-        }
+        auto mat = transforms[i]->GetWorldMatrix();
+        mattricies[i] = transforms[i]->GetWorldMatrix();
     }
+    
+    glBindBuffer(GL_ARRAY_BUFFER, posBuffer);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, transforms.size() * sizeof(glm::mat4), &mattricies[0]);
+
+    for (unsigned int j = 0; j < meshes.size(); j++)
+    {
+        meshes[j]->Bind(shader);
+        auto indexSize = meshes[j]->GetVertexArray()->GetNumIndices();
+        GLCall(glDrawElementsInstanced(GL_TRIANGLES, static_cast<unsigned int>(indexSize), GL_UNSIGNED_INT, 0, transforms.size()));
+        GLCall(glBindVertexArray(0));
+    }
+   //for (unsigned int i = 0; i < transforms.size(); i++)
+   //{
+   //    for (unsigned int j = 0; j < meshes.size(); j++)
+   //    {
+   //        //shader.SetMatrixUniform("worldMatrix", transforms[i]->GetWorldMatrix());
+   //       // meshes[j]->Draw(shader, *this);
+   //    }
+   //}
+    delete mattricies;
 }
 
 void Model::loadModel(std::string path)
@@ -186,13 +207,13 @@ void Model::UpdateSelfRot(float time,glm::mat4 worldMat )
 void Model::UpdatePosition(float time, glm::mat4 worldMat, glm::vec3 pos)
 {
 }
-
-void Model::Update(float time, std::vector< Entity*>& transforms)
+void PrintVec(glm::vec3 pos);
+void Model::Update(float time)
 {
+   
 
     for (int i = 0; i < transforms.size(); i++)
     {
-
 
         // calculate pos
         // !
@@ -209,6 +230,7 @@ void Model::Update(float time, std::vector< Entity*>& transforms)
             auto z = zSpeed;
             auto ownerPos = owner->GetPosition();
             auto  position = glm::vec3(x + ownerPos.x,  radiusOffset[i], z + ownerPos.z);
+           
             transforms[i]->SetPosition(position);
         }
 
@@ -216,7 +238,7 @@ void Model::Update(float time, std::vector< Entity*>& transforms)
 
         //SetRotation(GetRotation().x + time * selfRotationSpeed, GetRotation().y, GetRotation().z);
         glm::vec3 rotation =glm::vec3(transforms[i]->GetRotation().x+time * selfRotationSpeed, transforms[i]->GetRotation().y, transforms[i]->GetRotation().z);
-        std::cout << rotation.x << std::endl;
+       
         transforms[i]->SetRotation(rotation);
         // calculate scale
         glm::vec3 scale = glm::vec3(0.01, 0.01, 0.01);
@@ -225,6 +247,8 @@ void Model::Update(float time, std::vector< Entity*>& transforms)
         transforms[i]->ComputeWorldTransform();
 
     }
+   
+    PrintVec(transforms[0]->GetPosition());
     
 }
 

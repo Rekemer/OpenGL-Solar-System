@@ -120,8 +120,7 @@ void Sphere::AddSatellite(Model* satellite, float speed, float r )
 	}
 	
 }
-
-
+void PrintVec(glm::vec3 pos);
 
 void Sphere::Update(float time)
 {

@@ -61,9 +61,10 @@ void Renderer::Draw()
 	auto iter = models.begin();
 	
 
-	//_instanceShader->Bind();
-	//_instanceShader->SetVectorUniform("cameraPos", _camera->GetPosition());
-	
+	_instanceShader->Bind();
+	_instanceShader->SetVectorUniform("cameraPos", _camera->GetPosition());
+	models[0]->Update(deltaTime);
+	models[0]->DrawInstance(*_instanceShader);
 
 	//PrintVec(transforms[0]->GetPosition());
 	
@@ -71,12 +72,11 @@ void Renderer::Draw()
 	_basicShader->Bind();
 	_basicShader->SetVectorUniform("cameraPos", _camera->GetPosition());
 
-	models[0]->Update(deltaTime, transforms );
-	models[0]->DrawInstance(*_basicShader, transforms );
-
 	
 
-
+	
+	//PrintVec(spheres[1]->GetPosition());
+	//PrintVec(models[0]->transforms[0]->GetPosition());
 	for (auto sphere : spheres)
 	{
 		sphere->Update(deltaTime);
@@ -268,20 +268,13 @@ void Renderer::LoadSolarSystem()
 	sun->AddSatellite(uranus, 10 * GetRandomNumber(),25);
 	sun->AddSatellite(neptune, 10* GetRandomNumber(),29);
 
-	for (int i =0; i<rocksAmount; i++)
-	{
-		Entity* e = new Entity();
-		e->ComputeWorldTransform();
-		transforms.push_back(e);
-	}
-	
 	//std::fill(transforms, transforms + rocksAmount, glm::mat4(1.0f));
 	path = "res/Models/Cosmos/Rock/rock.obj";
 	//path = "res/Models/Backpack/backpack.obj";
-	Model* rock = new Model(path, this, transforms,false);
+	Model* rock = new Model(path, this, rocksAmount,false);
 	models.emplace_back(rock);
 	rock->SetPosition(9, 0, 0);
-	rock->SetScale(0.1f, 0.1f, 0.1f);
+	rock->SetScale(0.5f, 0.5f, 0.5f);
 	rock->selfRotationSpeed = 100;
 	sun->AddSatellite(rock, 10 * GetRandomNumber(),5);
 

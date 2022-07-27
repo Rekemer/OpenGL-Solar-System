@@ -15,5 +15,5 @@ in vec2 diffuseTexCoords;
 out vec4 outColor;
 void main()
 {
-   outColor = vec4(1,1,1,1);
+   outColor = texture(material.texture_diffuse1,diffuseTexCoords);
 }

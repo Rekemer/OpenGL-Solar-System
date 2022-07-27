@@ -90,12 +90,12 @@ void Mesh::SetupMesh()
 
 
 
-void Mesh::Bind(Shader&shader, glm::mat4& world)
+void Mesh::Bind(Shader&shader)
 {
 	unsigned int diffuseNr = 1;
 	unsigned int specularNr = 1;
 
-	shader.SetMatrixUniform("worldMatrix", world);
+	
 	shader.SetMatrixUniform("projMatrix", _renderer->GetPerspectiveMatrix());
 	// camera/view transformation
 	shader.SetMatrixUniform("viewMatrix", _renderer->GetCamera()->GetViewMatrix());
