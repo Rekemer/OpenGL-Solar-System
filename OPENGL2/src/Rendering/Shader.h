@@ -2,7 +2,7 @@
 #include <glew.h>
 #include <string>
 #include <ext/matrix_float4x4.hpp>
-
+#include<unordered_map>
 class Shader
 {
 public:
@@ -14,6 +14,7 @@ public:
 	bool Load(const std::string& vertName, const std::string& fragName);
 	void SetMatrixUniform(const char* name, const glm::mat4& matrix);
 	void SetVectorUniform(const char* name, const glm::vec3& vec);
+	GLuint GetUniform(const std::string& uniformName);
 	void SetVectorUniform(const char* name, float x, float y, float z);
 	void SetFloatUniform(const char* name, const float value);
 	void setInt(const std::string& name, int value) const
@@ -32,6 +33,7 @@ private:
 	GLuint mVertexShader;
 	GLuint mFragShader;
 	GLuint mShaderProgram;
+	std::unordered_map < std::string,GLuint> uniformsCache;
 
 };
 

@@ -24,30 +24,40 @@ Shader::~Shader()
 void Shader::SetMatrixUniform(const char* name, const glm::mat4& matrix)
 {
 	// Find the uniform by this name
-	GLuint loc = glGetUniformLocation(mShaderProgram, name);
+	GLuint loc = GetUniform(std::string(name));
 	// Send the matrix data to the uniform
 	GLCall(glUniformMatrix4fv(loc, 1, GL_FALSE, &matrix[0][0]));
 }
 
 void Shader::SetVectorUniform(const char* name, const glm::vec3& vector)
 {
-	GLuint loc = glGetUniformLocation(mShaderProgram, name);
+	GLuint loc = GetUniform(std::string(name));
 	// Send the vector data
 	glUniform3fv(loc, 1, glm::value_ptr(vector));
 }
 
+GLuint Shader::GetUniform(const std::string& uniformName) 
+{
+	if (uniformsCache.find(uniformName) != uniformsCache.end())
+	{
+		return uniformsCache[uniformName];
+	}
+	auto uniformLocation = glGetUniformLocation(mShaderProgram, uniformName.c_str());
+	uniformsCache[uniformName] = uniformLocation;
+	return uniformLocation;
+}
 
 void Shader::SetVectorUniform(const char* name,float x, float y,float z)
 {
 	auto vector = glm::vec3(x, y, z);
-	GLuint loc = glGetUniformLocation(mShaderProgram, name);
+	GLuint loc = GetUniform(std::string(name));
 	// Send the vector data
 	glUniform3fv(loc, 1, glm::value_ptr(vector));
 }
 
 void Shader::SetFloatUniform(const char* name, float value)
 {
-	GLuint loc = glGetUniformLocation(mShaderProgram, name);
+	GLuint loc = GetUniform(std::string(name));
 	// Send the float data
 	glUniform1f(loc, value);
 }

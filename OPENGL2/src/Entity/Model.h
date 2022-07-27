@@ -21,10 +21,12 @@ public:
 	float selfRotationSpeed;
     float* currentAngle;
     std::vector<float>radiusOffset;
-    Model(std::string& path, class Renderer* renderer,  int amount,bool isPrefab = false )
+    Model(std::string& path, class Renderer* renderer, std::vector<Entity*>&transforms,bool isPrefab = false )
     {
+        int amount = transforms.size();
         this->renderer = renderer;
         _isPrefab = isPrefab;
+        std::vector<glm::mat4> matricies;
         loadModel(path);
         currentAngle = new float[amount];
         for (int i = 0; i< amount; i++)
@@ -33,10 +35,13 @@ public:
         }
         for (int i =0; i< amount; i++)
         {
-            currentAngle[i] = PI * 2 * renderer->GetRandomNumber();;
+            currentAngle[i] = PI * 2 * renderer->GetRandomNumber();
+            matricies.emplace_back(transforms[i]->GetWorldMatrix());
         }
-        std::vector<glm::mat4> matricies;
         
+    
+      
+        //
         //unsigned int buffer;
         //glGenBuffers(1, &buffer);
         //glBindBuffer(GL_ARRAY_BUFFER, buffer);

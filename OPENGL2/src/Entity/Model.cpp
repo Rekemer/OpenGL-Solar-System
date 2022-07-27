@@ -208,17 +208,18 @@ void Model::Update(float time, std::vector< Entity*>& transforms)
             auto x = xSpeed;
             auto z = zSpeed;
             auto ownerPos = owner->GetPosition();
-            auto  position = glm::vec3(x + ownerPos.x, transforms[i]->GetPosition().y, z + ownerPos.z);
+            auto  position = glm::vec3(x + ownerPos.x,  radiusOffset[i], z + ownerPos.z);
             transforms[i]->SetPosition(position);
         }
 
         // calculate rot
 
         //SetRotation(GetRotation().x + time * selfRotationSpeed, GetRotation().y, GetRotation().z);
-        glm::vec3 rotation =glm::vec3(0,0,0);
+        glm::vec3 rotation =glm::vec3(transforms[i]->GetRotation().x+time * selfRotationSpeed, transforms[i]->GetRotation().y, transforms[i]->GetRotation().z);
+        std::cout << rotation.x << std::endl;
         transforms[i]->SetRotation(rotation);
         // calculate scale
-        glm::vec3 scale = glm::vec3(0.2, 0.2, 0.2);
+        glm::vec3 scale = glm::vec3(0.01, 0.01, 0.01);
         transforms[i]->SetScale(scale);
         // update world matrix
         transforms[i]->ComputeWorldTransform();

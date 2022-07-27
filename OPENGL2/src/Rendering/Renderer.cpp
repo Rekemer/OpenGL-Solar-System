@@ -65,7 +65,7 @@ void Renderer::Draw()
 	//_instanceShader->SetVectorUniform("cameraPos", _camera->GetPosition());
 	
 
-	PrintVec(transforms[0]->GetPosition());
+	//PrintVec(transforms[0]->GetPosition());
 	
 
 	_basicShader->Bind();
@@ -278,10 +278,11 @@ void Renderer::LoadSolarSystem()
 	//std::fill(transforms, transforms + rocksAmount, glm::mat4(1.0f));
 	path = "res/Models/Cosmos/Rock/rock.obj";
 	//path = "res/Models/Backpack/backpack.obj";
-	Model* rock = new Model(path, this, transforms.size(),false);
+	Model* rock = new Model(path, this, transforms,false);
 	models.emplace_back(rock);
 	rock->SetPosition(9, 0, 0);
 	rock->SetScale(0.1f, 0.1f, 0.1f);
+	rock->selfRotationSpeed = 100;
 	sun->AddSatellite(rock, 10 * GetRandomNumber(),5);
 
 }

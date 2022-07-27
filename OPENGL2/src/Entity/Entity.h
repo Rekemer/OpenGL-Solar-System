@@ -8,7 +8,14 @@ public:
 	void SetPosition(float x, float y, float z);
 	void SetRotation(float x, float y, float z);
 	void SetScale(float x, float y, float z);
-	glm::mat4 GetWorldMatrix() const { return _worldMat; }
+	glm::mat4 GetWorldMatrix()
+	{
+		if (_recomputeWorldMat) {
+			ComputeWorldTransform();
+			_recomputeWorldMat= false;
+		}
+		return _worldMat;
+	}
 	void SetPosition(glm::vec3 pos);
 	void SetRotation(glm::vec3 rot);
 	void ComputeWorldTransform();
