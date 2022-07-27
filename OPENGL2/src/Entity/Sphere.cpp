@@ -113,10 +113,10 @@ void Sphere::AddSatellite(Model* satellite, float speed, float r )
 	satellite->radiusSatelite = r;
 	satellite->speedSatelite = speed;
 	
-	for (int i =0; i<satellite->radiusOffset.size(); i++)
+	for (int i =0; i<satellite->radiusOffsetXZ.size(); i++)
 	{
 		float rand = _renderer->GetRandomNumber();
-		satellite->radiusOffset[i] = lerp(-2, 2, rand);
+		satellite->radiusOffsetXZ[i] = lerp(-2, 2, rand);
 	}
 	
 }

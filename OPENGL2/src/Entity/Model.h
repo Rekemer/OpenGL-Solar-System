@@ -23,8 +23,10 @@ public:
 	class Sphere* owner;
 	float selfRotationSpeed;
     float* currentAngle;
-    std::vector<float>radiusOffset;
+    std::vector<float>radiusOffsetXZ;
     std::vector<Entity*> transforms;
+
+    std::vector<float> radiusOffsetY;
 
     Model(std::string& path, class Renderer* renderer, int amount,bool isPrefab = false )
     {
@@ -34,7 +36,8 @@ public:
         currentAngle = new float[amount];
         for (int i = 0; i< amount; i++)
         {
-            radiusOffset.emplace_back(lerp(-2,2, renderer->GetRandomNumber()));
+            radiusOffsetXZ.emplace_back(0);
+            radiusOffsetY.emplace_back(lerp(-2,2, renderer->GetRandomNumber()));
         }
         for (int i =0; i< amount; i++)
         {

@@ -274,8 +274,8 @@ void Renderer::LoadSolarSystem()
 	Model* rock = new Model(path, this, rocksAmount,false);
 	models.emplace_back(rock);
 	rock->SetPosition(9, 0, 0);
-	rock->SetScale(0.5f, 0.5f, 0.5f);
+	rock->SetScale(0.7f, 0.7, 0.7f);
 	rock->selfRotationSpeed = 100;
-	sun->AddSatellite(rock, 10 * GetRandomNumber(),5);
+	sun->AddSatellite(rock, 10 * GetRandomNumber(),12);
 
 }

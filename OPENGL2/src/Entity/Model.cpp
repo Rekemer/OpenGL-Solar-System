@@ -223,13 +223,13 @@ void Model::Update(float time)
         if (radiusSatelite > 0.1f)
         {
             auto omega = speedSatelite / radiusSatelite;
-            auto xSpeed = (radiusSatelite+radiusOffset[i]) * sin(currentAngle[i] + omega * time);
-            auto zSpeed = (radiusSatelite+radiusOffset[i]) * cos(currentAngle[i] + omega * time);
+            auto xSpeed = (radiusSatelite+radiusOffsetXZ[i]) * sin(currentAngle[i] + omega * time);
+            auto zSpeed = (radiusSatelite+radiusOffsetXZ[i]) * cos(currentAngle[i] + omega * time);
             currentAngle[i] = currentAngle[i] + omega * time;
             auto x = xSpeed;
             auto z = zSpeed;
             auto ownerPos = owner->GetPosition();
-            auto  position = glm::vec3(x + ownerPos.x,  radiusOffset[i], z + ownerPos.z);
+            auto  position = glm::vec3(x + ownerPos.x,  radiusOffsetY[i], z + ownerPos.z);
            
             transforms[i]->SetPosition(position);
         }
