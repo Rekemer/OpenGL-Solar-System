@@ -21,6 +21,17 @@
 		int m_BoneIDs[MAX_BONE_INFLUENCE];
 		//weights from each bone
 		float m_Weights[MAX_BONE_INFLUENCE];
+
+
+		Vertex(float x, float y, float z,float u,float v)
+		{
+			Position.x = x;
+			Position.y = y;
+			Position.z = z;
+			TexCoords.x = u;
+			TexCoords.y = v;
+		};
+		Vertex() {};
 	};
 
 

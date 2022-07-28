@@ -190,6 +190,8 @@
     <None Include="Shaders\instance.frag" />
     <None Include="Shaders\instance.vert" />
     <None Include="Shaders\light.frag" />
+    <None Include="Shaders\screen.frag" />
+    <None Include="Shaders\screen.vert" />
     <Text Include="res\Models\Backpack\source_attribution.txt" />
     <Text Include="Shaders\light.vert">
       <FileType>Document</FileType>

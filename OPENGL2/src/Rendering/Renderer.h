@@ -10,6 +10,7 @@ class Renderer
 public:
 	Renderer(class GLFWwindow* window,int windowWidth, int windowHeight);
 	~Renderer();
+	void SetUpFrameBuffer();
 	void Draw();
 	void Init();
 	void LoadSolarSystem();
@@ -28,6 +29,10 @@ public:
 	}
 	
 private:
+	unsigned int renderBufferObject;
+	class VertexArray* screenQuad;
+	unsigned int textureScreen;
+	unsigned int frameBuffer;
 	unsigned int rocksAmount =700;
 	class std::vector<class Entity*> transforms;
 	class Shader* _basicShader;
@@ -45,5 +50,8 @@ private:
 	std::random_device rand;
 	std::mt19937 e{ rand() };
 	Shader* _instanceShader;
+	Shader* _screenShader;
+	int _windowHeight;
+	int _windowWidth;
 };
 

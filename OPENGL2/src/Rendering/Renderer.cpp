@@ -25,6 +25,8 @@
 
 Renderer::Renderer( GLFWwindow* window, int windowWidth, int windowHeight)
 {
+	_windowHeight = windowHeight;
+	_windowWidth = windowWidth;
 	auto aspect = (float)windowWidth / (float)windowHeight;
 	 _orthographicMatrix= glm::ortho(-1.0f, 1.0f , -1.0f * 1.f/aspect, 1.0f * 1.f/aspect);
 	 _perspectiveMatrix =  glm::perspective(glm::radians(45.0f), aspect, 0.1f, 100.0f);
@@ -34,6 +36,39 @@ Renderer::Renderer( GLFWwindow* window, int windowWidth, int windowHeight)
 Renderer::~Renderer()
 {
 }
+
+void Renderer::SetUpFrameBuffer()
+{
+	// generate buffer
+	GLCall(glGenFramebuffers(1, &frameBuffer));
+	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer));
+
+	// generate texture for buffer
+	GLCall(glGenTextures(1, &textureScreen));
+	GLCall(glBindTexture(GL_TEXTURE_2D, textureScreen));
+	GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, _windowWidth, _windowHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL));
+	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
+	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+	GLCall(glBindTexture(GL_TEXTURE_2D, 0));
+
+	// attach it to currently bound framebuffer object
+	GLCall(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureScreen, 0));
+
+
+	GLCall(glGenRenderbuffers(1, &renderBufferObject));
+	GLCall(glBindRenderbuffer(GL_RENDERBUFFER, renderBufferObject));
+	GLCall(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, 800, 600));
+	GLCall(glBindRenderbuffer(GL_RENDERBUFFER, 0));
+
+	GLCall(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, renderBufferObject));
+
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+		std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+
+}
+
 glm::vec3 pointLightPositions[] = {
 		glm::vec3(0.0f,  1.2f, 8.0f),
 		glm::vec3(2.3f * 2, 3.3f, 6.0f),
@@ -47,7 +82,8 @@ void PrintVec(glm::vec3 pos)
 }
 void Renderer::Draw()
 {
-	glEnable(GL_DEPTH_TEST);
+	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer));
+	GLCall(glEnable(GL_DEPTH_TEST));
 	GLCall(glClearColor(135.f/225.f, 128 / 225.f, 126 / 225.f,1.0f));
 	GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 	float timeAppStart = (float)glfwGetTime();
@@ -87,84 +123,52 @@ void Renderer::Draw()
 		_skybox->SetPosition(_camera->GetPosition());
 		_skybox->Draw(*_basicShader);
 	}
-		
 
-	
+
+	_screenShader->Bind();
+	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, 0)); // back to defaul)t
+	GLCall(glClearColor(1.0f, 1.0f, 1.0f, 1.0f));
+	GLCall(glClear(GL_COLOR_BUFFER_BIT));
+
+	screenQuad->Bind();
+	glDisable(GL_DEPTH_TEST);
+	glBindTexture(GL_TEXTURE_2D, textureScreen);
+	glDrawElements(GL_TRIANGLES, screenQuad->GetNumIndices(),GL_UNSIGNED_INT, 0);
 	
 }
 
 
 void Renderer::Init()
 {
-	const float vertexBuffer[] = {
-	-0.5f, -0.5f, -0.5f,  0.0f, 0.0f, 0.f,0.f,-1.f,
-	 0.5f, -0.5f, -0.5f,  1.0f, 0.0f, 0.f,0.f,-1.f,
-	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 0.f,0.f,-1.f,
-	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 0.f,0.f,-1.f,
-	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f, 0.f,0.f,-1.f,
-	-0.5f, -0.5f, -0.5f,  0.0f, 0.0f, 0.f,0.f,-1.f,
+	SetUpFrameBuffer();
 
-	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f, 0.f,0.f,1.f,
-	 0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 0.f,0.f,1.f,
-	 0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 0.f,0.f,1.f,
-	 0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 0.f,0.f,1.f,
-	-0.5f,  0.5f,  0.5f,  0.0f, 1.0f, 0.f,0.f,1.f,
-	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f, 0.f,0.f,1.f,
-
-	-0.5f,  0.5f,  0.5f,  1.0f, 0.0f, -1.f,0.f,0.f,
-	-0.5f,  0.5f, -0.5f,  1.0f, 1.0f, -1.f,0.f,0.f,
-	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f, -1.f,0.f,0.f,
-	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f, -1.f,0.f,0.f,
-	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f, -1.f,0.f,0.f,
-	-0.5f,  0.5f,  0.5f,  1.0f, 0.0f, -1.f,0.f,0.f,
-
-	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,  1.f,0.f,0.f,
-	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,  1.f,0.f,0.f,
-	 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,  1.f,0.f,0.f,
-	 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,  1.f,0.f,0.f,
-	 0.5f, -0.5f,  0.5f,  0.0f, 0.0f,  1.f,0.f,0.f,
-	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,  1.f,0.f,0.f,
-
-	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 0.0f, -1.0f,  0.0f,
-	 0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 0.0f, -1.0f,  0.0f,
-	 0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 0.0f, -1.0f,  0.0f, 
-	 0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 0.0f, -1.0f,  0.0f,
-	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f, 0.0f, -1.0f,  0.0f,
-	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 0.0f, -1.0f,  0.0f,
-
-	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f, 0.0f,  1.0f,  0.0f,
-	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 0.0f,  1.0f,  0.0f,
-	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 0.0f,  1.0f,  0.0f,
-	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 0.0f,  1.0f,  0.0f,
-	-0.5f,  0.5f,  0.5f,  0.0f, 0.0f, 0.0f,  1.0f,  0.0f,
-	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f, 0.0f,  1.0f,  0.0f
+	std::vector<Vertex> verticesScreen = {
+	 Vertex(-1.0f, -1.0f, 0.0f,		0.f,0.f),
+	 Vertex(1.0f, -1.0f, 0.0f,		1.f,0.f),
+	 Vertex(-1.0f,  1.0f, 0.0f,	0.f,1.f),
+	 Vertex(1.0f,  1.0f, 0.0f,		1.f,1.f)
 	};
-	
-	
-	const int indicies[] = {
-		2,1,0 ,
-		3,9,8,
-		4,11,10	,
-
-		5,11,12	,
-		6,14,13	,
-		7,14,15	,
-
-		18,17,16,
-		19,17,18,
-		22,21,20,
-
-		23,21,22,
-		26,25,24,
-		27,25,26
+	std::vector<unsigned int> indiciesScreen = {
+		0,1,2,
+		1,3,2
 	};
+
+	screenQuad = new VertexArray(verticesScreen, indiciesScreen);
+
+
 	//camera
 	_camera = new Camera(_window);
 	_camera->SetPosition(glm::vec3(0.f, 10.f,0.f));
 	_basicShader = new Shader("Shaders/basic.vert", "Shaders/basic.frag");
 	_instanceShader = new Shader("Shaders/instance.vert", "Shaders/instance.frag");
+	_screenShader = new Shader("Shaders/screen.vert", "Shaders/screen.frag");
+
 	LoadSolarSystem();
 
+
+	// generate quad
+
+	
 }
 
 

@@ -248,7 +248,7 @@ void Model::Update(float time)
 
     }
    
-    PrintVec(transforms[0]->GetPosition());
+   // PrintVec(transforms[0]->GetPosition());
     
 }
 
