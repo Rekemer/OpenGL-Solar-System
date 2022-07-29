@@ -5,9 +5,7 @@
 #include "SOIL.h"
 #include "Rendering/Debuger.h"
 
-TextureDefault::TextureDefault()
-{
-}
+
 
 TextureDefault::~TextureDefault()
 {
@@ -60,8 +58,8 @@ void TextureDefault::Load(std::string fileName)
 	// bilinear  filtering
 	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
 	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 }
 
 void TextureDefault::Unload()

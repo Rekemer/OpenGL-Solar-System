@@ -192,6 +192,8 @@
     <None Include="Shaders\light.frag" />
     <None Include="Shaders\screen.frag" />
     <None Include="Shaders\screen.vert" />
+    <None Include="Shaders\sun.frag" />
+    <None Include="Shaders\sun.vert" />
     <Text Include="res\Models\Backpack\source_attribution.txt" />
     <Text Include="Shaders\light.vert">
       <FileType>Document</FileType>
@@ -229,6 +231,7 @@
     <Image Include="res\Models\Cosmos\Planets\Earth\earth_specular.jpg" />
     <Image Include="res\Models\Cosmos\Sky\stars_milky_way.jpg" />
     <Image Include="res\Models\Cosmos\Sky\8k_stars_milky_way.jpg" />
+    <Image Include="res\Textures\perlin_noise.jpg" />
     <Image Include="res\Textures\snow\Material_394.png" />
     <Image Include="res\Textures\Morgana.jpg" />
     <Image Include="res\Textures\snow\Snow_002_COLOR.jpg" />

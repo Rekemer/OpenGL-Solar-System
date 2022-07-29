@@ -35,13 +35,13 @@ private:
 	unsigned int frameBuffer;
 	unsigned int rocksAmount =700;
 	class std::vector<class Entity*> transforms;
-	class Shader* _basicShader;
+	
 	std::vector<class Mesh*>_meshes;
 	std::vector<class Model*> models;
 	std::vector<class Sphere*> spheres;
 	class Sphere* _skybox;
 	class Mesh * _lightMesh;
-	class Sphere* sun;
+	class Sphere* _sun;
 	glm::mat4 _perspectiveMatrix;
 	glm::mat4 _orthographicMatrix;
 	class GLFWwindow* _window;
@@ -49,8 +49,10 @@ private:
 	float lastFrameTimeStart;
 	std::random_device rand;
 	std::mt19937 e{ rand() };
-	Shader* _instanceShader;
-	Shader* _screenShader;
+	class Shader* _basicShader;
+	 Shader* _instanceShader;
+	 Shader* _screenShader;
+	 Shader* _sunShader;
 	int _windowHeight;
 	int _windowWidth;
 };

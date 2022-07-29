@@ -7,7 +7,7 @@
 #include "Camera.h"
 #include "Model.h"
 #define PI 3.14159265358979323846
-Sphere::Sphere(int precision, Renderer* renderer) : Entity()
+Sphere::Sphere(int precision, Renderer* renderer, bool isSun):Entity()
 {
 	Init(precision);
 	_renderer = renderer;
@@ -54,8 +54,7 @@ void Sphere::Init(int prec)
 
 	}
 	_va = new VertexArray(vertices, indices);
-	
-	_textureSpecular = new TextureDefault();
+
 }
 
 Sphere::~Sphere()
@@ -78,18 +77,42 @@ void Sphere::Draw(Shader& shader)
 	shader.SetVectorUniform("dirLight.diffuse", glm::vec3(0.6f, 0.6f, 0.6f));
 	shader.SetVectorUniform("dirLight.specular", glm::vec3(1.0f, 1.0f, 1.0f));*/
 
-	glActiveTexture(GL_TEXTURE0);
-	_texture->Bind();
+	//glActiveTexture(GL_TEXTURE0);
+	//textures[0]->Bind();
+
+
+	unsigned int diffuseNr = 1;
+	unsigned int specularNr = 1;
+
+
+	for (unsigned int i = 0; i < textures.size(); i++)
+	{
+		glActiveTexture(GL_TEXTURE0 + i); // activate proper texture unit before binding
+		// retrieve texture number (the N in diffuse_textureN)
+		std::string number;
+		std::string name = textures[i]->GetType();
+		if (name == "texture_diffuse")
+			number = std::to_string(diffuseNr++);
+		else if (name == "texture_specular")
+			number = std::to_string(specularNr++);
+
+		shader.setInt(("material." + name + number).c_str(),  i);
+		glBindTexture(GL_TEXTURE_2D, textures[i]->GetId());
+	}
+
+
+
 	
 	//_textureSpecular->Bind();
 	_va->Bind();
 	GLCall(glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0));
 }
 
-void Sphere::SetTexture(std::string& path)
+void Sphere::SetTexture(std::string& path, std::string type)
 {
-	_texture = new TextureDefault();
-	_texture->Load(path);
+
+	textures.emplace_back(new TextureDefault(type));
+	textures.back()->Load(path);
 }
 
 void Sphere::AddSatellite(Sphere* satellite, float speed, float r)

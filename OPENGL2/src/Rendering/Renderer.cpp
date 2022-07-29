@@ -103,10 +103,19 @@ void Renderer::Draw()
 	models[0]->DrawInstance(*_instanceShader);
 
 	//PrintVec(transforms[0]->GetPosition());
+
+
+	_sunShader->Bind();
+	_sunShader->SetVectorUniform("cameraPos", _camera->GetPosition());
+	_sunShader->SetFloatUniform("time", timeAppStart);
 	
+	_sun->Update(deltaTime);
+	_sun->Draw(*_sunShader);
+
 
 	_basicShader->Bind();
 	_basicShader->SetVectorUniform("cameraPos", _camera->GetPosition());
+	//_basicShader->SetFloatUniform("time", timeAppStart);
 
 	
 
@@ -162,6 +171,7 @@ void Renderer::Init()
 	_basicShader = new Shader("Shaders/basic.vert", "Shaders/basic.frag");
 	_instanceShader = new Shader("Shaders/instance.vert", "Shaders/instance.frag");
 	_screenShader = new Shader("Shaders/screen.vert", "Shaders/screen.frag");
+	_sunShader = new Shader("Shaders/sun.vert", "Shaders/sun.frag");
 
 	LoadSolarSystem();
 
@@ -193,12 +203,14 @@ void Renderer::LoadSolarSystem()
 
 	// add planets
 
-	sun = new Sphere(48, this);
+	_sun = new Sphere(48, this,true);
 	path = "res/Models/Cosmos/Sun/sun.jpg";
-	sun->SetTexture(path);
-	spheres.emplace_back(sun);
-	sun->SetScale(2.5f, 2.5f,2.5f);
-	sun->SetPosition(2, 0, 0);
+	_sun->SetTexture(path);
+	path = "res/Textures/perlin_noise.png";
+	_sun->SetTexture(path);
+	//spheres.emplace_back(_sun);
+	_sun->SetScale(2.5f, 2.5f,2.5f);
+	_sun->SetPosition(2, 0, 0);
 
 
 	auto mercury = new Sphere(48, this);
@@ -259,18 +271,30 @@ void Renderer::LoadSolarSystem()
 	spheres.emplace_back(neptune);
 	neptune->SetPosition(0, 0, 0);
 
-	sun->selfRotationSpeed = earth->selfRotationSpeed
+	 earth->selfRotationSpeed
 	= moon->selfRotationSpeed = 100;
 	//sun->AddSatellite(moon, 20,6);
-	sun->AddSatellite(mercury, 10 * GetRandomNumber(), 4);
-	sun->AddSatellite(venus, 10 * GetRandomNumber(), 6);
-	sun->AddSatellite(earth, 10 * GetRandomNumber(),8);
-	earth->AddSatellite(moon, 20 * GetRandomNumber(), 4);
-	sun->AddSatellite(mars, 10 * GetRandomNumber(),14);
-	sun->AddSatellite(jupiter, 10 * GetRandomNumber(),17);
-	sun->AddSatellite(saturn, 10 * GetRandomNumber(),20);
-	sun->AddSatellite(uranus, 10 * GetRandomNumber(),25);
-	sun->AddSatellite(neptune, 10* GetRandomNumber(),29);
+	 float minSpeed = 1;
+	_sun->AddSatellite(mercury, 10 * GetRandomNumber()+minSpeed, 4);
+	_sun->AddSatellite(venus, 10 * GetRandomNumber()+minSpeed, 6);
+	_sun->AddSatellite(earth, 10 * GetRandomNumber()+minSpeed,8);
+	earth->AddSatellite(moon, 20 * GetRandomNumber()+minSpeed, 4);
+	_sun->AddSatellite(mars, 10 * GetRandomNumber()+minSpeed,14);
+	_sun->AddSatellite(jupiter, 10 * GetRandomNumber()+minSpeed,17);
+	_sun->AddSatellite(saturn, 10 * GetRandomNumber() + minSpeed, 20);
+	_sun->AddSatellite(uranus, 10 * GetRandomNumber()+minSpeed,25);
+	_sun->AddSatellite(neptune, 10* GetRandomNumber()+minSpeed,29);
+
+	spheres.emplace_back(mercury);
+	spheres.emplace_back(venus);
+	spheres.emplace_back(earth);
+	spheres.emplace_back(moon);
+	spheres.emplace_back(mars);
+	spheres.emplace_back(jupiter);
+	spheres.emplace_back(saturn);
+	spheres.emplace_back(uranus);
+	spheres.emplace_back(neptune);
+	
 
 	//std::fill(transforms, transforms + rocksAmount, glm::mat4(1.0f));
 	path = "res/Models/Cosmos/Rock/rock.obj";
@@ -280,6 +304,6 @@ void Renderer::LoadSolarSystem()
 	rock->SetPosition(9, 0, 0);
 	rock->SetScale(0.7f, 0.7, 0.7f);
 	rock->selfRotationSpeed = 100;
-	sun->AddSatellite(rock, 10 * GetRandomNumber(),12);
+	_sun->AddSatellite(rock, 10 * GetRandomNumber(),12);
 
 }
