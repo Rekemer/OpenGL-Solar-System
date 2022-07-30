@@ -7,10 +7,10 @@
 
 
 
-class Sphere:public Entity
+class Sphere: public Entity
 {
 public:
-	bool isSun;
+	bool isLight;
 	float currentAngle;
 	float speedSatelite;
 	std::vector<class Model*> m_satellites;
@@ -19,7 +19,7 @@ public:
 	float radiusSatelite;
 	float selfRotationSpeed;
 	Sphere* owner;
-	Sphere(int precision, Renderer* renderer, bool isSun = false);
+	Sphere(int precision, Renderer* renderer, bool isLight = false);
 	void Init(int precision);
 	~Sphere();
 	void Draw(class Shader& shader);

@@ -7,7 +7,7 @@
 #include "Camera.h"
 #include "Model.h"
 #define PI 3.14159265358979323846
-Sphere::Sphere(int precision, Renderer* renderer, bool isSun):Entity()
+Sphere::Sphere(int precision, Renderer* renderer, bool isLight):Entity()
 {
 	Init(precision);
 	_renderer = renderer;
@@ -36,6 +36,14 @@ void Sphere::Init(int prec)
 			float x = -(float)cos(toRadians(j * 360.0f / prec)) * (float)abs(cos(asin(y)));
 			float z = (float)sin(toRadians(j * 360.0f / prec)) * (float)abs(cos(asin(y)));
 			vertices[i * (prec + 1) + j].Position = glm::vec3(x, y, z);
+			if (x==0 && y==1 && z == 0 || x ==0 && y ==-1 && z == 0)
+			{
+				vertices[i * (prec + 1) + j].Tangent = glm::vec3(0.0f, 0.0f, -1.0f);
+			}
+			else
+			{
+				vertices[i * (prec + 1) + j].Tangent = glm::cross(glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(x, y, z));
+			}
 			vertices[i * (prec + 1) + j].TexCoords= glm::vec2(((float)j / prec), ((float)i / prec));
 			vertices[i * (prec + 1) + j].Normal = glm::vec3(x, y, z);
 		}
@@ -68,8 +76,8 @@ void Sphere::Draw(Shader& shader)
 	shader.SetMatrixUniform("projMatrix", _renderer->GetPerspectiveMatrix());
 	// camera/view transformation
 	shader.SetMatrixUniform("viewMatrix", _renderer->GetCamera()->GetViewMatrix());
-	shader.SetVectorUniform("material.specular", glm::vec3(0.8, 0.8, 0.8));
-	shader.SetFloatUniform("material.shininess", 32.0f);
+	shader.SetVectorUniform("material.specular", glm::vec3(0.1, 0.1, 0.1));
+	shader.SetFloatUniform("material.shininess", 0.0f);
 	
 	/*auto dir = glm::vec4(-0.0f, 0.0f, 1.0f, 1.0f);
 	shader.SetVectorUniform("dirLight.direction", (glm::vec3)dir);
@@ -106,6 +114,7 @@ void Sphere::Draw(Shader& shader)
 	//_textureSpecular->Bind();
 	_va->Bind();
 	GLCall(glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0));
+	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 void Sphere::SetTexture(std::string& path, std::string type)

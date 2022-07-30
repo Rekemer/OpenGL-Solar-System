@@ -238,6 +238,36 @@
     <Image Include="res\Textures\perlin_noise.jpg">
       <Filter>Файлы ресурсов</Filter>
     </Image>
+    <Image Include="res\Textures\uv_texture.png">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="res\Textures\Normal\normal_earth_day.png">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="res\Textures\Normal\normal_moon.png">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="res\Textures\Normal\venus.png">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="res\Textures\Normal\saturn.png">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="res\Textures\Normal\uranus.png">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="res\Textures\Normal\neptune.png">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="res\Textures\Normal\mars.png">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="res\Textures\Normal\mercury.png">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="res\Textures\Normal\jupiter.png">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <Text Include="Shaders\light.vert" />

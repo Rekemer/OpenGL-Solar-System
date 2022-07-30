@@ -35,7 +35,7 @@ private:
 	unsigned int frameBuffer;
 	unsigned int rocksAmount =700;
 	class std::vector<class Entity*> transforms;
-	
+	glm::vec3 lightPos;
 	std::vector<class Mesh*>_meshes;
 	std::vector<class Model*> models;
 	std::vector<class Sphere*> spheres;

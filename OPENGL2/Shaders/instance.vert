@@ -24,6 +24,10 @@ out vec2 diffuseTexCoords;
 uniform mat4 worldMatrix;
 uniform mat4 projMatrix;
 uniform mat4 viewMatrix;
+
+
+
+
 void main()
 {
     vec2 texcoord = vec2(texCoord.x, 1-texCoord.y);

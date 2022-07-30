@@ -33,6 +33,12 @@ VertexArray::VertexArray(const std::vector<Vertex>& verticies, const std::vector
 	GLCall(glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, TexCoords)))
 	GLCall(glEnableVertexAttribArray(2))
 
+	GLCall(glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Tangent)))
+	GLCall(glEnableVertexAttribArray(3))
+
+	GLCall(glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Bitangent)))
+	GLCall(glEnableVertexAttribArray(4))
+
 }
 
 

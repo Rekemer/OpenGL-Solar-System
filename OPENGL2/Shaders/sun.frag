@@ -1,4 +1,5 @@
 #version 330 
+ float PI =3.14159265359;
 
 float random (vec2 st);
 struct Material
@@ -79,18 +80,59 @@ in vec3 fragPos;
 
 
 
-vec3 random3(vec3 c) {
-	float j = 4096.0*sin(dot(c,vec3(17.0, 59.4, 15.0)));
-	vec3 r;
-	r.z = fract(512.0*j);
-	j *= .125;
-	r.x = fract(512.0*j);
-	j *= .125;
-	r.y = fract(512.0*j);
-	return r-0.5;
+vec2 random2( vec2 p ) {
+    return fract(sin(vec2(dot(p,vec2(127.1,311.7)),dot(p,vec2(269.5,183.3))))*43758.5453);
 }
 
 
+vec4 voronoi(vec2 texCoord)
+{
+   vec4 result;
+   vec2 i_st = floor(texCoord);
+   vec2 f_st = fract(texCoord);
+    vec4 cellColor = vec4(224/256f,180/256f,20/256f,1);
+  vec4 cellColor2 = vec4(235/256f,121/256f,21/256f,1);
+   float m_dist = 1.;
+  
+    for (int y= -1; y <= 1; y++) 
+    {
+       for (int x= -1; x <= 1; x++) 
+       {
+        // Neighbor place in the grid
+        vec2 neighbor = vec2(float(x),float(y));
+        vec2 neighborRel = i_st + neighbor;
+//        if (neighborRel.x > i_st.x){
+//        neighborRel.x = neighborRel.x-i_st.x;
+//        }
+//        if (neighborRel.y > i_st.y){
+//        neighborRel.y = neighborRel.y-i_st.y;
+//        }
+        vec2 point =  random2(neighborRel);
+       // point = clamp(point,0,1);
+        point = 0.5 + 0.5*sin(time + 6.2831*point);
+         vec2 diff = neighbor + point - f_st;
+
+        // Distance to the point
+        float dist = length(diff);
+
+        // Keep the closer distance
+        m_dist = min(m_dist, dist);
+    
+       }
+
+    }
+
+  
+   result = vec4(m_dist,m_dist,m_dist,1) +cellColor2 ;
+   //result = vec4(i_st,0,1);
+   return result;
+}
+
+float atan2(in float y, in float x)
+{
+    bool s = (abs(x) > abs(y));
+    return mix(PI/2.0 - atan(x,y), atan(y,x), s);
+}
 void main()
 {
 	
@@ -110,42 +152,25 @@ void main()
    float offsetX =sin(time/10); 
 
    vec2 texCoord = vec2(diffuseTexCoords.x,diffuseTexCoords.y) *30 ;
-   vec4 color1 = texture(material.texture_diffuse1,texCoord);
-   vec4 color2 = texture(material.texture_diffuse2,texCoord/2);
-   //vec4 cellColor = vec4(224/256f,180/256f,20/256f,1);
-  // outColor = mix(color1, color2, 0.5);
-   vec2 i_st = floor(texCoord);
-   vec2 f_st = fract(texCoord);
-   vec3 vec = vec3(texCoord.x,texCoord.y,0);
-   vec2 randomPoint = vec2(random3(vec3(i_st,0)));
-  // randomPoint =  ;
- // vec2 point = ;
- //// texCoord = fract(diffuseTexCoords*3);
-     vec2 diff = randomPoint - f_st;
-    float dist = length(diff);
    
    
-   
-   float m_dist = 1.;
-    for (int y= -1; y <= 1; y++) {
-    for (int x= -1; x <= 1; x++) {
-        // Neighbor place in the grid
-        vec2 neighbor = vec2(float(x),float(y));
-        vec2 point =  vec2(random3(vec3(i_st + neighbor,0)));
-        point = 0.5 + 0.5*sin(time + 6.2831*point);
-         vec2 diff = neighbor + point - f_st;
+  vec4 cellColor = vec4(224/256f,180/256f,20/256f,1);
+  vec4 cellColor2 = vec4(235/256f,121/256f,21/256f,1);
 
-        // Distance to the point
-        float dist = length(diff);
+ 
+ vec2 tex;
+ tex.x = (PI + atan2(fragPos.x, fragPos.z)) / (2 * PI);
+ vec4 color1 = texture(material.texture_diffuse2,diffuseTexCoords);
+ color1 = (color1*2 - 1) * sin(time)/100;
 
-        // Keep the closer distance
-        m_dist = min(m_dist, dist);
-    }
-}
-
-
-   outColor = vec4(m_dist,m_dist,m_dist,1);
-  
+ vec4 color2 = texture(material.texture_diffuse1,diffuseTexCoords+color1.xy);
+ outColor =  color2;
+ outColor *= (voronoi(texCoord));
+// float threshold = 0.8;
+// if (outColor.length <threshold){
+//
+// outColor += cellColor2;
+// }
 
 }
 float random (vec2 st) {

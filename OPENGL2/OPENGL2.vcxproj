@@ -231,6 +231,15 @@
     <Image Include="res\Models\Cosmos\Planets\Earth\earth_specular.jpg" />
     <Image Include="res\Models\Cosmos\Sky\stars_milky_way.jpg" />
     <Image Include="res\Models\Cosmos\Sky\8k_stars_milky_way.jpg" />
+    <Image Include="res\Textures\Normal\jupiter.png" />
+    <Image Include="res\Textures\Normal\mars.png" />
+    <Image Include="res\Textures\Normal\mercury.png" />
+    <Image Include="res\Textures\Normal\neptune.png" />
+    <Image Include="res\Textures\Normal\normal_earth_day.png" />
+    <Image Include="res\Textures\Normal\normal_moon.png" />
+    <Image Include="res\Textures\Normal\saturn.png" />
+    <Image Include="res\Textures\Normal\uranus.png" />
+    <Image Include="res\Textures\Normal\venus.png" />
     <Image Include="res\Textures\perlin_noise.jpg" />
     <Image Include="res\Textures\snow\Material_394.png" />
     <Image Include="res\Textures\Morgana.jpg" />
@@ -239,6 +248,7 @@
     <Image Include="res\Textures\snow\Snow_002_NORM.jpg" />
     <Image Include="res\Textures\snow\Snow_002_OCC.jpg" />
     <Image Include="res\Textures\snow\Snow_002_ROUGH.jpg" />
+    <Image Include="res\Textures\uv_texture.png" />
     <Image Include="res\Textures\Wall.png" />
   </ItemGroup>
   <ItemGroup>

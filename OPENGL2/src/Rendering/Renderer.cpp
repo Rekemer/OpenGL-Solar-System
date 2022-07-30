@@ -92,13 +92,34 @@ void Renderer::Draw()
 	deltaTime = 0.001f;
 	static int a =0;
 	_camera->Update();
-	
+
+	lightPos = _sun->GetPosition();
 	auto pos = _camera->GetPosition();
 	auto iter = models.begin();
 	
 
 	_instanceShader->Bind();
 	_instanceShader->SetVectorUniform("cameraPos", _camera->GetPosition());
+	_instanceShader->SetVectorUniform("dirLight.direction", 0.0f, -1.0f, 0.0f);
+	_instanceShader->SetVectorUniform("dirLight.ambient", 0.0f, 0.0f, 0.0f);
+	_instanceShader->SetVectorUniform("dirLight.diffuse", 0.0f, 0.0f, 0.0f);
+	_instanceShader->SetVectorUniform("dirLight.specular", 0.5f, 0.5f, 0.5f);
+
+
+
+
+	_instanceShader->SetVectorUniform("cameraPos", _camera->GetPosition());
+
+	_instanceShader->SetVectorUniform("pointLights[0].position", lightPos);
+	_instanceShader->SetVectorUniform("pointLights[0].ambient", 0.0f, 0.0f, 0.0f);
+	_instanceShader->SetVectorUniform("pointLights[0].diffuse", 0.5f, 0.5f, 0.5f);
+	_instanceShader->SetVectorUniform("pointLights[0].specular", 0.0f, 0.0f, 0.0f);
+	_instanceShader->SetFloatUniform("pointLights[0].constant", 1.0f);
+	_instanceShader->SetFloatUniform("pointLights[0].linear", 0.014f);
+	_instanceShader->SetFloatUniform("pointLights[0].quadratic", 0.007f);
+
+
+
 	models[0]->Update(deltaTime);
 	models[0]->DrawInstance(*_instanceShader);
 
@@ -114,21 +135,42 @@ void Renderer::Draw()
 
 
 	_basicShader->Bind();
+
+
+	_basicShader->SetVectorUniform("dirLight.direction", 0.0f, -1.0f, 0.0f);
+	_basicShader->SetVectorUniform("dirLight.ambient", 0.0f, 0.0f, 0.0f);
+	_basicShader->SetVectorUniform("dirLight.diffuse", 0.0f, 0.0f, 0.0f);
+	_basicShader->SetVectorUniform("dirLight.specular", 0.5f, 0.5f, 0.5f);
+
+
+
+
 	_basicShader->SetVectorUniform("cameraPos", _camera->GetPosition());
+
+	_basicShader->SetVectorUniform("pointLights[0].position", lightPos);
+	_basicShader->SetVectorUniform("pointLights[0].ambient", 0.2f, 0.2f, 0.2f);
+	_basicShader->SetVectorUniform("pointLights[0].diffuse", 1.3f, 1.3f, 1.3f);
+	_basicShader->SetVectorUniform("pointLights[0].specular", 0.0f, 0.0f, 0.0f);
+	_basicShader->SetFloatUniform("pointLights[0].constant", 1.0f);
+	_basicShader->SetFloatUniform("pointLights[0].linear", 0.014f);
+	_basicShader->SetFloatUniform("pointLights[0].quadratic", 0.007f);
+
+
 	//_basicShader->SetFloatUniform("time", timeAppStart);
 
-	
-
-	
-	//PrintVec(spheres[1]->GetPosition());
-	//PrintVec(models[0]->transforms[0]->GetPosition());
 	for (auto sphere : spheres)
 	{
 		sphere->Update(deltaTime);
 		sphere->Draw(*_basicShader);
 	}
+
+
 	if (_skybox != nullptr)
-	{
+	
+		_basicShader->SetVectorUniform("dirLight.direction", 0.0f, -1.0f, 0.0f);
+		_basicShader->SetVectorUniform("dirLight.ambient", 0.4f, 0.4f, 0.4f);
+		_basicShader->SetVectorUniform("dirLight.diffuse", 0.0f, 0.0f, 0.0f);
+		_basicShader->SetVectorUniform("dirLight.specular", 0.5f, 0.5f, 0.5f); {
 		_skybox->SetPosition(_camera->GetPosition());
 		_skybox->Draw(*_basicShader);
 	}
@@ -206,7 +248,8 @@ void Renderer::LoadSolarSystem()
 	_sun = new Sphere(48, this,true);
 	path = "res/Models/Cosmos/Sun/sun.jpg";
 	_sun->SetTexture(path);
-	path = "res/Textures/perlin_noise.png";
+	path = "res/Textures/uv_distortion.png";
+//	path = "res/Textures/uv_texture.png";
 	_sun->SetTexture(path);
 	//spheres.emplace_back(_sun);
 	_sun->SetScale(2.5f, 2.5f,2.5f);
@@ -216,6 +259,8 @@ void Renderer::LoadSolarSystem()
 	auto mercury = new Sphere(48, this);
 	path = "res/Models/Cosmos/Planets/mercury.jpg";
 	mercury->SetTexture(path);
+	path = "res/Textures/Normal/mercury.png";
+	mercury->SetTexture(path);
 	spheres.emplace_back(mercury);
 	mercury->SetPosition(0, 0, 0);
 
@@ -224,6 +269,8 @@ void Renderer::LoadSolarSystem()
 	auto venus = new Sphere(48, this);
 	path = "res/Models/Cosmos/Planets/venus.jpg";
 	venus->SetTexture(path);
+	path = "res/Textures/Normal/venus.png";
+	venus->SetTexture(path);
 	spheres.emplace_back(venus);
 	venus->SetPosition(0, 0, 0);
 
@@ -231,11 +278,15 @@ void Renderer::LoadSolarSystem()
 	auto earth = new Sphere(48, this);
 	path = "res/Models/Cosmos/Planets/Earth/earth_night.jpg";
 	earth->SetTexture(path);
+	path = "res/Textures/Normal/normal_earth_day.png";
+	earth->SetTexture(path);
 	spheres.emplace_back(earth);
 	earth->SetPosition(0,0,0);
 
 	auto moon = new Sphere(48, this);
 	path = "res/Models/Cosmos/Planets/moon.jpg";
+	moon->SetTexture(path);
+	path = "res/Textures/Normal/normal_moon.png";
 	moon->SetTexture(path);
 	spheres.emplace_back(moon);
 	moon->SetScale(0.5f, 0.5f, 0.5f);
@@ -244,11 +295,15 @@ void Renderer::LoadSolarSystem()
 	auto mars = new Sphere(48, this);
 	path = "res/Models/Cosmos/Planets/mars.jpg";
 	mars->SetTexture(path);
+	path = "res/Textures/Normal/mars.png";
+	mars->SetTexture(path);
 	spheres.emplace_back(mars);
 	mars->SetPosition(0, 0, 0);
 
 	auto jupiter = new Sphere(48, this);
 	path = "res/Models/Cosmos/Planets/jupiter.jpg";
+	jupiter->SetTexture(path);
+	path = "res/Textures/Normal/jupiter.png";
 	jupiter->SetTexture(path);
 	spheres.emplace_back(jupiter);
 	jupiter->SetPosition(0, 0, 0);
@@ -256,17 +311,23 @@ void Renderer::LoadSolarSystem()
 	auto saturn = new Sphere(48, this);
 	path = "res/Models/Cosmos/Planets/saturn.jpg";
 	saturn->SetTexture(path);
+	path = "res/Textures/Normal/saturn.png";
+	saturn->SetTexture(path);
 	spheres.emplace_back(saturn);
 	saturn->SetPosition(0, 0, 0);
 
 	auto uranus = new Sphere(48, this);
 	path = "res/Models/Cosmos/Planets/uranus.jpg";
 	uranus->SetTexture(path);
+	path = "res/Textures/Normal/uranus.png";
+	uranus->SetTexture(path);
 	spheres.emplace_back(uranus);
 	uranus->SetPosition(0, 0, 0);
 
 	auto neptune = new Sphere(48, this);
 	path = "res/Models/Cosmos/Planets/neptune.jpg";
+	neptune->SetTexture(path);
+	path = "res/Textures/Normal/neptune.png";
 	neptune->SetTexture(path);
 	spheres.emplace_back(neptune);
 	neptune->SetPosition(0, 0, 0);
@@ -278,7 +339,7 @@ void Renderer::LoadSolarSystem()
 	_sun->AddSatellite(mercury, 10 * GetRandomNumber()+minSpeed, 4);
 	_sun->AddSatellite(venus, 10 * GetRandomNumber()+minSpeed, 6);
 	_sun->AddSatellite(earth, 10 * GetRandomNumber()+minSpeed,8);
-	earth->AddSatellite(moon, 20 * GetRandomNumber()+minSpeed, 4);
+	earth->AddSatellite(moon, 10 * GetRandomNumber()+minSpeed, 4);
 	_sun->AddSatellite(mars, 10 * GetRandomNumber()+minSpeed,14);
 	_sun->AddSatellite(jupiter, 10 * GetRandomNumber()+minSpeed,17);
 	_sun->AddSatellite(saturn, 10 * GetRandomNumber() + minSpeed, 20);
