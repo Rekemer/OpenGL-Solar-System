@@ -116,6 +116,8 @@
     <None Include="Shaders\screen.frag" />
     <None Include="Shaders\sun.vert" />
     <None Include="Shaders\sun.frag" />
+    <None Include="Shaders\skybox.vert" />
+    <None Include="Shaders\skybox.frag" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\Textures\Wall.png">

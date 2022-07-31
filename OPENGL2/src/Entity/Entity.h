@@ -21,6 +21,7 @@ public:
 	void ComputeWorldTransform();
 	glm::vec3 GetPosition() { return _position; }
 	glm::vec3 GetRotation() { return _rotation; }
+	glm::vec3 GetScale() { return _scale; }
 	glm::mat4 _worldMat;
 private:
 protected:

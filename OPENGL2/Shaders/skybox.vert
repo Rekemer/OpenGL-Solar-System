@@ -23,23 +23,13 @@ out vec3 normal;
 out vec3 fragPos;
 out vec2 diffuseTexCoords;
 out vec3 tangent;
-out vec3 TexCoords;
-out mat3 TBN;
 uniform mat4 worldMatrix;
 uniform mat4 projMatrix;
 uniform mat4 viewMatrix;
 void main()
 {
-    vec2 texcoord = vec2(texCoord.x,1-texCoord.y);
+    vec2 texcoord = vec2(texCoord.x, 1-texCoord.y);
 	diffuseTexCoords = texcoord;
-	normal = mat3(transpose(inverse(worldMatrix))) * aNormal;  
-	tangent =mat3(transpose(inverse(worldMatrix))) *aTangent;
-	vec3 biTanget = mat3(transpose(inverse(worldMatrix))) *cross(aNormal,aTangent);
-	TBN = mat3(tangent,biTanget,normal);
-	//normal =  aNormal;
-	tangent =aTangent;
-	
-	TexCoords = vertPos;
 	vec4 pos = vec4(vertPos  ,1.0);
 	fragPos = vec3(worldMatrix * pos);
 	gl_Position =projMatrix *viewMatrix* worldMatrix * pos;

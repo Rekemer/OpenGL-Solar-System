@@ -23,7 +23,7 @@ public:
 	void Init(int precision);
 	~Sphere();
 	void Draw(class Shader& shader);
-	void SetTexture(std::string& path, std::string type = "texture_diffuse");
+	void SetTexture(std::string& path, std::string type = "texture_diffuse",bool isCube = false);
 	void AddSatellite(Sphere* satellite, float speed,float radius = 3);
 	void AddSatellite(Model* satellite, float speed,float radius = 3);
 	void Update(float time);

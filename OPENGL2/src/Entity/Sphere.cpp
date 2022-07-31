@@ -36,7 +36,7 @@ void Sphere::Init(int prec)
 			float x = -(float)cos(toRadians(j * 360.0f / prec)) * (float)abs(cos(asin(y)));
 			float z = (float)sin(toRadians(j * 360.0f / prec)) * (float)abs(cos(asin(y)));
 			vertices[i * (prec + 1) + j].Position = glm::vec3(x, y, z);
-			if (x==0 && y==1 && z == 0 || x ==0 && y ==-1 && z == 0)
+			if ((abs(x) <0.01 && y==1 && abs(z) < 0.01) || (abs(x) < 0.01 && y ==-1 && abs(z) < 0.01))
 			{
 				vertices[i * (prec + 1) + j].Tangent = glm::vec3(0.0f, 0.0f, -1.0f);
 			}
@@ -78,19 +78,11 @@ void Sphere::Draw(Shader& shader)
 	shader.SetMatrixUniform("viewMatrix", _renderer->GetCamera()->GetViewMatrix());
 	shader.SetVectorUniform("material.specular", glm::vec3(0.1, 0.1, 0.1));
 	shader.SetFloatUniform("material.shininess", 0.0f);
-	
-	/*auto dir = glm::vec4(-0.0f, 0.0f, 1.0f, 1.0f);
-	shader.SetVectorUniform("dirLight.direction", (glm::vec3)dir);
-	shader.SetVectorUniform("dirLight.ambient", glm::vec3(0.2, 0.2, 0.2));
-	shader.SetVectorUniform("dirLight.diffuse", glm::vec3(0.6f, 0.6f, 0.6f));
-	shader.SetVectorUniform("dirLight.specular", glm::vec3(1.0f, 1.0f, 1.0f));*/
-
-	//glActiveTexture(GL_TEXTURE0);
-	//textures[0]->Bind();
 
 
 	unsigned int diffuseNr = 1;
 	unsigned int specularNr = 1;
+	unsigned int cubeNr = 1;
 
 
 	for (unsigned int i = 0; i < textures.size(); i++)
@@ -100,12 +92,23 @@ void Sphere::Draw(Shader& shader)
 		std::string number;
 		std::string name = textures[i]->GetType();
 		if (name == "texture_diffuse")
+		{
 			number = std::to_string(diffuseNr++);
+			glBindTexture(GL_TEXTURE_2D, textures[i]->GetId());
+		}
 		else if (name == "texture_specular")
+		{
 			number = std::to_string(specularNr++);
-
-		shader.setInt(("material." + name + number).c_str(),  i);
-		glBindTexture(GL_TEXTURE_2D, textures[i]->GetId());
+			glBindTexture(GL_TEXTURE_2D, textures[i]->GetId());
+		}
+			
+		else if (name == "texture_cube")
+		{
+			number = std::to_string(cubeNr++);
+			glBindTexture(GL_TEXTURE_CUBE_MAP, textures[i]->GetId());
+		}
+		
+		shader.setInt(("material." + name + number).c_str(), i);
 	}
 
 
@@ -114,14 +117,23 @@ void Sphere::Draw(Shader& shader)
 	//_textureSpecular->Bind();
 	_va->Bind();
 	GLCall(glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0));
-	glBindTexture(GL_TEXTURE_2D, 0);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+	glBindTexture(GL_TEXTURE0, 0);
 }
 
-void Sphere::SetTexture(std::string& path, std::string type)
+void Sphere::SetTexture(std::string& path, std::string type, bool isCube)
 {
-
-	textures.emplace_back(new TextureDefault(type));
-	textures.back()->Load(path);
+	
+	textures.emplace_back(new TextureDefault(type, isCube));
+	if (isCube)
+	{
+		textures.back()->LoadCubeMap(path.c_str());
+	}
+	else
+	{
+		textures.back()->Load(path);
+	}
+	
 }
 
 void Sphere::AddSatellite(Sphere* satellite, float speed, float r)
@@ -182,5 +194,5 @@ void Sphere::UpdateSatellites(float time)
 }
 void Sphere::UpdateSelfRot(float time)
 {
-	SetRotation(GetRotation().x + time * selfRotationSpeed, GetRotation().y, GetRotation().z);
+	SetRotation(GetRotation().x , GetRotation().y+ time * selfRotationSpeed, GetRotation().z);
 }

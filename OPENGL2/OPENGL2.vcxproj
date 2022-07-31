@@ -192,6 +192,8 @@
     <None Include="Shaders\light.frag" />
     <None Include="Shaders\screen.frag" />
     <None Include="Shaders\screen.vert" />
+    <None Include="Shaders\skybox.frag" />
+    <None Include="Shaders\skybox.vert" />
     <None Include="Shaders\sun.frag" />
     <None Include="Shaders\sun.vert" />
     <Text Include="res\Models\Backpack\source_attribution.txt" />

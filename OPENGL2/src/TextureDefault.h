@@ -6,8 +6,9 @@ class TextureDefault
 	
 
 public:
-	TextureDefault(std::string type): type(type){};
+	TextureDefault(std::string type, bool isCube = false):isCube(isCube), type(type){};
 	~TextureDefault();
+	void LoadCubeMap(const char* mapDir);
 	void Load(std::string fileName);
 	void Unload();
 	void Bind();
@@ -16,6 +17,7 @@ public:
 private:
 private:
 	unsigned int _textureID;
+	bool isCube;
 	int _width;
 	int _height;
 	std::string type;
