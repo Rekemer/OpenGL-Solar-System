@@ -34,7 +34,7 @@ void main()
 	diffuseTexCoords = texcoord;
 	normal = mat3(transpose(inverse(worldMatrix))) * aNormal;  
 	tangent =mat3(transpose(inverse(worldMatrix))) *aTangent;
-	vec3 biTanget = mat3(transpose(inverse(worldMatrix))) *cross(aNormal,aTangent);
+	vec3 biTanget =cross(normal,tangent);
 	TBN = mat3(tangent,biTanget,normal);
 	//normal =  aNormal;
 	tangent =aTangent;

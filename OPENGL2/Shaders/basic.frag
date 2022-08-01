@@ -100,7 +100,7 @@ void main()
     vec3 result;
 //
 //    // phase 1: Directional lighting
-    result = CalcDirLight(dirLight, norm, viewDir);
+  //  result = CalcDirLight(dirLight, norm, viewDir);
 //    // phase 2: Point lights
    for(int i = 0; i < NR_POINT_LIGHTS; i++)
      result += CalcPointLight(pointLights[i], norm, fragPos, viewDir);    
@@ -111,7 +111,7 @@ void main()
   // float offsetX =time; 
   // vec2 texCoord = vec2(diffuseTexCoords.x+offsetX,diffuseTexCoords.y);
   
-   outColor = vec4(result,1.0);
+   outColor = vec4(result ,1.0);
   
 
 }
@@ -128,7 +128,7 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir)
     vec3 ambient  = light.ambient  * vec3(texture(material.texture_diffuse1, diffuseTexCoords));
     vec3 diffuse  = light.diffuse  * diff * vec3(texture(material.texture_diffuse1, diffuseTexCoords));
     vec3 specular = light.specular * spec * vec3(texture(material.texture_specular1, diffuseTexCoords));
-    return vec3(ambient+diffuse);
+    return vec3(diffuse);
 }
 
 vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)

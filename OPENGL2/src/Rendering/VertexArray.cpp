@@ -27,7 +27,7 @@ VertexArray::VertexArray(const std::vector<Vertex>& verticies, const std::vector
 	GLCall(glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE, sizeof(Vertex), (void*)0))
 	GLCall(glEnableVertexAttribArray(0))
 	
-	GLCall(glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex),(void*)offsetof(Vertex,Normal)))
+	GLCall(glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex),(void*)offsetof(Vertex,Normal)))
 	GLCall(glEnableVertexAttribArray(1))
 
 	GLCall(glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, TexCoords)))

@@ -141,9 +141,9 @@ void Renderer::Draw()
 	_basicShader->Bind();
 
 
-	_basicShader->SetVectorUniform("dirLight.direction", 0.0f, -1.0f, 0.0f);
+	_basicShader->SetVectorUniform("dirLight.direction", 0.0f, 0.0f, 1.0f);
 	_basicShader->SetVectorUniform("dirLight.ambient", 0.1f, 0.1f, 0.1f);
-	_basicShader->SetVectorUniform("dirLight.diffuse", 0.1f, 0.1f, 0.1f);
+	_basicShader->SetVectorUniform("dirLight.diffuse", 1.4f, 1.4f, 1.4f);
 	_basicShader->SetVectorUniform("dirLight.specular", 0.5f, 0.5f, 0.5f);
 
 	
@@ -274,11 +274,11 @@ void Renderer::LoadSolarSystem()
 	_sun->SetTexture(path);
 	//spheres.emplace_back(_sun);
 	_sun->SetScale(2.5f, 2.5f,2.5f);
-	
+	_sun->SetPosition(2, 0, 0);
 	lightPos.emplace_back(_sun->GetPosition());
 	lightPos.emplace_back(lightPos[0] + glm::vec3(0, 1, 0)*2.5f);
 	lightPos.emplace_back(lightPos[0] - glm::vec3(0, 1, 0)*2.5f);
-	_sun->SetPosition(2, 0, 0);
+	
 
 
 	auto mercury = new Sphere(48 * 2, this);
@@ -363,7 +363,7 @@ void Renderer::LoadSolarSystem()
 		 venus->selfRotationSpeed=
 		 mars->selfRotationSpeed= jupiter->selfRotationSpeed= saturn->selfRotationSpeed=
 		 uranus->selfRotationSpeed=
-		 neptune->selfRotationSpeed=100;
+		 neptune->selfRotationSpeed=100*2;
 	//sun->AddSatellite(moon, 20,6);
 	 float minSpeed = 1;
 	_sun->AddSatellite(mercury, 10 * GetRandomNumber()+minSpeed, 4);
@@ -376,16 +376,7 @@ void Renderer::LoadSolarSystem()
 	_sun->AddSatellite(uranus, 10 * GetRandomNumber()+minSpeed,25);
 	_sun->AddSatellite(neptune, 10* GetRandomNumber()+minSpeed,29);
 
-	spheres.emplace_back(mercury);
-	spheres.emplace_back(venus);
-	spheres.emplace_back(earth);
-	spheres.emplace_back(moon);
-	spheres.emplace_back(mars);
-	spheres.emplace_back(jupiter);
-	spheres.emplace_back(saturn);
-	spheres.emplace_back(uranus);
-	spheres.emplace_back(neptune);
-	
+
 
 	//std::fill(transforms, transforms + rocksAmount, glm::mat4(1.0f));
 	path = "res/Models/Cosmos/Rock/rock.obj";
