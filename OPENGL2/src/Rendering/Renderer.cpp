@@ -225,10 +225,30 @@ void Renderer::Draw()
 	glDrawElements(GL_TRIANGLES, screenQuad->GetNumIndices(),GL_UNSIGNED_INT, 0);
 	
 }
+const unsigned int SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
 
 void Renderer::DrawShadows()
 {
-	
+	glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
+	glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
+	glClear(GL_DEPTH_BUFFER_BIT);
+	_depthShader->Bind();
+
+	for (unsigned int i = 0; i < 6; ++i)
+	{
+		std::string a = "shadowMatrices[" + std::to_string(i) + "]";
+
+		_depthShader->SetMatrixUniform(a.c_str(), shadowTransforms[i]);
+	}
+		
+	_depthShader->SetFloatUniform("far_plane", 25);
+	_depthShader->SetVectorUniform("lightPos", lightPos[0]);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, depthCubemap);
+
+	// render scene
+
 }
 
 void Renderer::SetUpShadowBuffer()
@@ -237,7 +257,7 @@ void Renderer::SetUpShadowBuffer()
 	glGenTextures(1, &depthCubemap);
 	glGenFramebuffers(1, &depthMapFBO);
 
-	const unsigned int SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
+	
 	glBindTexture(GL_TEXTURE_CUBE_MAP, depthCubemap);
 	for (unsigned int i = 0; i < 6; ++i)
 		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_DEPTH_COMPONENT,
@@ -267,11 +287,21 @@ void Renderer::SetUpShadowBuffer()
 	//std::cout << default_draw_fbo_ << "\n";
 	//std::cout << default_read_fbo_ << "\n";
 
+	float near_plane = 1.0f;
+	float far_plane = 25.0f;
+	glm::mat4 shadowProj = glm::perspective(glm::radians(90.0f), (float)SHADOW_WIDTH / (float)SHADOW_HEIGHT, near_plane, far_plane);
+	shadowTransforms.push_back(shadowProj * glm::lookAt(lightPos[0], lightPos[0] + glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f)));
+	shadowTransforms.push_back(shadowProj * glm::lookAt(lightPos[0], lightPos[0] + glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f)));
+	shadowTransforms.push_back(shadowProj * glm::lookAt(lightPos[0], lightPos[0] + glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f)));
+	shadowTransforms.push_back(shadowProj * glm::lookAt(lightPos[0], lightPos[0] + glm::vec3(0.0f, -1.0f, 0.0f), glm::vec3(0.0f, 0.0f, -1.0f)));
+	shadowTransforms.push_back(shadowProj * glm::lookAt(lightPos[0], lightPos[0] + glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, -1.0f, 0.0f)));
+	shadowTransforms.push_back(shadowProj * glm::lookAt(lightPos[0], lightPos[0] + glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, -1.0f, 0.0f)));
+
 }
 
 void Renderer::Init()
 {
-	SetUpShadowBuffer();
+	
 	SetUpFrameBuffer();
 	
 	std::vector<Vertex> verticesScreen = {
@@ -300,7 +330,7 @@ void Renderer::Init()
 
 	LoadSolarSystem();
 
-
+	SetUpShadowBuffer();
 	
 
 	

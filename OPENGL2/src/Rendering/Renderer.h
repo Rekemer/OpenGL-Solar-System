@@ -46,6 +46,7 @@ private:
 	std::vector<class Mesh*>_meshes;
 	std::vector<class Model*> models;
 	std::vector<class Sphere*> spheres;
+	std::vector<glm::mat4> shadowTransforms;
 	class Sphere* _skybox;
 	class Mesh * _lightMesh;
 	class Sphere* _sun;
