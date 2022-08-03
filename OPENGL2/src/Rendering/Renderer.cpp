@@ -226,6 +226,10 @@ void Renderer::Draw()
 	
 }
 
+//void Renderer::DrawShadows()
+//{
+//	
+//}
 
 void Renderer::Init()
 {
@@ -253,6 +257,7 @@ void Renderer::Init()
 	_screenShader = new Shader("Shaders/screen.vert", "Shaders/screen.frag");
 	_sunShader = new Shader("Shaders/sun.vert", "Shaders/sun.frag");
 	_skyBoxShader = new Shader("Shaders/skybox.vert", "Shaders/skybox.frag");
+	_depthShader = new Shader("Shaders/depth.vert", "Shaders/skybox.frag", "Shaders/depth.geom");
 
 	LoadSolarSystem();
 

@@ -11,9 +11,14 @@ Shader::Shader()
 {
 }
 
-Shader::Shader(const std::string& vertName, const std::string& fragName)
+Shader::Shader(const std::string& vertName, const std::string& fragName,  const std::string& geoName)
 {
+	if (geoName.empty())
 	Load(vertName, fragName);
+	else
+	{
+		Load(vertName, fragName, geoName);
+	}
 }
 
 Shader::~Shader()
@@ -73,6 +78,11 @@ void Shader::Unload()
 	GLCall(glDeleteProgram(mShaderProgram));
 	GLCall(glDeleteShader(mVertexShader));
 	GLCall(glDeleteShader(mFragShader));
+	if (mGeometryShader!= 0)
+	{
+		GLCall(glDeleteShader(mGeometryShader));
+	}
+	
 }
 
 bool Shader::Load(const std::string& vertName, const std::string& fragName)
@@ -83,6 +93,39 @@ bool Shader::Load(const std::string& vertName, const std::string& fragName)
 	bool isVertex = CompileShader(vertName,
 		GL_VERTEX_SHADER,
 		mVertexShader);
+	if (!isFragment || !isVertex)
+	{
+		return false;
+	}
+
+	// Now create a shader program that
+	// links together the vertex/frag shaders
+	mShaderProgram = glCreateProgram();
+	GLCall(glAttachShader(mShaderProgram, mVertexShader));
+	GLCall(glAttachShader(mShaderProgram, mFragShader));
+	GLCall(glLinkProgram(mShaderProgram));
+
+	// Verify that the program linked successfully
+	if (!IsValidProgram())
+	{
+		std::cout << "failed to link shaders" << "\n";
+		return false;
+	}
+
+	return true;
+}
+
+bool Shader::Load(const std::string& vertName, const std::string& fragName, const std::string& geoName)
+{
+	bool isFragment = CompileShader(fragName,
+		GL_FRAGMENT_SHADER,
+		mFragShader);
+	bool isVertex = CompileShader(vertName,
+		GL_VERTEX_SHADER,
+		mVertexShader);
+	bool isGeo = CompileShader(geoName,
+		GL_GEOMETRY_SHADER,
+		mGeometryShader);
 	if (!isFragment || !isVertex)
 	{
 		return false;

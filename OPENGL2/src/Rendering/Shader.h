@@ -7,11 +7,12 @@ class Shader
 {
 public:
 	Shader();
-	Shader(const std::string& vertName, const std::string& fragName);
+	Shader(const std::string& vertName, const std::string& fragName, const std::string& geoName="");
 	~Shader();
 	void Bind();
 	void Unload();
 	bool Load(const std::string& vertName, const std::string& fragName);
+	bool Load(const std::string& vertName, const std::string& fragName, const std::string& geoName);
 	void SetMatrixUniform(const char* name, const glm::mat4& matrix);
 	void SetVectorUniform(const char* name, const glm::vec3& vec);
 	GLuint GetUniform(const std::string& uniformName);
@@ -31,6 +32,7 @@ private:
 private:
 	// Store the shader object IDs
 	GLuint mVertexShader;
+	GLuint mGeometryShader;
 	GLuint mFragShader;
 	GLuint mShaderProgram;
 	std::unordered_map < std::string,GLuint> uniformsCache;
