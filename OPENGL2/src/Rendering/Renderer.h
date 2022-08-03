@@ -15,6 +15,8 @@ public:
 	void DrawSun(float timeAppStart, float deltaTime);
 	void DrawPlanets(float deltaTime);
 	void Draw();
+	void DrawShadows();
+	void SetUpShadowBuffer();
 	void Init();
 	void LoadSolarSystem();
 	class GLFWwindow* GetWindow() { return _window; }
@@ -36,6 +38,8 @@ private:
 	class VertexArray* screenQuad;
 	unsigned int textureScreen;
 	unsigned int frameBuffer;
+	unsigned int depthCubemap;
+	unsigned int depthMapFBO;
 	unsigned int rocksAmount =700;
 	class std::vector<class Entity*> transforms;
 	std::vector< glm::vec3> lightPos;
