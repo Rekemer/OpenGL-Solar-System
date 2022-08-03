@@ -32,9 +32,9 @@ void main()
 {
     vec2 texcoord = vec2(texCoord.x, 1-texCoord.y);
 	diffuseTexCoords = texcoord;
-	normal = aNormal;
+	normal = mat3(transpose(inverse(instanceMatrix))) *aNormal;
 	vec4 pos = vec4(vertPos  ,1.0);
-	fragPos = vec3(worldMatrix * pos);
+	fragPos = vec3(instanceMatrix * pos);
 	gl_Position =projMatrix *viewMatrix* instanceMatrix * pos;
 
 }

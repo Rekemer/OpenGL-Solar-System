@@ -83,14 +83,13 @@ void PrintVec(glm::vec3 pos)
 
 void Renderer::DrawModel(float deltaTime)
 {
-	_instanceShader->Bind();
 	_instanceShader->SetVectorUniform("cameraPos", _camera->GetPosition());
 	_instanceShader->SetVectorUniform("dirLight.direction", 0.0f, -1.0f, 0.0f);
 	_instanceShader->SetVectorUniform("dirLight.ambient", 0.1f, 0.1f, 0.1f);
 	_instanceShader->SetVectorUniform("dirLight.diffuse", 0.3f, 0.3f, 0.3f);
 	_instanceShader->SetVectorUniform("dirLight.specular", 0.5f, 0.5f, 0.5f);
 
-
+	
 
 
 	_instanceShader->SetVectorUniform("cameraPos", _camera->GetPosition());
@@ -102,6 +101,15 @@ void Renderer::DrawModel(float deltaTime)
 	_instanceShader->SetFloatUniform("pointLights[0].constant", 1.0f);
 	_instanceShader->SetFloatUniform("pointLights[0].linear", 0.014f);
 	_instanceShader->SetFloatUniform("pointLights[0].quadratic", 0.007f);
+
+	_instanceShader->SetMatrixUniform("projMatrix", GetPerspectiveMatrix());
+	// camera/view transformation
+	_instanceShader->SetMatrixUniform("viewMatrix", GetCamera()->GetViewMatrix());
+
+	glActiveTexture(GL_TEXTURE8);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, depthCubemap);
+	_instanceShader->setInt("depthMap", 8);
+
 
 	models[0]->Update(deltaTime);
 	models[0]->DrawInstance(*_instanceShader);
@@ -161,7 +169,9 @@ void Renderer::DrawPlanets(float deltaTime)
 	_basicShader->SetFloatUniform("pointLights[2].linear", 0.014f);
 	_basicShader->SetFloatUniform("pointLights[2].quadratic", 0.007f);
 
-	
+	glActiveTexture(GL_TEXTURE8);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, depthCubemap);
+	_basicShader->setInt("depthMap", 8);
 	//_basicShader->SetFloatUniform("time", timeAppStart);
 
 	for (auto sphere : spheres)
@@ -198,6 +208,9 @@ void Renderer::Draw()
 	auto iter = models.begin();
 	
 
+	  
+
+	_instanceShader->Bind();
 	DrawModel(deltaTime);
 
 
@@ -210,12 +223,9 @@ void Renderer::Draw()
 	DrawSun(timeAppStart, deltaTime);
 
 	
-	_basicShader->Bind();
-	_basicShader->setInt("depthMap", 4);
-	glActiveTexture(GL_TEXTURE4);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, depthCubemap);
 	
-
+	
+	_basicShader->Bind();
 	DrawPlanets(deltaTime);
 
 
@@ -256,6 +266,22 @@ void Renderer::DrawShadows()
 	GLCall(glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT));
 	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO));
 	GLCall(glClear(GL_DEPTH_BUFFER_BIT));
+
+
+	// render scene
+
+	_depthInstanceShader->Bind();
+
+	for (unsigned int i = 0; i < 6; ++i)
+	{
+		std::string a = "shadowMatrices[" + std::to_string(i) + "]";
+		_depthInstanceShader->SetMatrixUniform(a.c_str(), shadowTransforms[i]);
+	}
+	_depthInstanceShader->SetFloatUniform("far_plane", 25);
+	_depthInstanceShader->SetVectorUniform("lightPos", lightPos[0]);
+	models[0]->DrawInstance(*_depthInstanceShader);
+
+
 	_depthShader->Bind();
 
 	for (unsigned int i = 0; i < 6; ++i)
@@ -264,11 +290,9 @@ void Renderer::DrawShadows()
 
 		_depthShader->SetMatrixUniform(a.c_str(), shadowTransforms[i]);
 	}
-		
-	_depthShader->SetFloatUniform("far_plane", 25);
-	_depthShader->SetVectorUniform("lightPos", lightPos[1]);
 
-	// render scene
+	_depthShader->SetFloatUniform("far_plane", 25);
+	_depthShader->SetVectorUniform("lightPos", lightPos[0]);
 
 	for (auto sphere : spheres)
 	{
@@ -353,6 +377,7 @@ void Renderer::Init()
 	_sunShader = new Shader("Shaders/sun.vert", "Shaders/sun.frag");
 	_skyBoxShader = new Shader("Shaders/skybox.vert", "Shaders/skybox.frag");
 	_depthShader = new Shader("Shaders/depth.vert", "Shaders/depth.frag", "Shaders/depth.geom");
+	_depthInstanceShader = new Shader("Shaders/depth_instance.vert", "Shaders/depth.frag", "Shaders/depth.geom");
 
 	LoadSolarSystem();
 
@@ -504,7 +529,7 @@ void Renderer::LoadSolarSystem()
 	Model* rock = new Model(path, this, rocksAmount,false);
 	models.emplace_back(rock);
 	rock->SetPosition(9, 0, 0);
-	rock->SetScale(0.7f, 0.7, 0.7f);
+	
 	rock->selfRotationSpeed = 100;
 	_sun->AddSatellite(rock, 10 * GetRandomNumber(),12);
 

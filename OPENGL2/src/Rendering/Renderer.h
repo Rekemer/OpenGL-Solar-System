@@ -65,7 +65,6 @@ private:
 	int _windowWidth;
 	Shader* _skyBoxShader;
 	Shader* _depthShader;
-
-	
+	Shader* _depthInstanceShader;
 };
 

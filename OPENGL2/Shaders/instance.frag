@@ -34,6 +34,7 @@ uniform DirLight dirLight;
 uniform Material material;
 #define NR_POINT_LIGHTS 1  
 uniform PointLight pointLights[NR_POINT_LIGHTS];
+uniform samplerCube depthMap;
 
 in vec3 normal;
 in vec3 cameraPos;
@@ -41,6 +42,50 @@ in vec3 fragPos;
 
 in vec2 diffuseTexCoords;
 out vec4 outColor;
+
+
+
+float ShadowCalculation(vec3 fragPos,vec3 lightPos)
+{
+    // get vector between fragment position and light position
+    vec3 fragToLight = fragPos - lightPos;
+    // use the light to fragment vector to sample from the depth map    
+    float closestDepth = texture(depthMap, fragToLight).r;
+    // it is currently in linear range between [0,1]. Re-transform back to original value
+    closestDepth *= 25;
+    // now get current linear depth as the length between the fragment and light position
+    float currentDepth = length(fragToLight);
+    // now test for shadows
+    float bias = 0.05; 
+    float shadow = currentDepth -  bias > closestDepth ? 1.0 : 0.0;
+
+    return shadow;
+} 
+vec4 ShadowDebug(vec3 fragPos,vec3 lightPos)
+{
+    // get vector between fragment position and light position
+    vec3 fragToLight = fragPos - lightPos;
+    // use the light to fragment vector to sample from the depth map    
+    float closestDepth = texture(depthMap, fragToLight).r;
+    // it is currently in linear range between [0,1]. Re-transform back to original value
+    closestDepth *= 25;
+    // now get current linear depth as the length between the fragment and light position
+    float currentDepth = length(fragToLight);
+    // now test for shadows
+    float bias = 0.05; 
+    float shadow = currentDepth -  bias > closestDepth ? 1.0 : 0.0;
+    return vec4(vec3(closestDepth / 25), 1.0);
+  
+}  
+
+
+vec3 textureDebug(vec3 fragPos,vec3 lightPos){
+    vec3 fragToLight = fragPos - lightPos;
+    vec3 result = texture(depthMap, fragToLight).rgb;
+    return result;
+}
+
+
 
 vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir)
 {
@@ -76,7 +121,10 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
     ambient  *= attenuation;
     diffuse  *= attenuation;
     specular *= attenuation;
-    return (ambient + diffuse);
+    float shadow = ShadowCalculation(fragPos,light.position);
+    vec3 debug = vec3(ShadowDebug(fragPos,light.position));
+    vec3 text = textureDebug(fragPos,light.position);
+    return vec3(ambient+diffuse*(1-shadow));
 } 
 
 
@@ -88,9 +136,9 @@ void main()
     vec3 result;
 //
 //    // phase 1: Directional lighting
-    result = CalcDirLight(dirLight, norm, viewDir);
+ //   result = CalcDirLight(dirLight, norm, viewDir);
 //    // phase 2: Point lights
-   for(int i = 0; i < NR_POINT_LIGHTS; i++)
+   for(int i = 0; i < 1; i++)
      result += CalcPointLight(pointLights[i], norm, fragPos, viewDir);   
 
    outColor = vec4(result,1);

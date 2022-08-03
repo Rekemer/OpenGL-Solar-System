@@ -33,11 +33,9 @@ void UpdateMatrix(glm::mat4* matrix, glm::vec3 pos, glm::vec3 rot, glm::vec3 sca
 
 void Model::DrawInstance(Shader& shader)
 {
-    shader.Bind();
    
-    shader.SetMatrixUniform("projMatrix", renderer->GetPerspectiveMatrix());
-    // camera/view transformation
-    shader.SetMatrixUniform("viewMatrix", renderer->GetCamera()->GetViewMatrix());
+   
+   
 
     glm::mat4* mattricies = new glm::mat4[transforms.size()];
 
@@ -241,7 +239,7 @@ void Model::Update(float time)
        
         transforms[i]->SetRotation(rotation);
         // calculate scale
-        glm::vec3 scale = glm::vec3(0.01, 0.01, 0.01);
+        glm::vec3 scale = glm::vec3(0.3, 0.3, 0.3);
         transforms[i]->SetScale(scale);
         // update world matrix
         transforms[i]->ComputeWorldTransform();

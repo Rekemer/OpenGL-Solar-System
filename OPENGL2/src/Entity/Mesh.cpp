@@ -95,10 +95,6 @@ void Mesh::Bind(Shader&shader)
 	unsigned int diffuseNr = 1;
 	unsigned int specularNr = 1;
 
-	
-	shader.SetMatrixUniform("projMatrix", _renderer->GetPerspectiveMatrix());
-	// camera/view transformation
-	shader.SetMatrixUniform("viewMatrix", _renderer->GetCamera()->GetViewMatrix());
 
 	for (unsigned int i = 0; i < textures.size(); i++)
 	{
@@ -108,7 +104,7 @@ void Mesh::Bind(Shader&shader)
 		std::string name = textures[i].type;
 		if (name == "texture_diffuse")
 			number = std::to_string(diffuseNr++);
-		else if (name == "texture_specular")
+		else if (name == "texture_specular")	
 			number = std::to_string(specularNr++);
 		
 		shader.setInt(("material." + name + number).c_str(), i);
