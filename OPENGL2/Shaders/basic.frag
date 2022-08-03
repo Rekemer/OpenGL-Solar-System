@@ -6,7 +6,7 @@ struct Material
     sampler2D texture_diffuse2;
     samplerCube texture_cube1;
    // sampler2D texture_diffuse3;
-    sampler2D texture_specular1;
+    //sampler2D texture_specular1;
    // sampler2D texture_specular2;
 	//sampler2D diffuse;
     vec3 specular;
@@ -65,7 +65,7 @@ vec3 CalcSpotLight( SpotLight spotLight,vec3  normal, vec3 fragPos, vec3 viewDir
 uniform Material material;
 uniform float time;
 uniform vec3 cameraPos;
-
+uniform samplerCube depthMap;
 in vec2 diffuseTexCoords;
 out vec4 outColor;
 
@@ -100,10 +100,11 @@ void main()
     vec3 result;
 //
 //    // phase 1: Directional lighting
-  //  result = CalcDirLight(dirLight, norm, viewDir);
+    result = CalcDirLight(dirLight, norm, viewDir);
 //    // phase 2: Point lights
-   for(int i = 0; i < NR_POINT_LIGHTS; i++)
+   for(int i = 0; i < 1; i++)
      result += CalcPointLight(pointLights[i], norm, fragPos, viewDir);    
+    // result = CalcPointLight(pointLights[0], norm, fragPos, viewDir);    
 //    // phase 3: Spot light
 //    result += CalcSpotLight(spotLight, norm, fragPos, viewDir);
     //outColor = vec4(result,1.0f);
@@ -127,8 +128,49 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir)
     // combine results
     vec3 ambient  = light.ambient  * vec3(texture(material.texture_diffuse1, diffuseTexCoords));
     vec3 diffuse  = light.diffuse  * diff * vec3(texture(material.texture_diffuse1, diffuseTexCoords));
-    vec3 specular = light.specular * spec * vec3(texture(material.texture_specular1, diffuseTexCoords));
-    return vec3(diffuse);
+  //  vec3 specular = light.specular * spec * vec3(texture(material.texture_specular1, diffuseTexCoords));
+    return vec3(ambient);
+}
+
+
+float ShadowCalculation(vec3 fragPos,vec3 lightPos)
+{
+    // get vector between fragment position and light position
+    vec3 fragToLight = fragPos - lightPos;
+    // use the light to fragment vector to sample from the depth map    
+    float closestDepth = texture(depthMap, fragToLight).r;
+    // it is currently in linear range between [0,1]. Re-transform back to original value
+    closestDepth *= 25;
+    // now get current linear depth as the length between the fragment and light position
+    float currentDepth = length(fragToLight);
+    // now test for shadows
+    float bias = 0.05; 
+    float shadow = currentDepth -  bias > closestDepth ? 1.0 : 0.0;
+
+    return shadow;
+} 
+vec4 ShadowDebug(vec3 fragPos,vec3 lightPos)
+{
+    // get vector between fragment position and light position
+    vec3 fragToLight = fragPos - lightPos;
+    // use the light to fragment vector to sample from the depth map    
+    float closestDepth = texture(depthMap, fragToLight).r;
+    // it is currently in linear range between [0,1]. Re-transform back to original value
+    closestDepth *= 25;
+    // now get current linear depth as the length between the fragment and light position
+    float currentDepth = length(fragToLight);
+    // now test for shadows
+    float bias = 0.05; 
+    float shadow = currentDepth -  bias > closestDepth ? 1.0 : 0.0;
+    return vec4(vec3(closestDepth / 25), 1.0);
+  
+}  
+
+
+vec3 textureDebug(vec3 fragPos,vec3 lightPos){
+    vec3 fragToLight = fragPos - lightPos;
+    vec3 result = texture(depthMap, fragToLight).rgb;
+    return result;
 }
 
 vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
@@ -146,11 +188,14 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
     // combine results
     vec3 ambient  = light.ambient  * vec3(texture(material.texture_diffuse1, diffuseTexCoords));
     vec3 diffuse  = light.diffuse  * diff *vec3(texture(material.texture_diffuse1, diffuseTexCoords));
-    vec3 specular = light.specular * spec * material.specular;
+   // vec3 specular = light.specular * spec * material.specular;
     ambient  *= attenuation;
     diffuse  *= attenuation;
-    specular *= attenuation;
-    return (diffuse);
+    //specular *= attenuation;
+    float shadow = ShadowCalculation(fragPos,light.position);
+    vec3 debug = vec3(ShadowDebug(fragPos,light.position));
+    vec3 text = textureDebug(fragPos,light.position);
+    return vec3 ( diffuse*(1-shadow));
 } 
 //vec3 CalcSpotLight( SpotLight spotLight,vec3  normal, vec3 fragPos, vec3 viewDir)
 //{

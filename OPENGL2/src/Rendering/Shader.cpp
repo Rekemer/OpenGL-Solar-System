@@ -48,8 +48,11 @@ GLuint Shader::GetUniform(const std::string& uniformName)
 		return uniformsCache[uniformName];
 	}
 	auto uniformLocation = glGetUniformLocation(mShaderProgram, uniformName.c_str());
-	uniformsCache[uniformName] = uniformLocation;
-	return uniformLocation;
+	if (uniformLocation!= -1)
+	{
+		uniformsCache[uniformName] = uniformLocation;
+		return uniformLocation;
+	}
 }
 
 void Shader::SetVectorUniform(const char* name,float x, float y,float z)
@@ -126,7 +129,7 @@ bool Shader::Load(const std::string& vertName, const std::string& fragName, cons
 	bool isGeo = CompileShader(geoName,
 		GL_GEOMETRY_SHADER,
 		mGeometryShader);
-	if (!isFragment || !isVertex)
+	if (!isFragment || !isVertex || !isGeo)
 	{
 		return false;
 	}
@@ -136,6 +139,7 @@ bool Shader::Load(const std::string& vertName, const std::string& fragName, cons
 	mShaderProgram = glCreateProgram();
 	GLCall(glAttachShader(mShaderProgram, mVertexShader));
 	GLCall(glAttachShader(mShaderProgram, mFragShader));
+	GLCall(glAttachShader(mShaderProgram, mGeometryShader));
 	GLCall(glLinkProgram(mShaderProgram));
 
 	// Verify that the program linked successfully

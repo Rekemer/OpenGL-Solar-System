@@ -111,19 +111,24 @@ void Renderer::DrawSun(float timeAppStart, float deltaTime)
 {
 	_sunShader->Bind();
 	_sunShader->SetVectorUniform("cameraPos", _camera->GetPosition());
+
 	_sunShader->SetFloatUniform("time", timeAppStart);
-	
+	//glActiveTexture(GL_TEXTURE2);
+	//glBindTexture(GL_TEXTURE_2D, 0);
+	//
+	//_sunShader->setInt("material.texture_diffuse1", 2);
+
 	_sun->Update(deltaTime);
 	_sun->Draw(*_sunShader);
 }
 
 void Renderer::DrawPlanets(float deltaTime)
 {
-	_basicShader->Bind();
-
+	
+	
 
 	_basicShader->SetVectorUniform("dirLight.direction", 0.0f, 0.0f, 1.0f);
-	_basicShader->SetVectorUniform("dirLight.ambient", 0.1f, 0.1f, 0.1f);
+	_basicShader->SetVectorUniform("dirLight.ambient", 0.4f, 0.4f, 0.4f);
 	_basicShader->SetVectorUniform("dirLight.diffuse", 1.4f, 1.4f, 1.4f);
 	_basicShader->SetVectorUniform("dirLight.specular", 0.5f, 0.5f, 0.5f);
 
@@ -168,8 +173,13 @@ void Renderer::DrawPlanets(float deltaTime)
 
 void Renderer::Draw()
 {
+	
+	DrawShadows();
+
+	GLCall(glViewport(0, 0, _windowWidth, _windowHeight));
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
+
 	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer));
 	GLCall(glEnable(GL_DEPTH_TEST));
 	GLCall(glClearColor(135.f/225.f, 128 / 225.f, 126 / 225.f,1.0f));
@@ -199,6 +209,12 @@ void Renderer::Draw()
 
 	DrawSun(timeAppStart, deltaTime);
 
+	
+	_basicShader->Bind();
+	_basicShader->setInt("depthMap", 4);
+	glActiveTexture(GL_TEXTURE4);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, depthCubemap);
+	
 
 	DrawPlanets(deltaTime);
 
@@ -208,19 +224,24 @@ void Renderer::Draw()
 		glDisable(GL_CULL_FACE);
 		glCullFace(GL_BACK);
 		_skyBoxShader->Bind();
-		
+		//glActiveTexture(GL_TEXTURE1);
+		//glBindTexture(GL_TEXTURE_2D, 0);
+		//_skyBoxShader->setInt("material.texture_diffuse1", 1);
+
 		_skybox->SetPosition(_camera->GetPosition());
 		_skybox->Draw(*_skyBoxShader);
 	}
 
 
 	_screenShader->Bind();
+	_screenShader->setInt("screenTexture", 0);
 	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, 0)); // back to defaul)t
 	GLCall(glClearColor(1.0f, 1.0f, 1.0f, 1.0f));
 	GLCall(glClear(GL_COLOR_BUFFER_BIT));
 
 	screenQuad->Bind();
 	glDisable(GL_DEPTH_TEST);
+	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, textureScreen);
 	glDrawElements(GL_TRIANGLES, screenQuad->GetNumIndices(),GL_UNSIGNED_INT, 0);
 	
@@ -229,9 +250,12 @@ const unsigned int SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
 
 void Renderer::DrawShadows()
 {
-	glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
-	glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
-	glClear(GL_DEPTH_BUFFER_BIT);
+	GLCall(glEnable(GL_DEPTH_TEST));
+	
+
+	GLCall(glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT));
+	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO));
+	GLCall(glClear(GL_DEPTH_BUFFER_BIT));
 	_depthShader->Bind();
 
 	for (unsigned int i = 0; i < 6; ++i)
@@ -242,18 +266,20 @@ void Renderer::DrawShadows()
 	}
 		
 	_depthShader->SetFloatUniform("far_plane", 25);
-	_depthShader->SetVectorUniform("lightPos", lightPos[0]);
-
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, depthCubemap);
+	_depthShader->SetVectorUniform("lightPos", lightPos[1]);
 
 	// render scene
+
+	for (auto sphere : spheres)
+	{
+		//sphere->Update(deltaTime);
+		sphere->Draw(*_depthShader);
+	}
 
 }
 
 void Renderer::SetUpShadowBuffer()
 {
-	unsigned int depthCubemap;
 	glGenTextures(1, &depthCubemap);
 	glGenFramebuffers(1, &depthMapFBO);
 
@@ -326,7 +352,7 @@ void Renderer::Init()
 	_screenShader = new Shader("Shaders/screen.vert", "Shaders/screen.frag");
 	_sunShader = new Shader("Shaders/sun.vert", "Shaders/sun.frag");
 	_skyBoxShader = new Shader("Shaders/skybox.vert", "Shaders/skybox.frag");
-	_depthShader = new Shader("Shaders/depth.vert", "Shaders/skybox.frag", "Shaders/depth.geom");
+	_depthShader = new Shader("Shaders/depth.vert", "Shaders/depth.frag", "Shaders/depth.geom");
 
 	LoadSolarSystem();
 
@@ -367,6 +393,8 @@ void Renderer::LoadSolarSystem()
 	//spheres.emplace_back(_sun);
 	_sun->SetScale(2.5f, 2.5f,2.5f);
 	_sun->SetPosition(2, 0, 0);
+
+
 	lightPos.emplace_back(_sun->GetPosition());
 	lightPos.emplace_back(lightPos[0] + glm::vec3(0, 1, 0)*2.5f);
 	lightPos.emplace_back(lightPos[0] - glm::vec3(0, 1, 0)*2.5f);

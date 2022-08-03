@@ -76,8 +76,8 @@ void Sphere::Draw(Shader& shader)
 	shader.SetMatrixUniform("projMatrix", _renderer->GetPerspectiveMatrix());
 	// camera/view transformation
 	shader.SetMatrixUniform("viewMatrix", _renderer->GetCamera()->GetViewMatrix());
-	shader.SetVectorUniform("material.specular", glm::vec3(0.1, 0.1, 0.1));
-	shader.SetFloatUniform("material.shininess", 0.0f);
+	//shader.SetVectorUniform("material.specular", glm::vec3(0.1, 0.1, 0.1));
+	//shader.SetFloatUniform("material.shininess", 0.0f);
 
 
 	unsigned int diffuseNr = 1;
@@ -96,16 +96,16 @@ void Sphere::Draw(Shader& shader)
 			number = std::to_string(diffuseNr++);
 			glBindTexture(GL_TEXTURE_2D, textures[i]->GetId());
 		}
-		else if (name == "texture_specular")
-		{
-			number = std::to_string(specularNr++);
-			glBindTexture(GL_TEXTURE_2D, textures[i]->GetId());
-		}
+	//else if (name == "texture_specular")
+	//{
+	//	number = std::to_string(specularNr++);
+	//	glBindTexture(GL_TEXTURE_2D, textures[i]->GetId());
+	//}
 			
 		else if (name == "texture_cube")
 		{
-			number = std::to_string(cubeNr++);
-			glBindTexture(GL_TEXTURE_CUBE_MAP, textures[i]->GetId());
+		number = std::to_string(cubeNr++);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, textures[i]->GetId());
 		}
 		
 		shader.setInt(("material." + name + number).c_str(), i);
@@ -117,8 +117,8 @@ void Sphere::Draw(Shader& shader)
 	//_textureSpecular->Bind();
 	_va->Bind();
 	GLCall(glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0));
-	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
-	glBindTexture(GL_TEXTURE0, 0);
+	//glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+	//glBindTexture(GL_TEXTURE0, 0);
 }
 
 void Sphere::SetTexture(std::string& path, std::string type, bool isCube)
