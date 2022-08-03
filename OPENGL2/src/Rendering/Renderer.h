@@ -11,6 +11,9 @@ public:
 	Renderer(class GLFWwindow* window,int windowWidth, int windowHeight);
 	~Renderer();
 	void SetUpFrameBuffer();
+	void DrawModel(float deltaTime);
+	void DrawSun(float timeAppStart, float deltaTime);
+	void DrawPlanets(float deltaTime);
 	void Draw();
 	void Init();
 	void LoadSolarSystem();

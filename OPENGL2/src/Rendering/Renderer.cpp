@@ -80,28 +80,9 @@ void PrintVec(glm::vec3 pos)
 {
 	std::cout << pos.x << " " << pos.y << " " << pos.z << "\n";
 }
-void Renderer::Draw()
+
+void Renderer::DrawModel(float deltaTime)
 {
-	glEnable(GL_CULL_FACE);
-	glCullFace(GL_BACK);
-	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer));
-	GLCall(glEnable(GL_DEPTH_TEST));
-	GLCall(glClearColor(135.f/225.f, 128 / 225.f, 126 / 225.f,1.0f));
-	GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
-	float timeAppStart = (float)glfwGetTime();
-	float deltaTime = (timeAppStart - lastFrameTimeStart) / 1000.0f;
-	lastFrameTimeStart = timeAppStart;
-	deltaTime = 0.001f;
-	static int a =0;
-	_camera->Update();
-	
-
-	
-	auto lightScale = _sun->GetScale();
-	auto pos = _camera->GetPosition();
-	auto iter = models.begin();
-	
-
 	_instanceShader->Bind();
 	_instanceShader->SetVectorUniform("cameraPos", _camera->GetPosition());
 	_instanceShader->SetVectorUniform("dirLight.direction", 0.0f, -1.0f, 0.0f);
@@ -122,22 +103,22 @@ void Renderer::Draw()
 	_instanceShader->SetFloatUniform("pointLights[0].linear", 0.014f);
 	_instanceShader->SetFloatUniform("pointLights[0].quadratic", 0.007f);
 
-
-
 	models[0]->Update(deltaTime);
 	models[0]->DrawInstance(*_instanceShader);
+}
 
-	//PrintVec(transforms[0]->GetPosition());
-
-
+void Renderer::DrawSun(float timeAppStart, float deltaTime)
+{
 	_sunShader->Bind();
 	_sunShader->SetVectorUniform("cameraPos", _camera->GetPosition());
 	_sunShader->SetFloatUniform("time", timeAppStart);
 	
 	_sun->Update(deltaTime);
 	_sun->Draw(*_sunShader);
+}
 
-
+void Renderer::DrawPlanets(float deltaTime)
+{
 	_basicShader->Bind();
 
 
@@ -183,6 +164,43 @@ void Renderer::Draw()
 		sphere->Update(deltaTime);
 		sphere->Draw(*_basicShader);
 	}
+}
+
+void Renderer::Draw()
+{
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
+	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer));
+	GLCall(glEnable(GL_DEPTH_TEST));
+	GLCall(glClearColor(135.f/225.f, 128 / 225.f, 126 / 225.f,1.0f));
+	GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+	float timeAppStart = (float)glfwGetTime();
+	float deltaTime = (timeAppStart - lastFrameTimeStart) / 1000.0f;
+	lastFrameTimeStart = timeAppStart;
+	deltaTime = 0.001f;
+	static int a =0;
+	_camera->Update();
+	
+
+	
+	auto lightScale = _sun->GetScale();
+	auto pos = _camera->GetPosition();
+	auto iter = models.begin();
+	
+
+	DrawModel(deltaTime);
+
+
+
+	
+
+	//PrintVec(transforms[0]->GetPosition());
+
+
+	DrawSun(timeAppStart, deltaTime);
+
+
+	DrawPlanets(deltaTime);
 
 
 	if (_skybox != nullptr){
