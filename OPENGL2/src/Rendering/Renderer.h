@@ -15,6 +15,7 @@ public:
 	void DrawSun(float timeAppStart, float deltaTime);
 	void DrawPlanets(float deltaTime);
 	void Draw();
+	void SetUpBlurBuffers();
 	void DrawShadows();
 	void SetUpShadowBuffer();
 	void Init();
@@ -42,6 +43,8 @@ private:
 	unsigned int depthMapFBO;
 	unsigned int rocksAmount =700;
 	unsigned int colorBuffers[2];
+	unsigned int pingpongFBO[2];
+	unsigned int pingpongBuffer[2];
 	class std::vector<class Entity*> transforms;
 	std::vector< glm::vec3> lightPos;
 	std::vector<class Mesh*>_meshes;
@@ -67,5 +70,6 @@ private:
 	Shader* _skyBoxShader;
 	Shader* _depthShader;
 	Shader* _depthInstanceShader;
+	Shader* _blurShader;
 };
 

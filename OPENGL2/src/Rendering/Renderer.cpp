@@ -265,21 +265,69 @@ void Renderer::Draw()
 		_skybox->Draw(*_skyBoxShader);
 	}
 
+	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, 0));
+	
+	glDisable(GL_DEPTH_TEST);
 
-	_screenShader->Bind();
-	_screenShader->setInt("screenTexture", 0);
-	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, 0)); // back to defaul)t
+	bool horizontal = true, first_iteration = true;
+	int amount = 10;
+	_blurShader->Bind();
+	_blurShader->setInt("image", 0);
+	glActiveTexture(GL_TEXTURE0);
+	for (unsigned int i = 0; i < amount; i++)
+	{
+		glBindFramebuffer(GL_FRAMEBUFFER, pingpongFBO[horizontal]);
+		_blurShader->setInt("horizontal", horizontal);
+		glBindTexture(
+			GL_TEXTURE_2D, first_iteration ? colorBuffers[1] : pingpongBuffer[!horizontal]
+		);
+		// render quad
+		screenQuad->Bind();
+		glDrawElements(GL_TRIANGLES, screenQuad->GetNumIndices(), GL_UNSIGNED_INT, 0);
+		
+		horizontal = !horizontal;
+		if (first_iteration)
+			first_iteration = false;
+	}
+	
+	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, 0));
 	GLCall(glClearColor(1.0f, 1.0f, 1.0f, 1.0f));
 	GLCall(glClear(GL_COLOR_BUFFER_BIT));
-
-	screenQuad->Bind();
-	glDisable(GL_DEPTH_TEST);
+	_screenShader->Bind();
+	_screenShader->setInt("screenTexture", 0);
+	 // back to defaul)t
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, colorBuffers[1]);
-	glDrawElements(GL_TRIANGLES, screenQuad->GetNumIndices(),GL_UNSIGNED_INT, 0);
+	glBindTexture(GL_TEXTURE_2D, pingpongBuffer[!horizontal]);
+	screenQuad->Bind();
+	glDrawElements(GL_TRIANGLES, screenQuad->GetNumIndices(), GL_UNSIGNED_INT, 0);
 	
 }
 const unsigned int SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
+
+
+void Renderer::SetUpBlurBuffers()
+{
+	
+	glGenFramebuffers(2, pingpongFBO);
+	glGenTextures(2, pingpongBuffer);
+	for (unsigned int i = 0; i < 2; i++)
+	{
+		glBindFramebuffer(GL_FRAMEBUFFER, pingpongFBO[i]);
+		glBindTexture(GL_TEXTURE_2D, pingpongBuffer[i]);
+		glTexImage2D(
+			GL_TEXTURE_2D, 0, GL_RGBA16F, _windowWidth, _windowHeight, 0, GL_RGBA, GL_FLOAT, NULL
+		);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glFramebufferTexture2D(
+			GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, pingpongBuffer[i], 0
+		);
+		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+			std::cout << "Framebuffer not complete!" << std::endl;
+	}
+}
 
 void Renderer::DrawShadows()
 {
@@ -376,7 +424,7 @@ void Renderer::Init()
 {
 	
 	SetUpFrameBuffer();
-	
+	SetUpBlurBuffers();
 	std::vector<Vertex> verticesScreen = {
 	 Vertex(-1.0f, -1.0f, 0.0f,		0.f,0.f),
 	 Vertex(1.0f, -1.0f, 0.0f,		1.f,0.f),
@@ -401,6 +449,7 @@ void Renderer::Init()
 	_skyBoxShader = new Shader("Shaders/skybox.vert", "Shaders/skybox.frag");
 	_depthShader = new Shader("Shaders/depth.vert", "Shaders/depth.frag", "Shaders/depth.geom");
 	_depthInstanceShader = new Shader("Shaders/depth_instance.vert", "Shaders/depth.frag", "Shaders/depth.geom");
+	_blurShader = new Shader("Shaders/blur.vert", "Shaders/blur.frag");
 
 	LoadSolarSystem();
 
