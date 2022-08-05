@@ -41,6 +41,7 @@ private:
 	unsigned int depthCubemap;
 	unsigned int depthMapFBO;
 	unsigned int rocksAmount =700;
+	unsigned int colorBuffers[2];
 	class std::vector<class Entity*> transforms;
 	std::vector< glm::vec3> lightPos;
 	std::vector<class Mesh*>_meshes;

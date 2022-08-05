@@ -69,7 +69,8 @@ uniform float time;
 uniform vec3 cameraPos;
 
 in vec2 diffuseTexCoords;
-out vec4 outColor;
+layout (location = 0) out vec4 outColor;
+layout (location = 1) out vec4 BrightColor;
 
 in vec3 normal;
 in vec3 lightPosition;
@@ -92,6 +93,7 @@ vec4 voronoi(vec2 texCoord)
    vec2 f_st = fract(texCoord);
     vec4 cellColor = vec4(224/256f,180/256f,20/256f,1);
   vec4 cellColor2 = vec4(235/256f,121/256f,21/256f,1);
+  vec4 cellColor3 = vec4(285/256f,285/256f,285/256f,1);
    float m_dist = 1.;
   
     for (int y= -1; y <= 1; y++) 
@@ -123,7 +125,7 @@ vec4 voronoi(vec2 texCoord)
     }
 
   
-   result = vec4(m_dist,m_dist,m_dist,1) +cellColor2 ;
+   result = vec4(m_dist,m_dist,m_dist,1) +cellColor3 ;
    //result = vec4(i_st,0,1);
    return result;
 }
@@ -166,6 +168,13 @@ void main()
  vec4 color2 = texture(material.texture_diffuse1,diffuseTexCoords+color1.xy);
  outColor =  color2;
  outColor *= (voronoi(texCoord));
+
+ float brightness = dot(outColor.rgb, vec3(0.2126, 0.7152, 0.0722));
+    if(brightness > 1.0)
+        BrightColor = vec4(outColor.rgb, 1.0);
+    else
+        BrightColor = vec4(0.0, 0.0, 0.0, 1.0);
+
 // float threshold = 0.8;
 // if (outColor.length <threshold){
 //

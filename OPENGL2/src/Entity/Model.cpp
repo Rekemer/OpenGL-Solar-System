@@ -239,7 +239,7 @@ void Model::Update(float time)
        
         transforms[i]->SetRotation(rotation);
         // calculate scale
-        glm::vec3 scale = glm::vec3(0.3, 0.3, 0.3);
+        glm::vec3 scale = glm::vec3(0.01, 0.01, 0.01);
         transforms[i]->SetScale(scale);
         // update world matrix
         transforms[i]->ComputeWorldTransform();

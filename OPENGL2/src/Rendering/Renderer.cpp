@@ -39,21 +39,44 @@ Renderer::~Renderer()
 
 void Renderer::SetUpFrameBuffer()
 {
-	// generate buffer
-	GLCall(glGenFramebuffers(1, &frameBuffer));
-	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer));
+	//// generate buffer
+	//GLCall(glGenFramebuffers(1, &frameBuffer));
+	//GLCall(glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer));
 
-	// generate texture for buffer
-	GLCall(glGenTextures(1, &textureScreen));
-	GLCall(glBindTexture(GL_TEXTURE_2D, textureScreen));
-	GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, _windowWidth, _windowHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL));
-	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
-	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
-	GLCall(glBindTexture(GL_TEXTURE_2D, 0));
+	//// generate texture for buffer
+	//GLCall(glGenTextures(1, &textureScreen));
+	//GLCall(glBindTexture(GL_TEXTURE_2D, textureScreen));
+	//GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, _windowWidth, _windowHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL));
+	//GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
+	//GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+	//GLCall(glBindTexture(GL_TEXTURE_2D, 0));
 
-	// attach it to currently bound framebuffer object
-	GLCall(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureScreen, 0));
+	//// attach it to currently bound framebuffer object
+	//GLCall(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureScreen, 0));
 
+
+	
+	glGenFramebuffers(1, &frameBuffer);
+	glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
+	
+	glGenTextures(2, colorBuffers);
+	for (unsigned int i = 0; i < 2; i++)
+	{
+		glBindTexture(GL_TEXTURE_2D, colorBuffers[i]);
+		glTexImage2D(
+			GL_TEXTURE_2D, 0, GL_RGBA16F, _windowWidth, _windowHeight, 0, GL_RGBA, GL_FLOAT, NULL
+		);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		// attach texture to framebuffer
+		glFramebufferTexture2D(
+			GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, colorBuffers[i], 0
+		);
+	}
+	unsigned int attachments[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
+	glDrawBuffers(2, attachments);
 
 	GLCall(glGenRenderbuffers(1, &renderBufferObject));
 	GLCall(glBindRenderbuffer(GL_RENDERBUFFER, renderBufferObject));
@@ -252,7 +275,7 @@ void Renderer::Draw()
 	screenQuad->Bind();
 	glDisable(GL_DEPTH_TEST);
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, textureScreen);
+	glBindTexture(GL_TEXTURE_2D, colorBuffers[1]);
 	glDrawElements(GL_TRIANGLES, screenQuad->GetNumIndices(),GL_UNSIGNED_INT, 0);
 	
 }
