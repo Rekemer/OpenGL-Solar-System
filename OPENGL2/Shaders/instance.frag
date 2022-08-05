@@ -32,7 +32,7 @@ struct PointLight {
 }; 
 uniform DirLight dirLight;
 uniform Material material;
-#define NR_POINT_LIGHTS 1  
+#define NR_POINT_LIGHTS 3  
 uniform PointLight pointLights[NR_POINT_LIGHTS];
 uniform samplerCube depthMap;
 
@@ -41,8 +41,10 @@ in vec3 cameraPos;
 in vec3 fragPos;
 
 in vec2 diffuseTexCoords;
-out vec4 outColor;
 
+
+layout (location = 0) out vec4 outColor;
+layout (location = 1) out vec4 BrightColor;
 
 
 float ShadowCalculation(vec3 fragPos,vec3 lightPos)
@@ -116,7 +118,7 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
   			     light.quadratic * (distance * distance));    
     // combine results
     vec3 ambient  = light.ambient  * vec3(texture(material.texture_diffuse1, diffuseTexCoords));
-    vec3 diffuse  = light.diffuse  * diff * vec3(texture(material.texture_diffuse1, diffuseTexCoords));
+    vec3 diffuse  = diff* light.diffuse*  vec3(texture(material.texture_diffuse1, diffuseTexCoords));
     vec3 specular = light.specular * spec * material.specular;
     ambient  *= attenuation;
     diffuse  *= attenuation;
@@ -138,9 +140,14 @@ void main()
 //    // phase 1: Directional lighting
  //   result = CalcDirLight(dirLight, norm, viewDir);
 //    // phase 2: Point lights
-   for(int i = 0; i < 1; i++)
+   for(int i = 0; i < NR_POINT_LIGHTS; i++)
      result += CalcPointLight(pointLights[i], norm, fragPos, viewDir);   
-
+     vec3 tx =texture(material.texture_diffuse1, diffuseTexCoords).rgb;
    outColor = vec4(result,1);
+   float brightness = dot(outColor.rgb, vec3(0.2126, 0.7152, 0.0722));
+    if(brightness > 1.0)
+        BrightColor = vec4(outColor.rgb, 1.0);
+    else
+        BrightColor = vec4(0.0, 0.0, 0.0, 1.0);
 }
 

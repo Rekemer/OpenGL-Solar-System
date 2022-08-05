@@ -118,12 +118,28 @@ void Renderer::DrawModel(float deltaTime)
 	_instanceShader->SetVectorUniform("cameraPos", _camera->GetPosition());
 
 	_instanceShader->SetVectorUniform("pointLights[0].position", lightPos[0]);
-	_instanceShader->SetVectorUniform("pointLights[0].ambient", 0.0f, 0.0f, 0.0f);
+	_instanceShader->SetVectorUniform("pointLights[0].ambient", 0.3f, 0.3f, 0.3f);
 	_instanceShader->SetVectorUniform("pointLights[0].diffuse", 0.5f, 0.5f, 0.5f);
 	_instanceShader->SetVectorUniform("pointLights[0].specular", 0.0f, 0.0f, 0.0f);
 	_instanceShader->SetFloatUniform("pointLights[0].constant", 1.0f);
 	_instanceShader->SetFloatUniform("pointLights[0].linear", 0.014f);
 	_instanceShader->SetFloatUniform("pointLights[0].quadratic", 0.007f);
+
+	_instanceShader->SetVectorUniform("pointLights[1].position", lightPos[1]);
+	_instanceShader->SetVectorUniform("pointLights[1].ambient", 0.0f, 0.0f, 0.0f);
+	_instanceShader->SetVectorUniform("pointLights[1].diffuse", 0.5f, 0.5f, 0.5f);
+	_instanceShader->SetVectorUniform("pointLights[1].specular", 0.0f, 0.0f, 0.0f);
+	_instanceShader->SetFloatUniform("pointLights[1].constant", 1.0f);
+	_instanceShader->SetFloatUniform("pointLights[1].linear", 0.014f);
+	_instanceShader->SetFloatUniform("pointLights[1].quadratic", 0.007f);
+
+	_instanceShader->SetVectorUniform("pointLights[2].position", lightPos[2]);
+	_instanceShader->SetVectorUniform("pointLights[2].ambient", 0.0f, 0.0f, 0.0f);
+	_instanceShader->SetVectorUniform("pointLights[2].diffuse", 0.5f, 0.5f, 0.5f);
+	_instanceShader->SetVectorUniform("pointLights[2].specular", 0.0f, 0.0f, 0.0f);
+	_instanceShader->SetFloatUniform("pointLights[2].constant", 1.0f);
+	_instanceShader->SetFloatUniform("pointLights[2].linear", 0.014f);
+	_instanceShader->SetFloatUniform("pointLights[2].quadratic", 0.007f);
 
 	_instanceShader->SetMatrixUniform("projMatrix", GetPerspectiveMatrix());
 	// camera/view transformation
@@ -294,9 +310,13 @@ void Renderer::Draw()
 	GLCall(glClearColor(1.0f, 1.0f, 1.0f, 1.0f));
 	GLCall(glClear(GL_COLOR_BUFFER_BIT));
 	_screenShader->Bind();
-	_screenShader->setInt("screenTexture", 0);
+	_screenShader->setInt("scene", 0);
+	_screenShader->setInt("bloomBlur", 1);
+	_screenShader->SetFloatUniform("exposure", 1.0);
 	 // back to defaul)t
 	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, colorBuffers[0]);
+	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, pingpongBuffer[!horizontal]);
 	screenQuad->Bind();
 	glDrawElements(GL_TRIANGLES, screenQuad->GetNumIndices(), GL_UNSIGNED_INT, 0);

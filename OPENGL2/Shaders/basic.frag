@@ -69,7 +69,7 @@ uniform samplerCube depthMap;
 in vec2 diffuseTexCoords;
 layout (location = 0) out vec4 outColor;
 layout (location = 1) out vec4 BrightColor;
-;
+
 
 in vec3 normal;
 in vec3 lightPosition;
