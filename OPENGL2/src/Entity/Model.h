@@ -43,11 +43,12 @@ public:
         {
             currentAngle[i] = PI * 2 * renderer->GetRandomNumber();
             Entity* en = new Entity;
+            en->SetRotation(360 * renderer->GetRandomNumber(), 360 * renderer->GetRandomNumber(), 360 * renderer->GetRandomNumber());
             en->ComputeWorldTransform();
             transforms.emplace_back(en);
         }
 
-
+        
         glGenBuffers(1, &posBuffer);
         glBindBuffer(GL_ARRAY_BUFFER, posBuffer);
         glBufferData(GL_ARRAY_BUFFER, amount * sizeof(glm::mat4), nullptr, GL_STATIC_DRAW);
