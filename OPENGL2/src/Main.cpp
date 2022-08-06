@@ -10,7 +10,7 @@ int main(int argc, char* argv[])
 	int fullB = 1080;
 	int testA = 480;
 	int testb = 640;
-	Application* app = new Application(testA, testb);
+	Application* app = new Application(fullB, fullA);
 	if (app->Init())
 	{
 		app->Run();

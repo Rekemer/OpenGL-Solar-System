@@ -23,8 +23,8 @@ protected:
 	bool firstMouse = true;
 	glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 	glm::mat4 _view;
-	float yaw = -90.0f; // because -z is forward 
-	float pitch = -90.f; // up and down axis
+	float yaw = 90.0f; // because -z is forward 
+	float pitch = 0.f; // up and down axis
 	float _lastX;
 	float _lastY;
 	bool isCursorHoveringWindow;

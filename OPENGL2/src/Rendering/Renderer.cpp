@@ -39,20 +39,6 @@ Renderer::~Renderer()
 
 void Renderer::SetUpFrameBuffer()
 {
-	//// generate buffer
-	//GLCall(glGenFramebuffers(1, &frameBuffer));
-	//GLCall(glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer));
-
-	//// generate texture for buffer
-	//GLCall(glGenTextures(1, &textureScreen));
-	//GLCall(glBindTexture(GL_TEXTURE_2D, textureScreen));
-	//GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, _windowWidth, _windowHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL));
-	//GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
-	//GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
-	//GLCall(glBindTexture(GL_TEXTURE_2D, 0));
-
-	//// attach it to currently bound framebuffer object
-	//GLCall(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureScreen, 0));
 
 
 	
@@ -80,7 +66,7 @@ void Renderer::SetUpFrameBuffer()
 
 	GLCall(glGenRenderbuffers(1, &renderBufferObject));
 	GLCall(glBindRenderbuffer(GL_RENDERBUFFER, renderBufferObject));
-	GLCall(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, 800, 600));
+	GLCall(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, _windowWidth, _windowHeight));
 	GLCall(glBindRenderbuffer(GL_RENDERBUFFER, 0));
 
 	GLCall(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, renderBufferObject));
@@ -108,8 +94,8 @@ void Renderer::DrawModel(float deltaTime)
 {
 	_instanceShader->SetVectorUniform("cameraPos", _camera->GetPosition());
 	_instanceShader->SetVectorUniform("dirLight.direction", 0.0f, -1.0f, 0.0f);
-	_instanceShader->SetVectorUniform("dirLight.ambient", 0.1f, 0.1f, 0.1f);
-	_instanceShader->SetVectorUniform("dirLight.diffuse", 0.3f, 0.3f, 0.3f);
+	_instanceShader->SetVectorUniform("dirLight.ambient", 0.3f, 0.3f, 0.3f);
+	_instanceShader->SetVectorUniform("dirLight.diffuse", 0.0f, 0.0f, 0.0f);
 	_instanceShader->SetVectorUniform("dirLight.specular", 0.5f, 0.5f, 0.5f);
 
 	
@@ -119,7 +105,7 @@ void Renderer::DrawModel(float deltaTime)
 
 	_instanceShader->SetVectorUniform("pointLights[0].position", lightPos[0]);
 	_instanceShader->SetVectorUniform("pointLights[0].ambient", 0.3f, 0.3f, 0.3f);
-	_instanceShader->SetVectorUniform("pointLights[0].diffuse", 0.5f, 0.5f, 0.5f);
+	_instanceShader->SetVectorUniform("pointLights[0].diffuse", 0.6f, 0.6f, 0.6f);
 	_instanceShader->SetVectorUniform("pointLights[0].specular", 0.0f, 0.0f, 0.0f);
 	_instanceShader->SetFloatUniform("pointLights[0].constant", 1.0f);
 	_instanceShader->SetFloatUniform("pointLights[0].linear", 0.014f);
@@ -127,7 +113,7 @@ void Renderer::DrawModel(float deltaTime)
 
 	_instanceShader->SetVectorUniform("pointLights[1].position", lightPos[1]);
 	_instanceShader->SetVectorUniform("pointLights[1].ambient", 0.0f, 0.0f, 0.0f);
-	_instanceShader->SetVectorUniform("pointLights[1].diffuse", 0.5f, 0.5f, 0.5f);
+	_instanceShader->SetVectorUniform("pointLights[1].diffuse", 0.6f, 0.6f, 0.6f);
 	_instanceShader->SetVectorUniform("pointLights[1].specular", 0.0f, 0.0f, 0.0f);
 	_instanceShader->SetFloatUniform("pointLights[1].constant", 1.0f);
 	_instanceShader->SetFloatUniform("pointLights[1].linear", 0.014f);
@@ -135,7 +121,7 @@ void Renderer::DrawModel(float deltaTime)
 
 	_instanceShader->SetVectorUniform("pointLights[2].position", lightPos[2]);
 	_instanceShader->SetVectorUniform("pointLights[2].ambient", 0.0f, 0.0f, 0.0f);
-	_instanceShader->SetVectorUniform("pointLights[2].diffuse", 0.5f, 0.5f, 0.5f);
+	_instanceShader->SetVectorUniform("pointLights[2].diffuse", 0.6f, 0.6f, 0.6f);
 	_instanceShader->SetVectorUniform("pointLights[2].specular", 0.0f, 0.0f, 0.0f);
 	_instanceShader->SetFloatUniform("pointLights[2].constant", 1.0f);
 	_instanceShader->SetFloatUniform("pointLights[2].linear", 0.014f);
@@ -186,7 +172,7 @@ void Renderer::DrawPlanets(float deltaTime)
 
 	_basicShader->SetVectorUniform("pointLights[0].position", lightPos[0]);
 	_basicShader->SetVectorUniform("pointLights[0].ambient", 0.2f, 0.2f, 0.2f);
-	_basicShader->SetVectorUniform("pointLights[0].diffuse", 0.5f, 0.5f, 0.5f);
+	_basicShader->SetVectorUniform("pointLights[0].diffuse", 0.6f, 0.6f, 0.6f);
 	_basicShader->SetVectorUniform("pointLights[0].specular", 0.0f, 0.0f, 0.0f);
 	_basicShader->SetFloatUniform("pointLights[0].constant", 1.0f);
 	_basicShader->SetFloatUniform("pointLights[0].linear", 0.014f);
@@ -194,7 +180,7 @@ void Renderer::DrawPlanets(float deltaTime)
 
 	_basicShader->SetVectorUniform("pointLights[1].position", lightPos[1]);
 	_basicShader->SetVectorUniform("pointLights[1].ambient", 0.2f, 0.2f, 0.2f);
-	_basicShader->SetVectorUniform("pointLights[1].diffuse", 0.5f, 0.5f, 0.5f);
+	_basicShader->SetVectorUniform("pointLights[1].diffuse", 0.6f, 0.6f, 0.6f);
 	_basicShader->SetVectorUniform("pointLights[1].specular", 0.0f, 0.0f, 0.0f);
 	_basicShader->SetFloatUniform("pointLights[1].constant", 1.0f);
 	_basicShader->SetFloatUniform("pointLights[1].linear", 0.014f);
@@ -202,7 +188,7 @@ void Renderer::DrawPlanets(float deltaTime)
 
 	_basicShader->SetVectorUniform("pointLights[2].position", lightPos[2]);
 	_basicShader->SetVectorUniform("pointLights[2].ambient", 0.2f, 0.2f, 0.2f);
-	_basicShader->SetVectorUniform("pointLights[2].diffuse", 0.5f, 0.5f, 0.5f);
+	_basicShader->SetVectorUniform("pointLights[2].diffuse", 0.6f, 0.6f, 0.6f);
 	_basicShader->SetVectorUniform("pointLights[2].specular", 0.0f, 0.0f, 0.0f);
 	_basicShader->SetFloatUniform("pointLights[2].constant", 1.0f);
 	_basicShader->SetFloatUniform("pointLights[2].linear", 0.014f);
@@ -461,7 +447,7 @@ void Renderer::Init()
 
 	//camera
 	_camera = new Camera(_window);
-	_camera->SetPosition(glm::vec3(0.f, 10.f,0.f));
+	_camera->SetPosition(glm::vec3(0.f, 10.f,-25.f));
 	_basicShader = new Shader("Shaders/basic.vert", "Shaders/basic.frag");
 	_instanceShader = new Shader("Shaders/instance.vert", "Shaders/instance.frag");
 	_screenShader = new Shader("Shaders/screen.vert", "Shaders/screen.frag");
@@ -508,13 +494,13 @@ void Renderer::LoadSolarSystem()
 //	path = "res/Textures/uv_texture.png";
 	_sun->SetTexture(path);
 	//spheres.emplace_back(_sun);
-	_sun->SetScale(2.5f, 2.5f,2.5f);
+	_sun->SetScale(3.5f,3.5f,3.5f);
 	_sun->SetPosition(2, 0, 0);
 
 
 	lightPos.emplace_back(_sun->GetPosition());
-	lightPos.emplace_back(lightPos[0] + glm::vec3(0, 1, 0)*2.5f);
-	lightPos.emplace_back(lightPos[0] - glm::vec3(0, 1, 0)*2.5f);
+	lightPos.emplace_back(lightPos[0] + glm::vec3(0, 1, 0)* 3.5f);
+	lightPos.emplace_back(lightPos[0] - glm::vec3(0, 1, 0)* 3.5f);
 	
 
 
@@ -525,7 +511,7 @@ void Renderer::LoadSolarSystem()
 	mercury->SetTexture(path);
 	spheres.emplace_back(mercury);
 	mercury->SetPosition(0, 0, 0);
-
+	mercury->SetScale(1.f, 1.f, 1.f);
 
 
 	auto venus = new Sphere(48 * 2, this);
@@ -535,7 +521,7 @@ void Renderer::LoadSolarSystem()
 	venus->SetTexture(path);
 	spheres.emplace_back(venus);
 	venus->SetPosition(0, 0, 0);
-
+	venus->SetScale(1.3f, 1.3f, 1.3f);
 
 	auto earth = new Sphere(48 * 2, this);
 	path = "res/Models/Cosmos/Planets/Earth/earth_day.jpg";
@@ -544,6 +530,7 @@ void Renderer::LoadSolarSystem()
 	earth->SetTexture(path);
 	spheres.emplace_back(earth);
 	earth->SetPosition(0,0,0);
+	earth->SetScale(1.4f, 1.4f, 1.4f);
 	//earth->SetRotation(90, 0, 0);
 	auto moon = new Sphere(48 * 2, this);
 	path = "res/Models/Cosmos/Planets/moon.jpg";
@@ -559,6 +546,7 @@ void Renderer::LoadSolarSystem()
 	mars->SetTexture(path);
 	path = "res/Textures/Normal/mars.png";
 	mars->SetTexture(path);
+	mars->SetScale(1.2f, 1.2f, 1.2f);
 	spheres.emplace_back(mars);
 	mars->SetPosition(0, 0, 0);
 
@@ -567,6 +555,7 @@ void Renderer::LoadSolarSystem()
 	jupiter->SetTexture(path);
 	path = "res/Textures/Normal/jupiter.png";
 	jupiter->SetTexture(path);
+	jupiter->SetScale(2.5, 2.5, 2.5);
 	spheres.emplace_back(jupiter);
 	jupiter->SetPosition(0, 0, 0);
 
@@ -575,6 +564,7 @@ void Renderer::LoadSolarSystem()
 	saturn->SetTexture(path);
 	path = "res/Textures/Normal/saturn.png";
 	saturn->SetTexture(path);
+	saturn->SetScale(2, 2, 2);
 	spheres.emplace_back(saturn);
 	saturn->SetPosition(0, 0, 0);
 
@@ -583,6 +573,7 @@ void Renderer::LoadSolarSystem()
 	uranus->SetTexture(path);
 	path = "res/Textures/Normal/uranus.png";
 	uranus->SetTexture(path);
+	uranus->SetScale(1.8f, 1.8f, 1.8f);
 	spheres.emplace_back(uranus);
 	uranus->SetPosition(0, 0, 0);
 
@@ -591,27 +582,30 @@ void Renderer::LoadSolarSystem()
 	neptune->SetTexture(path);
 	path = "res/Textures/Normal/neptune.png";
 	neptune->SetTexture(path);
+	uranus->SetScale(1.6f, 1.6f, 1.6f);
 	spheres.emplace_back(neptune);
 	neptune->SetPosition(0, 0, 0);
 
-	earth->selfRotationSpeed= 
-		 moon->selfRotationSpeed = 
-		 mercury->selfRotationSpeed=
-		 venus->selfRotationSpeed=
-		 mars->selfRotationSpeed= jupiter->selfRotationSpeed= saturn->selfRotationSpeed=
-		 uranus->selfRotationSpeed=
-		 neptune->selfRotationSpeed=100*2;
+	earth->selfRotationSpeed = 100 * 2 * GetRandomNumber();
+	moon->selfRotationSpeed = 100 * 2 * GetRandomNumber();
+	mercury->selfRotationSpeed = 100 * 2 * GetRandomNumber();
+	venus->selfRotationSpeed = 100 * 2 * GetRandomNumber();
+	mars->selfRotationSpeed = 100 * 2 * GetRandomNumber();
+	jupiter->selfRotationSpeed = 100 * 2 * GetRandomNumber();
+	saturn->selfRotationSpeed = 100 * 2 * GetRandomNumber();
+	uranus->selfRotationSpeed = 100 * 2 * GetRandomNumber();
+	neptune->selfRotationSpeed=100*2*GetRandomNumber();
 	//sun->AddSatellite(moon, 20,6);
 	 float minSpeed = 1;
-	_sun->AddSatellite(mercury, 10 * GetRandomNumber()+minSpeed, 4);
-	_sun->AddSatellite(venus, 10 * GetRandomNumber()+minSpeed, 6);
-	_sun->AddSatellite(earth, 10 * GetRandomNumber()+minSpeed,8);
+	_sun->AddSatellite(mercury, 10 * GetRandomNumber()+minSpeed, 6);
+	_sun->AddSatellite(venus, 10 * GetRandomNumber()+minSpeed, 8);
+	_sun->AddSatellite(earth, 10 * GetRandomNumber()+minSpeed,16);
 	earth->AddSatellite(moon, 10 * GetRandomNumber()+minSpeed, 4);
-	_sun->AddSatellite(mars, 10 * GetRandomNumber()+minSpeed,14);
-	_sun->AddSatellite(jupiter, 10 * GetRandomNumber()+minSpeed,17);
-	_sun->AddSatellite(saturn, 10 * GetRandomNumber() + minSpeed, 20);
-	_sun->AddSatellite(uranus, 10 * GetRandomNumber()+minSpeed,25);
-	_sun->AddSatellite(neptune, 10* GetRandomNumber()+minSpeed,29);
+	_sun->AddSatellite(mars, 10 * GetRandomNumber()+minSpeed,21);
+	_sun->AddSatellite(jupiter, 10 * GetRandomNumber()+minSpeed,30);
+	_sun->AddSatellite(saturn, 10 * GetRandomNumber() + minSpeed, 40);
+	_sun->AddSatellite(uranus, 10 * GetRandomNumber()+minSpeed,44);
+	_sun->AddSatellite(neptune, 10* GetRandomNumber()+minSpeed,52);
 
 
 
@@ -623,6 +617,6 @@ void Renderer::LoadSolarSystem()
 	rock->SetPosition(9, 0, 0);
 	
 	rock->selfRotationSpeed = 100;
-	_sun->AddSatellite(rock, 10 * GetRandomNumber(),12);
+	_sun->AddSatellite(rock, 10 * GetRandomNumber(),25);
 
 }
