@@ -14,4 +14,4 @@
 * *Bloom Effect*
     Sun has little bloom effect with HDR
 * *Normal Maps*
-    Volumes in textures are added with normal mapping
+    Bumpiness in textures are added with normal mapping
