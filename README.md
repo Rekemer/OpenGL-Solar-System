@@ -5,13 +5,13 @@
 <img src="OPENGL2/res/Shadow.png"  width=50% height=50%>
 ***
 ## Features
-* *Instance Rendering*
+* *Instance Rendering*:
    Every asteroid has world matrix as attribute of vertex 
-* *Shadow Mapping*
+* *Shadow Mapping*:
     Shadows are implemented with basic shadow mapping
-* *Voronoi Shader*
+* *Voronoi Shader*:
     The movement of plasma is realized with special sun shader and UV map displacement
-* *Bloom Effect*
+* *Bloom Effect*:
     Sun has little bloom effect with HDR
-* *Normal Maps*
+* *Normal Maps*:
     Bumpiness in textures are added with normal mapping
