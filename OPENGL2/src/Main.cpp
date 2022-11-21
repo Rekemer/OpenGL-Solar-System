@@ -8,9 +8,9 @@ int main(int argc, char* argv[])
 {
 	int fullA = 1920;
 	int fullB = 1080;
-	int testA = 480;
-	int testb = 640;
-	Application* app = new Application(fullB, fullA);
+	int testA = 16*50;
+	int testb = 9*50;
+	Application* app = new Application(testb,testA);
 	if (app->Init())
 	{
 		app->Run();

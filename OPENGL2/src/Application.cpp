@@ -18,6 +18,9 @@ _windowWidth(windowWidth)
 
 Application::~Application()
 {
+    delete _renderer;
+    delete _input;
+    glfwTerminate();
 }
 
 void Application::Run()
@@ -57,9 +60,9 @@ bool Application::Init()
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     /* Make the window's context current */
     glfwMakeContextCurrent(_window);
-    glfwSwapInterval(2);
+    glfwSwapInterval(0);
     glfwSetKeyCallback(_window, ProcessInput);
-    glfwSetInputMode(_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+  //  glfwSetInputMode(_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 
     // Initialize GLEW
     glewExperimental = GL_TRUE;

@@ -61,7 +61,7 @@ void Sphere::Init(int prec)
 		}
 
 	}
-	_va = new VertexArray(vertices, indices);
+	_va.Init(vertices, indices);
 
 }
 
@@ -69,13 +69,13 @@ Sphere::~Sphere()
 {
 }
 
-void Sphere::Draw(Shader& shader)
+void Sphere::Draw(Shader& shader, glm::mat4x4& viewMat, glm::mat4x4& projMat)
 {
 	ComputeWorldTransform();
 	shader.SetMatrixUniform("worldMatrix", _worldMat);
-	shader.SetMatrixUniform("projMatrix", _renderer->GetPerspectiveMatrix());
+	shader.SetMatrixUniform("projMatrix", projMat);
 	// camera/view transformation
-	shader.SetMatrixUniform("viewMatrix", _renderer->GetCamera()->GetViewMatrix());
+	shader.SetMatrixUniform("viewMatrix", viewMat);
 	//shader.SetVectorUniform("material.specular", glm::vec3(0.1, 0.1, 0.1));
 	//shader.SetFloatUniform("material.shininess", 0.0f);
 
@@ -115,7 +115,7 @@ void Sphere::Draw(Shader& shader)
 
 	
 	//_textureSpecular->Bind();
-	_va->Bind();
+	_va.Bind();
 	GLCall(glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0));
 	//glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 	//glBindTexture(GL_TEXTURE0, 0);

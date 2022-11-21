@@ -6,7 +6,8 @@ class Camera : public Entity
 {
 public:
 	void OnMouseEnter( );
-	Camera(class GLFWwindow* _window);
+	Camera()=default;
+	void Init(class GLFWwindow* _window);
 	void ProcessMouseInput();
 	void Update();
 	void UpdateCursor();

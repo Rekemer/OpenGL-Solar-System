@@ -4,7 +4,8 @@
 class VertexArray
 {
 public:
-	VertexArray(const std::vector<struct Vertex>& verticies, const std::vector<unsigned int >& indicies);
+	VertexArray() = default ;
+	void Init(const std::vector<struct Vertex>& verticies, const std::vector<unsigned int >& indicies);
 	~VertexArray();
 
 	void Bind();

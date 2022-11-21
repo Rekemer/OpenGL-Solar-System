@@ -7,21 +7,26 @@
 #include <glfw3.h>
 #include <ext/matrix_clip_space.hpp>
 
-#include "VertexArray.h"
 #include "Debuger.h"
-#include "../Entity/Mesh.h"
-#include "Shader.h"
-#include "../TextureDefault.h"
-#include "../Entity/Camera.h"
-#include "../Entity/Model.h"
-
-//#include <glfw3.h>
 
 #include <string>
 #include <cstdlib>
-#include "../Entity/Sphere.h"
 
+//#include <glfw3.h>
+//#include "VertexArray.h"
+//#include "Shader.h"
+//#include "../Entity/Mesh.h"
+//#include "../TextureDefault.h"
+//#include "../Entity/Camera.h"
+//#include "../Entity/Model.h"
+//#include "../Entity/Sphere.h"
 
+#ifdef RELEASE
+ std::string releasePath = "../../../OPENGL2/";
+#else
+
+ std::string releasePath = "";
+#endif // RELEASE
 
 Renderer::Renderer( GLFWwindow* window, int windowWidth, int windowHeight)
 {
@@ -35,6 +40,24 @@ Renderer::Renderer( GLFWwindow* window, int windowWidth, int windowHeight)
 
 Renderer::~Renderer()
 {
+	delete _basicShader;
+	delete _instanceShader;
+	delete _screenShader;
+	delete _sunShader;
+	delete _skyBoxShader;
+	delete _depthShader;
+	delete _depthInstanceShader;
+	delete _blurShader;
+	glDeleteFramebuffers(1, &frameBuffer);
+	glDeleteFramebuffers(1, &depthMapFBO);
+	glDeleteFramebuffers(2, pingpongFBO);
+	glDeleteRenderbuffers(1, &renderBufferObject);
+	glDeleteTextures(2, colorBuffers);
+	glDeleteTextures(2, pingpongBuffer);
+	glDeleteTextures(1, &depthCubemap);
+	
+
+	delete _sun;
 }
 
 void Renderer::SetUpFrameBuffer()
@@ -44,6 +67,7 @@ void Renderer::SetUpFrameBuffer()
 	
 	glGenFramebuffers(1, &frameBuffer);
 	glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
+
 	
 	glGenTextures(2, colorBuffers);
 	for (unsigned int i = 0; i < 2; i++)
@@ -92,7 +116,7 @@ void PrintVec(glm::vec3 pos)
 
 void Renderer::DrawModel(float deltaTime)
 {
-	_instanceShader->SetVectorUniform("cameraPos", _camera->GetPosition());
+	_instanceShader->SetVectorUniform("cameraPos", _camera.GetPosition());
 	_instanceShader->SetVectorUniform("dirLight.direction", 0.0f, -1.0f, 0.0f);
 	_instanceShader->SetVectorUniform("dirLight.ambient", 0.3f, 0.3f, 0.3f);
 	_instanceShader->SetVectorUniform("dirLight.diffuse", 0.0f, 0.0f, 0.0f);
@@ -101,7 +125,7 @@ void Renderer::DrawModel(float deltaTime)
 	
 
 
-	_instanceShader->SetVectorUniform("cameraPos", _camera->GetPosition());
+	_instanceShader->SetVectorUniform("cameraPos", _camera.GetPosition());
 
 	_instanceShader->SetVectorUniform("pointLights[0].position", lightPos[0]);
 	_instanceShader->SetVectorUniform("pointLights[0].ambient", 0.3f, 0.3f, 0.3f);
@@ -129,7 +153,7 @@ void Renderer::DrawModel(float deltaTime)
 
 	_instanceShader->SetMatrixUniform("projMatrix", GetPerspectiveMatrix());
 	// camera/view transformation
-	_instanceShader->SetMatrixUniform("viewMatrix", GetCamera()->GetViewMatrix());
+	_instanceShader->SetMatrixUniform("viewMatrix",_camera.GetViewMatrix());
 
 	glActiveTexture(GL_TEXTURE8);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, depthCubemap);
@@ -143,7 +167,7 @@ void Renderer::DrawModel(float deltaTime)
 void Renderer::DrawSun(float timeAppStart, float deltaTime)
 {
 	_sunShader->Bind();
-	_sunShader->SetVectorUniform("cameraPos", _camera->GetPosition());
+	_sunShader->SetVectorUniform("cameraPos", _camera.GetPosition());
 
 	_sunShader->SetFloatUniform("time", timeAppStart);
 	//glActiveTexture(GL_TEXTURE2);
@@ -152,7 +176,8 @@ void Renderer::DrawSun(float timeAppStart, float deltaTime)
 	//_sunShader->setInt("material.texture_diffuse1", 2);
 
 	_sun->Update(deltaTime);
-	_sun->Draw(*_sunShader);
+	auto view = _camera.GetViewMatrix();
+	_sun->Draw(*_sunShader,view, _perspectiveMatrix);
 }
 
 void Renderer::DrawPlanets(float deltaTime)
@@ -168,7 +193,7 @@ void Renderer::DrawPlanets(float deltaTime)
 	
 
 
-	_basicShader->SetVectorUniform("cameraPos", _camera->GetPosition());
+	_basicShader->SetVectorUniform("cameraPos", _camera.GetPosition());
 
 	_basicShader->SetVectorUniform("pointLights[0].position", lightPos[0]);
 	_basicShader->SetVectorUniform("pointLights[0].ambient", 0.2f, 0.2f, 0.2f);
@@ -199,10 +224,11 @@ void Renderer::DrawPlanets(float deltaTime)
 	_basicShader->setInt("depthMap", 8);
 	//_basicShader->SetFloatUniform("time", timeAppStart);
 
+	auto view = _camera.GetViewMatrix();
 	for (auto sphere : spheres)
 	{
 		sphere->Update(deltaTime);
-		sphere->Draw(*_basicShader);
+		sphere->Draw(*_basicShader, view, _perspectiveMatrix);
 	}
 }
 
@@ -224,12 +250,12 @@ void Renderer::Draw()
 	lastFrameTimeStart = timeAppStart;
 	deltaTime = 0.001f;
 	static int a =0;
-	_camera->Update();
+	_camera.Update();
 	
 
 	
 	auto lightScale = _sun->GetScale();
-	auto pos = _camera->GetPosition();
+	auto pos = _camera.GetPosition();
 	auto iter = models.begin();
 	
 
@@ -263,8 +289,9 @@ void Renderer::Draw()
 		//glBindTexture(GL_TEXTURE_2D, 0);
 		//_skyBoxShader->setInt("material.texture_diffuse1", 1);
 
-		_skybox->SetPosition(_camera->GetPosition());
-		_skybox->Draw(*_skyBoxShader);
+		_skybox->SetPosition(_camera.GetPosition());
+		auto view = _camera.GetViewMatrix();
+		_skybox->Draw(*_skyBoxShader, view,_perspectiveMatrix);
 	}
 
 	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, 0));
@@ -284,8 +311,8 @@ void Renderer::Draw()
 			GL_TEXTURE_2D, first_iteration ? colorBuffers[1] : pingpongBuffer[!horizontal]
 		);
 		// render quad
-		screenQuad->Bind();
-		glDrawElements(GL_TRIANGLES, screenQuad->GetNumIndices(), GL_UNSIGNED_INT, 0);
+		screenQuad.Bind();
+		glDrawElements(GL_TRIANGLES, screenQuad.GetNumIndices(), GL_UNSIGNED_INT, 0);
 		
 		horizontal = !horizontal;
 		if (first_iteration)
@@ -304,8 +331,8 @@ void Renderer::Draw()
 	glBindTexture(GL_TEXTURE_2D, colorBuffers[0]);
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, pingpongBuffer[!horizontal]);
-	screenQuad->Bind();
-	glDrawElements(GL_TRIANGLES, screenQuad->GetNumIndices(), GL_UNSIGNED_INT, 0);
+	screenQuad.Bind();
+	glDrawElements(GL_TRIANGLES, screenQuad.GetNumIndices(), GL_UNSIGNED_INT, 0);
 	
 }
 const unsigned int SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
@@ -371,10 +398,11 @@ void Renderer::DrawShadows()
 	_depthShader->SetFloatUniform("far_plane", 25);
 	_depthShader->SetVectorUniform("lightPos", lightPos[0]);
 
+	auto view = _camera.GetViewMatrix();
 	for (auto sphere : spheres)
 	{
 		//sphere->Update(deltaTime);
-		sphere->Draw(*_depthShader);
+		sphere->Draw(*_depthShader, view,_perspectiveMatrix);
 	}
 
 }
@@ -442,20 +470,23 @@ void Renderer::Init()
 		1,3,2
 	};
 
-	screenQuad = new VertexArray(verticesScreen, indiciesScreen);
+	screenQuad.Init(verticesScreen, indiciesScreen);
 
 
 	//camera
-	_camera = new Camera(_window);
-	_camera->SetPosition(glm::vec3(0.f, 10.f,-25.f));
-	_basicShader = new Shader("Shaders/basic.vert", "Shaders/basic.frag");
-	_instanceShader = new Shader("Shaders/instance.vert", "Shaders/instance.frag");
-	_screenShader = new Shader("Shaders/screen.vert", "Shaders/screen.frag");
-	_sunShader = new Shader("Shaders/sun.vert", "Shaders/sun.frag");
-	_skyBoxShader = new Shader("Shaders/skybox.vert", "Shaders/skybox.frag");
-	_depthShader = new Shader("Shaders/depth.vert", "Shaders/depth.frag", "Shaders/depth.geom");
-	_depthInstanceShader = new Shader("Shaders/depth_instance.vert", "Shaders/depth.frag", "Shaders/depth.geom");
-	_blurShader = new Shader("Shaders/blur.vert", "Shaders/blur.frag");
+	_camera.Init(_window);
+	_camera.SetPosition(glm::vec3(0.f, 10.f,-25.f));
+
+
+	
+	_basicShader = new Shader(releasePath+"Shaders/basic.vert", releasePath+"Shaders/basic.frag");
+	_instanceShader = new Shader(releasePath+"Shaders/instance.vert", releasePath+"Shaders/instance.frag");
+	_screenShader = new Shader(releasePath+"Shaders/screen.vert", releasePath+"Shaders/screen.frag");
+	_sunShader = new Shader(releasePath+"Shaders/sun.vert", releasePath+"Shaders/sun.frag");
+	_skyBoxShader = new Shader(releasePath+"Shaders/skybox.vert", releasePath+"Shaders/skybox.frag");
+	_depthShader = new Shader(releasePath+"Shaders/depth.vert", releasePath+"Shaders/depth.frag", releasePath+"Shaders/depth.geom");
+	_depthInstanceShader = new Shader(releasePath + "Shaders/depth_instance.vert", releasePath+"Shaders/depth.frag", releasePath+"Shaders/depth.geom");
+	_blurShader = new Shader(releasePath+"Shaders/blur.vert", releasePath+"Shaders/blur.frag");
 
 	LoadSolarSystem();
 
@@ -480,7 +511,7 @@ void Renderer::LoadSolarSystem()
 
 
 	// add skybox
-	std::string path = "res/Models/Cosmos/Sky/8k_stars_milky_way.jpg";
+	std::string path = releasePath + "res/Models/Cosmos/Sky/8k_stars_milky_way.jpg";
 	_skybox = new Sphere(48, this);
 	_skybox->SetTexture(path);
 	_skybox->SetScale(glm::vec3(100.0f, 100.0f, 100.0f));
@@ -488,9 +519,9 @@ void Renderer::LoadSolarSystem()
 	// add planets
 
 	_sun = new Sphere(48*2, this,true);
-	path = "res/Models/Cosmos/Sun/sun.jpg";
+	path = releasePath + "res/Models/Cosmos/Sun/sun.jpg";
 	_sun->SetTexture(path);
-	path = "res/Textures/uv_distortion.png";
+	path = releasePath + "res/Textures/uv_distortion.png";
 //	path = "res/Textures/uv_texture.png";
 	_sun->SetTexture(path);
 	//spheres.emplace_back(_sun);
@@ -505,9 +536,9 @@ void Renderer::LoadSolarSystem()
 
 
 	auto mercury = new Sphere(48 * 2, this);
-	path = "res/Models/Cosmos/Planets/mercury.jpg";
+	path = releasePath+"res/Models/Cosmos/Planets/mercury.jpg";
 	mercury->SetTexture(path);
-	path = "res/Textures/Normal/mercury.png";
+	path = releasePath + "res/Textures/Normal/mercury.png";
 	mercury->SetTexture(path);
 	spheres.emplace_back(mercury);
 	mercury->SetPosition(0, 0, 0);
@@ -515,72 +546,72 @@ void Renderer::LoadSolarSystem()
 
 
 	auto venus = new Sphere(48 * 2, this);
-	path = "res/Models/Cosmos/Planets/venus.jpg";
+	path = releasePath + "res/Models/Cosmos/Planets/venus.jpg";
 	venus->SetTexture(path);
-	path = "res/Textures/Normal/venus.png";
+	path = releasePath + "res/Textures/Normal/venus.png";
 	venus->SetTexture(path);
 	spheres.emplace_back(venus);
 	venus->SetPosition(0, 0, 0);
 	venus->SetScale(1.3f, 1.3f, 1.3f);
 
 	auto earth = new Sphere(48 * 2, this);
-	path = "res/Models/Cosmos/Planets/Earth/earth_day.jpg";
+	path = releasePath + "res/Models/Cosmos/Planets/Earth/earth_day.jpg";
 	earth->SetTexture(path);
-	path = "res/Textures/Normal/normal_earth_day.png";
+	path = releasePath + "res/Textures/Normal/normal_earth_day.png";
 	earth->SetTexture(path);
 	spheres.emplace_back(earth);
 	earth->SetPosition(0,0,0);
 	earth->SetScale(1.4f, 1.4f, 1.4f);
 	//earth->SetRotation(90, 0, 0);
 	auto moon = new Sphere(48 * 2, this);
-	path = "res/Models/Cosmos/Planets/moon.jpg";
+	path = releasePath + "res/Models/Cosmos/Planets/moon.jpg";
 	moon->SetTexture(path);
-	path = "res/Textures/Normal/normal_moon.png";
+	path = releasePath + "res/Textures/Normal/normal_moon.png";
 	moon->SetTexture(path);
 	spheres.emplace_back(moon);
 	moon->SetScale(0.5f, 0.5f, 0.5f);
 	moon->SetPosition(0, 0, 0);
 
 	auto mars = new Sphere(48 * 2, this);
-	path = "res/Models/Cosmos/Planets/mars.jpg";
+	path = releasePath + "res/Models/Cosmos/Planets/mars.jpg";
 	mars->SetTexture(path);
-	path = "res/Textures/Normal/mars.png";
+	path = releasePath + "res/Textures/Normal/mars.png";
 	mars->SetTexture(path);
 	mars->SetScale(1.2f, 1.2f, 1.2f);
 	spheres.emplace_back(mars);
 	mars->SetPosition(0, 0, 0);
 
 	auto jupiter = new Sphere(48 * 2, this);
-	path = "res/Models/Cosmos/Planets/jupiter.jpg";
+	path = releasePath + "res/Models/Cosmos/Planets/jupiter.jpg";
 	jupiter->SetTexture(path);
-	path = "res/Textures/Normal/jupiter.png";
+	path = releasePath + "res/Textures/Normal/jupiter.png";
 	jupiter->SetTexture(path);
 	jupiter->SetScale(2.5, 2.5, 2.5);
 	spheres.emplace_back(jupiter);
 	jupiter->SetPosition(0, 0, 0);
 
 	auto saturn = new Sphere(48 * 2, this);
-	path = "res/Models/Cosmos/Planets/saturn.jpg";
+	path = releasePath + "res/Models/Cosmos/Planets/saturn.jpg";
 	saturn->SetTexture(path);
-	path = "res/Textures/Normal/saturn.png";
+	path = releasePath + "res/Textures/Normal/saturn.png";
 	saturn->SetTexture(path);
 	saturn->SetScale(2, 2, 2);
 	spheres.emplace_back(saturn);
 	saturn->SetPosition(0, 0, 0);
 
 	auto uranus = new Sphere(48 * 2, this);
-	path = "res/Models/Cosmos/Planets/uranus.jpg";
+	path = releasePath + "res/Models/Cosmos/Planets/uranus.jpg";
 	uranus->SetTexture(path);
-	path = "res/Textures/Normal/uranus.png";
+	path = releasePath + "res/Textures/Normal/uranus.png";
 	uranus->SetTexture(path);
 	uranus->SetScale(1.8f, 1.8f, 1.8f);
 	spheres.emplace_back(uranus);
 	uranus->SetPosition(0, 0, 0);
 
 	auto neptune = new Sphere(48 * 2, this);
-	path = "res/Models/Cosmos/Planets/neptune.jpg";
+	path = releasePath + "res/Models/Cosmos/Planets/neptune.jpg";
 	neptune->SetTexture(path);
-	path = "res/Textures/Normal/neptune.png";
+	path = releasePath + "res/Textures/Normal/neptune.png";
 	neptune->SetTexture(path);
 	uranus->SetScale(1.6f, 1.6f, 1.6f);
 	spheres.emplace_back(neptune);
@@ -610,7 +641,7 @@ void Renderer::LoadSolarSystem()
 
 
 	//std::fill(transforms, transforms + rocksAmount, glm::mat4(1.0f));
-	path = "res/Models/Cosmos/Rock/rock.obj";
+	path = releasePath + "res/Models/Cosmos/Rock/rock.obj";
 	//path = "res/Models/Backpack/backpack.obj";
 	Model* rock = new Model(path, this, rocksAmount,false);
 	models.emplace_back(rock);

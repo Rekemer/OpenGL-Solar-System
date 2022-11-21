@@ -3,7 +3,14 @@
 #include <random>
 #include <ext/matrix_float4x4.hpp>
 #include <unordered_map>
-
+#include "VertexArray.h"
+#include "Shader.h"
+#include "../Entity/Mesh.h"
+#include "../TextureDefault.h"
+#include "../Entity/Camera.h"
+#include "../Entity/Model.h"
+#include "../Entity/Sphere.h"
+#include "../Entity/Camera.h"
 
 class Renderer
 {
@@ -23,7 +30,7 @@ public:
 	class GLFWwindow* GetWindow() { return _window; }
 	glm::mat4 GetPerspectiveMatrix()const { return _perspectiveMatrix; }
 	glm::mat4 GetOrthographicMatrix()const { return _orthographicMatrix; }
-	class Camera* GetCamera() { return  _camera; }
+	Camera& GetCamera() { return  _camera; }
 	float GetRandomNumber()
 	{
 		 // or std::default_random_engine e{rd()};
@@ -36,20 +43,20 @@ public:
 	
 private:
 	unsigned int renderBufferObject;
-	class VertexArray* screenQuad;
+	VertexArray screenQuad;
 	unsigned int textureScreen;
 	unsigned int frameBuffer;
 	unsigned int depthCubemap;
 	unsigned int depthMapFBO;
-	unsigned int rocksAmount =700;
+	unsigned int rocksAmount =700*10;
 	unsigned int colorBuffers[2];
 	unsigned int pingpongFBO[2];
 	unsigned int pingpongBuffer[2];
-	class std::vector<class Entity*> transforms;
+	class std::vector<Entity*> transforms;
 	std::vector< glm::vec3> lightPos;
-	std::vector<class Mesh*>_meshes;
-	std::vector<class Model*> models;
-	std::vector<class Sphere*> spheres;
+
+	std::vector<Model*> models;
+	std::vector<Sphere*> spheres;
 	std::vector<glm::mat4> shadowTransforms;
 	class Sphere* _skybox;
 	class Mesh * _lightMesh;
@@ -57,16 +64,16 @@ private:
 	glm::mat4 _perspectiveMatrix;
 	glm::mat4 _orthographicMatrix;
 	class GLFWwindow* _window;
-	class Camera* _camera;
+	Camera _camera;
 	float lastFrameTimeStart;
 	std::random_device rand;
 	std::mt19937 e{ rand() };
-	class Shader* _basicShader;
-	 Shader* _instanceShader;
-	 Shader* _screenShader;
-	 Shader* _sunShader;
 	int _windowHeight;
 	int _windowWidth;
+	Shader* _basicShader;
+	Shader* _instanceShader;
+	Shader* _screenShader;
+	Shader* _sunShader;
 	Shader* _skyBoxShader;
 	Shader* _depthShader;
 	Shader* _depthInstanceShader;

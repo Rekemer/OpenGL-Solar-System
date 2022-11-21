@@ -22,7 +22,7 @@ public:
 	Sphere(int precision, Renderer* renderer, bool isLight = false);
 	void Init(int precision);
 	~Sphere();
-	void Draw(class Shader& shader);
+	void Draw(class Shader& shader,glm::mat4x4& viewMat, glm::mat4x4& projMat);
 	void SetTexture(std::string& path, std::string type = "texture_diffuse",bool isCube = false);
 	void AddSatellite(Sphere* satellite, float speed,float radius = 3);
 	void AddSatellite(Model* satellite, float speed,float radius = 3);
@@ -36,7 +36,7 @@ private:
 	float toRadians(float degrees) { return (degrees * 2.0f * 3.14159f) / 360.0f; }
 	std::vector<unsigned int> indices;
 	std::vector<Vertex> vertices;
-	class VertexArray* _va;
+    VertexArray _va;
 	class Renderer* _renderer;
 	
 };

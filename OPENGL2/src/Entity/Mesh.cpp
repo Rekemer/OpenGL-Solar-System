@@ -30,24 +30,23 @@ Mesh::Mesh(std::vector<Vertex>& vertices,
 	this->vertices = vertices;
 	this->indices = indices;
 	this->textures = textures;
-	_va = new VertexArray(vertices, indices);
+	_va.Init(vertices, indices);
 }
 
 Mesh::~Mesh()
 {
-	delete _va;
-	_va = nullptr;
+	
 }
 
-void Mesh::Draw(Shader& shader, Model& model)
+void Mesh::Draw(Shader& shader, Model& model, glm::mat4x4& viewMat, glm::mat4x4& projMat)
 {
 	unsigned int diffuseNr = 1;
 	unsigned int specularNr = 1;
 
 	//shader.SetMatrixUniform("worldMatrix", model.GetWorldMatrix());
-	shader.SetMatrixUniform("projMatrix", _renderer->GetPerspectiveMatrix());
+	shader.SetMatrixUniform("projMatrix", projMat);
 	// camera/view transformation
-	shader.SetMatrixUniform("viewMatrix", _renderer->GetCamera()->GetViewMatrix());
+	shader.SetMatrixUniform("viewMatrix", viewMat);
 
 	for (unsigned int i = 0; i < textures.size(); i++)
 	{
@@ -66,7 +65,7 @@ void Mesh::Draw(Shader& shader, Model& model)
 	
 
 	// draw mesh
-	_va->Bind();
+	_va.Bind();
 	/*glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, 0);*/
 	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
@@ -79,7 +78,7 @@ void Mesh::Load(std::vector<Vertex> vertices, std::vector<unsigned> indices, std
 	this -> vertices = vertices;
 	this -> indices  = indices;
 	this -> textures = textures;
-	_va = new VertexArray(vertices, indices);
+	_va.Init(vertices, indices);
 }
 
 void Mesh::SetupMesh()
@@ -113,7 +112,7 @@ void Mesh::Bind(Shader&shader)
 	
 
 	// draw mesh
-	_va->Bind();
+	_va.Bind();
 	
 	
 }
@@ -135,7 +134,7 @@ void Mesh::Load(const float* verticies, const int numVerticies, const int* indic
 
 int Mesh::GetNumIndices()
 {
-	return _va->GetNumIndices();
+	return _va.GetNumIndices();
 }
 
 

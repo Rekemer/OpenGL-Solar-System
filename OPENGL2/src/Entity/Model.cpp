@@ -14,15 +14,65 @@
 #include "../Rendering/Shader.h"
 
 
-void Model::Draw(Shader& shader)
+Model::Model(std::string& path, Renderer* renderer, int amount, bool isPrefab)
+{
+
+    this->renderer = renderer;
+    _isPrefab = isPrefab;
+    loadModel(path);
+    currentAngle = new float[amount];
+    for (int i = 0; i < amount; i++)
+    {
+        radiusOffsetXZ.emplace_back(0);
+        radiusOffsetY.emplace_back(lerp(-2, 2, renderer->GetRandomNumber()));
+    }
+    for (int i = 0; i < amount; i++)
+    {
+        currentAngle[i] = PI * 2 * renderer->GetRandomNumber();
+        Entity en;
+        en.SetRotation(360 * renderer->GetRandomNumber(), 360 * renderer->GetRandomNumber(), 360 * renderer->GetRandomNumber());
+        en.ComputeWorldTransform();
+        transforms.emplace_back(en);
+    }
+
+
+    glGenBuffers(1, &posBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, posBuffer);
+    glBufferData(GL_ARRAY_BUFFER, amount * sizeof(glm::mat4), nullptr, GL_STATIC_DRAW);
+
+    for (unsigned int i = 0; i < meshes.size(); i++)
+    {
+        unsigned int VAO = meshes[i].GetVertexArray().GetVertexArrayId();
+        glBindVertexArray(VAO);
+        // set attribute pointers for matrix (4 times vec4)
+        glEnableVertexAttribArray(3);
+        glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)0);
+        glEnableVertexAttribArray(4);
+        glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(sizeof(glm::vec4)));
+        glEnableVertexAttribArray(5);
+        glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(2 * sizeof(glm::vec4)));
+        glEnableVertexAttribArray(6);
+        glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(3 * sizeof(glm::vec4)));
+
+        glVertexAttribDivisor(3, 1);
+        glVertexAttribDivisor(4, 1);
+        glVertexAttribDivisor(5, 1);
+        glVertexAttribDivisor(6, 1);
+
+        glBindVertexArray(0);
+    }
+
+}
+
+void Model::Draw(Shader& shader, glm::mat4x4& viewMat, glm::mat4x4& projMat)
 {
     
 
      for (unsigned int i = 0; i < meshes.size(); i++)
      {
          ComputeWorldTransform();
-         meshes[i]->ComputeWorldTransform();
-         meshes[i]->Draw(shader, *this);
+         meshes[i].ComputeWorldTransform();
+         meshes[i].Draw(shader, *this, viewMat, projMat);
      }
 }
 
@@ -37,21 +87,21 @@ void Model::DrawInstance(Shader& shader)
    
    
 
-    glm::mat4* mattricies = new glm::mat4[transforms.size()];
+    glm::mat4* matricies = new glm::mat4[transforms.size()];
 
     for (int i = 0; i < transforms.size(); i++)
     {
-        auto mat = transforms[i]->GetWorldMatrix();
-        mattricies[i] = transforms[i]->GetWorldMatrix();
+        auto mat = transforms[i].GetWorldMatrix();
+        matricies[i] = transforms[i].GetWorldMatrix();
     }
     
     glBindBuffer(GL_ARRAY_BUFFER, posBuffer);
-    glBufferSubData(GL_ARRAY_BUFFER, 0, transforms.size() * sizeof(glm::mat4), &mattricies[0]);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, transforms.size() * sizeof(glm::mat4), &matricies[0]);
 
     for (unsigned int j = 0; j < meshes.size(); j++)
     {
-        meshes[j]->Bind(shader);
-        auto indexSize = meshes[j]->GetVertexArray()->GetNumIndices();
+        meshes[j].Bind(shader);
+        auto indexSize = meshes[j].GetVertexArray().GetNumIndices();
         GLCall(glDrawElementsInstanced(GL_TRIANGLES, static_cast<unsigned int>(indexSize), GL_UNSIGNED_INT, 0, transforms.size()));
         GLCall(glBindVertexArray(0));
     }
@@ -63,7 +113,7 @@ void Model::DrawInstance(Shader& shader)
    //       // meshes[j]->Draw(shader, *this);
    //    }
    //}
-    delete mattricies;
+    delete matricies;
 }
 
 void Model::loadModel(std::string path)
@@ -88,7 +138,7 @@ void Model::processNode(aiNode* node, const aiScene* scene)
     {
         aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
         auto meshToAdd = processMesh(mesh, scene);
-        meshes.push_back(meshToAdd);
+        meshes.emplace_back(*meshToAdd);
     }
     // then do the same for each of its children
     for (unsigned int i = 0; i < node->mNumChildren; i++)
@@ -229,20 +279,20 @@ void Model::Update(float time)
             auto ownerPos = owner->GetPosition();
             auto  position = glm::vec3(x + ownerPos.x,  radiusOffsetY[i], z + ownerPos.z);
            
-            transforms[i]->SetPosition(position);
+            transforms[i].SetPosition(position);
         }
 
         // calculate rot
 
         //SetRotation(GetRotation().x + time * selfRotationSpeed, GetRotation().y, GetRotation().z);
-        glm::vec3 rotation =glm::vec3(transforms[i]->GetRotation().x+time * selfRotationSpeed, transforms[i]->GetRotation().y, transforms[i]->GetRotation().z);
+        glm::vec3 rotation =glm::vec3(transforms[i].GetRotation().x+time * selfRotationSpeed, transforms[i].GetRotation().y, transforms[i].GetRotation().z);
        
-        transforms[i]->SetRotation(rotation);
+        transforms[i].SetRotation(rotation);
         // calculate scale
         glm::vec3 scale = glm::vec3(0.06, 0.06, 0.06);
-        transforms[i]->SetScale(scale);
+        transforms[i].SetScale(scale);
         // update world matrix
-        transforms[i]->ComputeWorldTransform();
+        transforms[i].ComputeWorldTransform();
 
     }
    

@@ -5,7 +5,8 @@
 
 
 
-Camera::Camera(GLFWwindow* window)
+
+void Camera::Init(GLFWwindow* window)
 {
     _window = window;
     int width, height;

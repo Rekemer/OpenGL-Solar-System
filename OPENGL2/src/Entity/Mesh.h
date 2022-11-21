@@ -4,6 +4,7 @@
 #include <ext/matrix_float4x4.hpp>
 
 #include "Entity.h"
+#include "../Rendering/VertexArray.h"
 
 #define MAX_BONE_INFLUENCE 4
 	struct Vertex {
@@ -45,10 +46,12 @@ struct Texture {
 class Mesh : public Entity
 {
 public:
+	/*Mesh() = default;
+	Mesh(const Mesh& mesh) = default;*/
 	Mesh(class Renderer*);
 	Mesh(std::vector<Vertex>& vertices, std::vector<unsigned int> indices, std::vector<Texture>& textures,Renderer* renderer);
 	~Mesh();
-	void Draw(class Shader& shader, class Model& model);
+	void Draw(class Shader& shader, class Model& model, glm::mat4x4& viewMat, glm::mat4x4& projMat);
 	void Bind();
 	void Bind(class Shader& shader);
 	void LoadShader(const std::string& vertShaderPath, const std::string& fragShaderPath);
@@ -56,12 +59,12 @@ public:
 	void Load(const float* verticies, const int  numVerticies, const int* indicies, const int  numInd);
 	void Load(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures);
 	int GetNumIndices();
-	class VertexArray* GetVertexArray() { return _va; }
+	class VertexArray& GetVertexArray() { return _va; }
 	void SetupMesh();
 	
 private:
 private:
-	class VertexArray* _va;
+	VertexArray _va;
 
 	class Renderer* _renderer;
 
