@@ -52,6 +52,8 @@ private:
 	unsigned int colorBuffers[2];
 	unsigned int pingpongFBO[2];
 	unsigned int pingpongBuffer[2];
+	unsigned int blackFBO;
+	unsigned int blackBuffer;
 	class std::vector<Entity*> transforms;
 	std::vector< glm::vec3> lightPos;
 
@@ -80,5 +82,6 @@ private:
 	Shader* _depthInstanceShader;
 	Shader* _blurShader;
 	Shader* _blackHoleShader;
+	Shader* _blackHoleShaderScreen;
 };
 

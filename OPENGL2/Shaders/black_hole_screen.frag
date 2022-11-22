@@ -67,8 +67,9 @@ uniform Light light;
 uniform Material material;
 uniform float time;
 uniform float radius;
-uniform vec3 dist;
 uniform vec3 cameraPos;
+uniform float dist;
+uniform vec3 pos;
 
 in vec2 diffuseTexCoords;
 layout (location = 0) out vec4 outColor;
@@ -78,7 +79,31 @@ in vec3 normal;
 in vec3 lightPosition;
 in vec3 fragPos;
 
+
+
+
+
+
+
+uniform sampler2D scene;
 void main()
 {
-    outColor = vec4(1,1,1,1);
+    vec2 offset = diffuseTexCoords-vec2(pos);
+    vec2  ratio = vec2(9.f/16.f,1);
+    float rad = length(offset/ratio);
+
+    float deformation  = 1 / pow(rad * pow(dist,0.5),2) * radius * 0.1;
+    offset = offset * (1 - deformation);
+    offset += vec2(pos);
+    //outColor = vec4(1,0,0,1);
+    //fragPos
+    outColor = texture(scene, offset);
+    if (rad*dist <radius)
+    {
+        outColor = vec4(1,0,0,1);
+    }
+    //outColor =  vec4(offset,0,1);
+
+
+
 }

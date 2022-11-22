@@ -255,8 +255,9 @@ void Renderer::Draw()
 
 	
 	auto lightScale = _sun->GetScale();
-	auto pos = _camera.GetPosition();
+	auto cameraPos = _camera.GetPosition();
 	auto iter = models.begin();
+	auto view = _camera.GetViewMatrix();
 	
 	if (_skybox != nullptr) {
 
@@ -268,7 +269,6 @@ void Renderer::Draw()
 		//_skyBoxShader->setInt("material.texture_diffuse1", 1);
 
 		_skybox->SetPosition(_camera.GetPosition());
-		auto view = _camera.GetViewMatrix();
 		_skybox->Draw(*_skyBoxShader, view, _perspectiveMatrix);
 	}
 
@@ -288,17 +288,44 @@ void Renderer::Draw()
 
 	_blackHoleShader->Bind();
 	_blackHoleShader->SetFloatUniform("radius", _blackHole->GetScale().x);
+
+
 	auto distance = _blackHole->GetPosition() - _camera.GetPosition();
 	_blackHoleShader->SetVectorUniform("dist", distance);
-	auto view =  _camera.GetViewMatrix();
 	_blackHole->Draw(*_blackHoleShader, view, _perspectiveMatrix);
 	
 	
 	_basicShader->Bind();
 	DrawPlanets(deltaTime);
 
-
+	// black hole effect
+	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, blackFBO));
+	glDisable(GL_DEPTH_TEST);
+	GLCall(glClearColor(1.0f, 1.0f, 1.0f, 1.0f));
+	GLCall(glClear(GL_COLOR_BUFFER_BIT));
+	_blackHoleShaderScreen->Bind();
+	_blackHoleShaderScreen->setInt("scene",0);
+	_blackHoleShaderScreen->SetFloatUniform("radius", _blackHole->GetScale().x);
+	_blackHoleShaderScreen->SetFloatUniform("dist", glm::length(distance));
+	std::cout << glm::length(distance) << "\n";
+	glm::vec4 screenSpace = _perspectiveMatrix * view * _blackHole->_worldMat * glm::vec4(_blackHole->GetPosition(),1);
+	screenSpace /= screenSpace.w;
+	//std::cout << screenSpace.x << " " << screenSpace.y << "\n";
+	auto s_x = (screenSpace.x + 1.f) / 2.f;
+	auto s_y = (screenSpace.y + 1.f) / 2.f;
+	//std::cout << s_x  << " " << s_y << "\n";
+	glm::vec2 screenSpaceCoords = (glm::vec2(screenSpace) + glm::vec2{ 1.f,1.f }) / 2.f;
+	//std::cout << screenSpaceCoords.x << " " << screenSpaceCoords.y << "\n";
 	
+	_blackHoleShaderScreen->SetVectorUniform("pos", glm::vec3{ s_x,s_y,0 });
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, colorBuffers[0]);
+	screenQuad.Bind();
+	glDrawElements(GL_TRIANGLES, screenQuad.GetNumIndices(), GL_UNSIGNED_INT, 0);
+
+	//
+
+
 	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, 0));
 	
 	glDisable(GL_DEPTH_TEST);
@@ -333,7 +360,7 @@ void Renderer::Draw()
 	_screenShader->SetFloatUniform("exposure", 1.0);
 	 // back to defaul)t
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, colorBuffers[0]);
+	glBindTexture(GL_TEXTURE_2D, blackBuffer);
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, pingpongBuffer[!horizontal]);
 	screenQuad.Bind();
@@ -345,6 +372,26 @@ const unsigned int SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
 
 void Renderer::SetUpBlurBuffers()
 {
+
+	glGenFramebuffers(1, &blackFBO);
+	glGenTextures(1, &blackBuffer);
+	
+	glBindFramebuffer(GL_FRAMEBUFFER, blackFBO);
+	glBindTexture(GL_TEXTURE_2D, blackBuffer);
+	glTexImage2D(
+		GL_TEXTURE_2D, 0, GL_RGBA16F, _windowWidth, _windowHeight, 0, GL_RGBA, GL_FLOAT, NULL
+	);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glFramebufferTexture2D(
+		GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, blackBuffer, 0
+	);
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+		std::cout << "Framebuffer not complete!" << std::endl;
+	
+
 	
 	glGenFramebuffers(2, pingpongFBO);
 	glGenTextures(2, pingpongBuffer);
@@ -495,6 +542,7 @@ void Renderer::Init()
 	_depthInstanceShader = new Shader(releasePath + "Shaders/depth_instance.vert", releasePath+"Shaders/depth.frag", releasePath+"Shaders/depth.geom");
 	_blurShader = new Shader(releasePath+"Shaders/blur.vert", releasePath+"Shaders/blur.frag");
 	_blackHoleShader = new Shader(releasePath+"Shaders/black_hole.vert", releasePath+"Shaders/black_hole.frag");
+	_blackHoleShaderScreen = new Shader(releasePath+"Shaders/black_hole_screen.vert", releasePath+"Shaders/black_hole_screen.frag");
 
 	LoadSolarSystem();
 
