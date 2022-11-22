@@ -258,6 +258,19 @@ void Renderer::Draw()
 	auto pos = _camera.GetPosition();
 	auto iter = models.begin();
 	
+	if (_skybox != nullptr) {
+
+		glDisable(GL_CULL_FACE);
+		glCullFace(GL_BACK);
+		_skyBoxShader->Bind();
+		//glActiveTexture(GL_TEXTURE1);
+		//glBindTexture(GL_TEXTURE_2D, 0);
+		//_skyBoxShader->setInt("material.texture_diffuse1", 1);
+
+		_skybox->SetPosition(_camera.GetPosition());
+		auto view = _camera.GetViewMatrix();
+		_skybox->Draw(*_skyBoxShader, view, _perspectiveMatrix);
+	}
 
 	  
 
@@ -271,29 +284,21 @@ void Renderer::Draw()
 	//PrintVec(transforms[0]->GetPosition());
 
 
-	DrawSun(timeAppStart, deltaTime);
+	//DrawSun(timeAppStart, deltaTime);
 
-	
+	_blackHoleShader->Bind();
+	_blackHoleShader->SetFloatUniform("radius", _blackHole->GetScale().x);
+	auto distance = _blackHole->GetPosition() - _camera.GetPosition();
+	_blackHoleShader->SetVectorUniform("dist", distance);
+	auto view =  _camera.GetViewMatrix();
+	_blackHole->Draw(*_blackHoleShader, view, _perspectiveMatrix);
 	
 	
 	_basicShader->Bind();
 	DrawPlanets(deltaTime);
 
 
-	if (_skybox != nullptr){
-
-		glDisable(GL_CULL_FACE);
-		glCullFace(GL_BACK);
-		_skyBoxShader->Bind();
-		//glActiveTexture(GL_TEXTURE1);
-		//glBindTexture(GL_TEXTURE_2D, 0);
-		//_skyBoxShader->setInt("material.texture_diffuse1", 1);
-
-		_skybox->SetPosition(_camera.GetPosition());
-		auto view = _camera.GetViewMatrix();
-		_skybox->Draw(*_skyBoxShader, view,_perspectiveMatrix);
-	}
-
+	
 	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, 0));
 	
 	glDisable(GL_DEPTH_TEST);
@@ -374,17 +379,7 @@ void Renderer::DrawShadows()
 
 	// render scene
 
-	_depthInstanceShader->Bind();
-
-	for (unsigned int i = 0; i < 6; ++i)
-	{
-		std::string a = "shadowMatrices[" + std::to_string(i) + "]";
-		_depthInstanceShader->SetMatrixUniform(a.c_str(), shadowTransforms[i]);
-	}
-	_depthInstanceShader->SetFloatUniform("far_plane", 25);
-	_depthInstanceShader->SetVectorUniform("lightPos", lightPos[0]);
-	models[0]->DrawInstance(*_depthInstanceShader);
-
+	
 
 	_depthShader->Bind();
 
@@ -404,6 +399,18 @@ void Renderer::DrawShadows()
 		//sphere->Update(deltaTime);
 		sphere->Draw(*_depthShader, view,_perspectiveMatrix);
 	}
+
+	_depthInstanceShader->Bind();
+
+	for (unsigned int i = 0; i < 6; ++i)
+	{
+		std::string a = "shadowMatrices[" + std::to_string(i) + "]";
+		_depthInstanceShader->SetMatrixUniform(a.c_str(), shadowTransforms[i]);
+	}
+	_depthInstanceShader->SetFloatUniform("far_plane", 25);
+	_depthInstanceShader->SetVectorUniform("lightPos", lightPos[0]);
+
+	models[0]->DrawInstance(*_depthInstanceShader);
 
 }
 
@@ -487,6 +494,7 @@ void Renderer::Init()
 	_depthShader = new Shader(releasePath+"Shaders/depth.vert", releasePath+"Shaders/depth.frag", releasePath+"Shaders/depth.geom");
 	_depthInstanceShader = new Shader(releasePath + "Shaders/depth_instance.vert", releasePath+"Shaders/depth.frag", releasePath+"Shaders/depth.geom");
 	_blurShader = new Shader(releasePath+"Shaders/blur.vert", releasePath+"Shaders/blur.frag");
+	_blackHoleShader = new Shader(releasePath+"Shaders/black_hole.vert", releasePath+"Shaders/black_hole.frag");
 
 	LoadSolarSystem();
 
@@ -509,6 +517,8 @@ void Renderer::LoadSolarSystem()
 	// Uranus
 	//Neptune
 
+	_blackHole = new Sphere(48 * 2, this);
+	_blackHole->SetPosition(4, 0, 0);
 
 	// add skybox
 	std::string path = releasePath + "res/Models/Cosmos/Sky/8k_stars_milky_way.jpg";
@@ -519,6 +529,7 @@ void Renderer::LoadSolarSystem()
 	// add planets
 
 	_sun = new Sphere(48*2, this,true);
+	
 	path = releasePath + "res/Models/Cosmos/Sun/sun.jpg";
 	_sun->SetTexture(path);
 	path = releasePath + "res/Textures/uv_distortion.png";

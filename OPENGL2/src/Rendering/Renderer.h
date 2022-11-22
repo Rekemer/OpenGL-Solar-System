@@ -48,7 +48,7 @@ private:
 	unsigned int frameBuffer;
 	unsigned int depthCubemap;
 	unsigned int depthMapFBO;
-	unsigned int rocksAmount =700*10;
+	unsigned int rocksAmount =700;
 	unsigned int colorBuffers[2];
 	unsigned int pingpongFBO[2];
 	unsigned int pingpongBuffer[2];
@@ -61,6 +61,7 @@ private:
 	class Sphere* _skybox;
 	class Mesh * _lightMesh;
 	class Sphere* _sun;
+	class Sphere* _blackHole;
 	glm::mat4 _perspectiveMatrix;
 	glm::mat4 _orthographicMatrix;
 	class GLFWwindow* _window;
@@ -78,5 +79,6 @@ private:
 	Shader* _depthShader;
 	Shader* _depthInstanceShader;
 	Shader* _blurShader;
+	Shader* _blackHoleShader;
 };
 
