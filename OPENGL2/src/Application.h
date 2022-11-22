@@ -1,6 +1,6 @@
 #pragma once
 
-
+struct GLFWwindow;
 class Application
 {
 public:
@@ -11,7 +11,7 @@ public:
 	bool Init();
 private:
 
-	class GLFWwindow* _window;
+	GLFWwindow* _window;
 	int _windowHeight;
 	int _windowWidth;
 	class Input* _input;

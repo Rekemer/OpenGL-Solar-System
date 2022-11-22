@@ -2,12 +2,13 @@
 
 
 #include "Entity.h"
+struct GLFWwindow;
 class Camera : public Entity
 {
 public:
 	void OnMouseEnter( );
 	Camera()=default;
-	void Init(class GLFWwindow* _window);
+	void Init(GLFWwindow* _window);
 	void ProcessMouseInput();
 	void Update();
 	void UpdateCursor();
@@ -18,7 +19,7 @@ public:
 private:
 
 protected:
-	class GLFWwindow* _window;
+	GLFWwindow* _window;
 	
 	float lastFrame = 0.f;
 	bool firstMouse = true;

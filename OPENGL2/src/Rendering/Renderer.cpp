@@ -12,6 +12,10 @@
 #include <string>
 #include <cstdlib>
 
+#include "../../imgui/imgui.h"
+#include "../../imgui/imgui_impl_glfw.h"
+#include "../../imgui/imgui_impl_opengl3.h"
+
 //#include <glfw3.h>
 //#include "VertexArray.h"
 //#include "Shader.h"
@@ -36,6 +40,14 @@ Renderer::Renderer( GLFWwindow* window, int windowWidth, int windowHeight)
 	 _orthographicMatrix= glm::ortho(-1.0f, 1.0f , -1.0f * 1.f/aspect, 1.0f * 1.f/aspect);
 	 _perspectiveMatrix =  glm::perspective(glm::radians(45.0f), aspect, 0.1f, 100.0f);
 	 _window = window;
+	 ImGui::CreateContext();
+	 ImGui::StyleColorsDark();
+
+	 ImGui_ImplGlfw_InitForOpenGL(window, true);
+
+	 const char* glsl_version = "#version 130";
+	 ImGui_ImplOpenGL3_Init(glsl_version);
+	 ImGui::StyleColorsDark();
 }
 
 Renderer::~Renderer()
@@ -55,7 +67,8 @@ Renderer::~Renderer()
 	glDeleteTextures(2, colorBuffers);
 	glDeleteTextures(2, pingpongBuffer);
 	glDeleteTextures(1, &depthCubemap);
-	
+	ImGui_ImplGlfw_Shutdown();
+	ImGui::DestroyContext();
 
 	delete _sun;
 }
@@ -234,7 +247,32 @@ void Renderer::DrawPlanets(float deltaTime)
 
 void Renderer::Draw()
 {
+	float timeAppStart = (float)glfwGetTime();
+	float deltaTime = (timeAppStart - lastFrameTimeStart) / 1000.0f;
+	lastFrameTimeStart = timeAppStart;
+	deltaTime = 0.001f;
+	float speed = 100;
+	auto posBlackHole = _blackHole->GetPosition();
 	
+	if (glfwGetKey(_window, GLFW_KEY_LEFT) == GLFW_PRESS)
+	{
+		posBlackHole = posBlackHole + glm::vec3(-speed,0,0)* deltaTime;
+	}
+	if (glfwGetKey(_window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+	{
+		posBlackHole = posBlackHole + glm::vec3(speed, 0, 0) * deltaTime;
+	}
+	if (glfwGetKey(_window, GLFW_KEY_UP) == GLFW_PRESS)
+	{
+		posBlackHole = posBlackHole + glm::vec3(0, speed, 0) * deltaTime;
+	}
+	if (glfwGetKey(_window, GLFW_KEY_DOWN) == GLFW_PRESS)
+	{
+		posBlackHole = posBlackHole + glm::vec3(0, -speed, 0) * deltaTime;
+	}
+	_blackHole->SetPosition(posBlackHole);
+	
+
 	DrawShadows();
 
 	GLCall(glViewport(0, 0, _windowWidth, _windowHeight));
@@ -245,10 +283,7 @@ void Renderer::Draw()
 	GLCall(glEnable(GL_DEPTH_TEST));
 	GLCall(glClearColor(135.f/225.f, 128 / 225.f, 126 / 225.f,1.0f));
 	GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
-	float timeAppStart = (float)glfwGetTime();
-	float deltaTime = (timeAppStart - lastFrameTimeStart) / 1000.0f;
-	lastFrameTimeStart = timeAppStart;
-	deltaTime = 0.001f;
+	
 	static int a =0;
 	_camera.Update();
 	
@@ -286,13 +321,15 @@ void Renderer::Draw()
 
 	//DrawSun(timeAppStart, deltaTime);
 
-	_blackHoleShader->Bind();
-	_blackHoleShader->SetFloatUniform("radius", _blackHole->GetScale().x);
 
 
+	//_blackHoleShader->Bind();
+	//_blackHoleShader->SetFloatUniform("radius", _blackHole->GetScale().x);
+	//
+	//
 	auto distance = _blackHole->GetPosition() - _camera.GetPosition();
-	_blackHoleShader->SetVectorUniform("dist", distance);
-	_blackHole->Draw(*_blackHoleShader, view, _perspectiveMatrix);
+	//_blackHoleShader->SetVectorUniform("dist", distance);
+	//_blackHole->Draw(*_blackHoleShader, view, _perspectiveMatrix);
 	
 	
 	_basicShader->Bind();
@@ -303,12 +340,12 @@ void Renderer::Draw()
 	glDisable(GL_DEPTH_TEST);
 	GLCall(glClearColor(1.0f, 1.0f, 1.0f, 1.0f));
 	GLCall(glClear(GL_COLOR_BUFFER_BIT));
+	std::cout << glm::length(distance) << "\n";
 	_blackHoleShaderScreen->Bind();
 	_blackHoleShaderScreen->setInt("scene",0);
 	_blackHoleShaderScreen->SetFloatUniform("radius", _blackHole->GetScale().x);
 	_blackHoleShaderScreen->SetFloatUniform("dist", glm::length(distance));
-	std::cout << glm::length(distance) << "\n";
-	glm::vec4 screenSpace = _perspectiveMatrix * view * _blackHole->_worldMat * glm::vec4(_blackHole->GetPosition(),1);
+	glm::vec4 screenSpace = _perspectiveMatrix * view * glm::vec4(_blackHole->GetPosition(),1);
 	screenSpace /= screenSpace.w;
 	//std::cout << screenSpace.x << " " << screenSpace.y << "\n";
 	auto s_x = (screenSpace.x + 1.f) / 2.f;
@@ -365,6 +402,41 @@ void Renderer::Draw()
 	glBindTexture(GL_TEXTURE_2D, pingpongBuffer[!horizontal]);
 	screenQuad.Bind();
 	glDrawElements(GL_TRIANGLES, screenQuad.GetNumIndices(), GL_UNSIGNED_INT, 0);
+
+
+
+	//// imgui
+
+	//ImGui_ImplOpenGL3_NewFrame();
+	//ImGui_ImplGlfw_NewFrame();
+	//ImGui::NewFrame();
+
+	//static float f = 0.0f;
+	//static int counter = 0;
+
+	//bool show_demo_window = true;
+	//bool show_another_window = true;
+	//ImVec4 blackHolePosImGui = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+	//ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
+
+	//ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
+
+
+
+	//ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
+	//ImGui::ColorEdit3("Black Hole position", (float*)&blackHolePosImGui); // Edit 3 floats representing a color
+
+
+	//ImGui::SameLine();
+
+
+	//ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+	//ImGui::End();
+
+	//ImGui::Render();
+	//ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+
 	
 }
 const unsigned int SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;

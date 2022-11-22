@@ -12,10 +12,11 @@
 #include "../Entity/Sphere.h"
 #include "../Entity/Camera.h"
 
+struct GLFWwindow;
 class Renderer
 {
 public:
-	Renderer(class GLFWwindow* window,int windowWidth, int windowHeight);
+	Renderer( GLFWwindow* window,int windowWidth, int windowHeight);
 	~Renderer();
 	void SetUpFrameBuffer();
 	void DrawModel(float deltaTime);
@@ -27,7 +28,7 @@ public:
 	void SetUpShadowBuffer();
 	void Init();
 	void LoadSolarSystem();
-	class GLFWwindow* GetWindow() { return _window; }
+	GLFWwindow* GetWindow() { return _window; }
 	glm::mat4 GetPerspectiveMatrix()const { return _perspectiveMatrix; }
 	glm::mat4 GetOrthographicMatrix()const { return _orthographicMatrix; }
 	Camera& GetCamera() { return  _camera; }
@@ -66,7 +67,7 @@ private:
 	class Sphere* _blackHole;
 	glm::mat4 _perspectiveMatrix;
 	glm::mat4 _orthographicMatrix;
-	class GLFWwindow* _window;
+	GLFWwindow* _window;
 	Camera _camera;
 	float lastFrameTimeStart;
 	std::random_device rand;

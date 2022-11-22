@@ -100,7 +100,7 @@ void main()
     outColor = texture(scene, offset);
     if (rad*dist <radius)
     {
-        outColor = vec4(1,0,0,1);
+        outColor = vec4(1,1,1,1);
     }
     //outColor =  vec4(offset,0,1);
 
