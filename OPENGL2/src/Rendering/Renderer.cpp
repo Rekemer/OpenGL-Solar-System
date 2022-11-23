@@ -319,7 +319,7 @@ void Renderer::Draw()
 	//PrintVec(transforms[0]->GetPosition());
 
 
-	//DrawSun(timeAppStart, deltaTime);
+	DrawSun(timeAppStart, deltaTime);
 
 
 
@@ -336,29 +336,29 @@ void Renderer::Draw()
 	DrawPlanets(deltaTime);
 
 	// black hole effect
-	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, blackFBO));
-	glDisable(GL_DEPTH_TEST);
-	GLCall(glClearColor(1.0f, 1.0f, 1.0f, 1.0f));
-	GLCall(glClear(GL_COLOR_BUFFER_BIT));
-	std::cout << glm::length(distance) << "\n";
-	_blackHoleShaderScreen->Bind();
-	_blackHoleShaderScreen->setInt("scene",0);
-	_blackHoleShaderScreen->SetFloatUniform("radius", _blackHole->GetScale().x);
-	_blackHoleShaderScreen->SetFloatUniform("dist", glm::length(distance));
-	glm::vec4 screenSpace = _perspectiveMatrix * view * glm::vec4(_blackHole->GetPosition(),1);
-	screenSpace /= screenSpace.w;
-	//std::cout << screenSpace.x << " " << screenSpace.y << "\n";
-	auto s_x = (screenSpace.x + 1.f) / 2.f;
-	auto s_y = (screenSpace.y + 1.f) / 2.f;
-	//std::cout << s_x  << " " << s_y << "\n";
-	glm::vec2 screenSpaceCoords = (glm::vec2(screenSpace) + glm::vec2{ 1.f,1.f }) / 2.f;
-	//std::cout << screenSpaceCoords.x << " " << screenSpaceCoords.y << "\n";
-	
-	_blackHoleShaderScreen->SetVectorUniform("pos", glm::vec3{ s_x,s_y,0 });
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, colorBuffers[0]);
-	screenQuad.Bind();
-	glDrawElements(GL_TRIANGLES, screenQuad.GetNumIndices(), GL_UNSIGNED_INT, 0);
+	//GLCall(glBindFramebuffer(GL_FRAMEBUFFER, blackFBO));
+	//glDisable(GL_DEPTH_TEST);
+	//GLCall(glClearColor(1.0f, 1.0f, 1.0f, 1.0f));
+	//GLCall(glClear(GL_COLOR_BUFFER_BIT));
+	//std::cout << glm::length(distance) << "\n";
+	//_blackHoleShaderScreen->Bind();
+	//_blackHoleShaderScreen->setInt("scene",0);
+	//_blackHoleShaderScreen->SetFloatUniform("radius", _blackHole->GetScale().x);
+	//_blackHoleShaderScreen->SetFloatUniform("dist", glm::length(distance));
+	//glm::vec4 screenSpace = _perspectiveMatrix * view * glm::vec4(_blackHole->GetPosition(),1);
+	//screenSpace /= screenSpace.w;
+	////std::cout << screenSpace.x << " " << screenSpace.y << "\n";
+	//auto s_x = (screenSpace.x + 1.f) / 2.f;
+	//auto s_y = (screenSpace.y + 1.f) / 2.f;
+	////std::cout << s_x  << " " << s_y << "\n";
+	//glm::vec2 screenSpaceCoords = (glm::vec2(screenSpace) + glm::vec2{ 1.f,1.f }) / 2.f;
+	////std::cout << screenSpaceCoords.x << " " << screenSpaceCoords.y << "\n";
+	//
+	//_blackHoleShaderScreen->SetVectorUniform("pos", glm::vec3{ s_x,s_y,0 });
+	//glActiveTexture(GL_TEXTURE0);
+	//glBindTexture(GL_TEXTURE_2D, colorBuffers[0]);
+	//screenQuad.Bind();
+	//glDrawElements(GL_TRIANGLES, screenQuad.GetNumIndices(), GL_UNSIGNED_INT, 0);
 
 	//
 
@@ -395,9 +395,23 @@ void Renderer::Draw()
 	_screenShader->setInt("scene", 0);
 	_screenShader->setInt("bloomBlur", 1);
 	_screenShader->SetFloatUniform("exposure", 1.0);
+
+	_screenShader->SetFloatUniform("radius", _blackHole->GetScale().x);
+	_screenShader->SetFloatUniform("dist", glm::length(distance));
+	glm::vec4 screenSpace = _perspectiveMatrix * view * glm::vec4(_blackHole->GetPosition(), 1);
+	screenSpace /= screenSpace.w;
+	//std::cout << screenSpace.x << " " << screenSpace.y << "\n";
+	auto s_x = (screenSpace.x + 1.f) / 2.f;
+	auto s_y = (screenSpace.y + 1.f) / 2.f;
+	
+	glm::vec2 screenSpaceCoords = (glm::vec2(screenSpace) + glm::vec2{ 1.f,1.f }) / 2.f;
+	
+
+	_screenShader->SetVectorUniform("pos", glm::vec3{ s_x,s_y,0 });
+
 	 // back to defaul)t
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, blackBuffer);
+	glBindTexture(GL_TEXTURE_2D, colorBuffers[0]);
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, pingpongBuffer[!horizontal]);
 	screenQuad.Bind();

@@ -86,6 +86,7 @@ in vec3 fragPos;
 
 
 uniform sampler2D scene;
+uniform sampler2D blur;
 void main()
 {
     vec2 offset = diffuseTexCoords-vec2(pos);
@@ -97,7 +98,7 @@ void main()
     offset += vec2(pos);
     //outColor = vec4(1,0,0,1);
     //fragPos
-    outColor = texture(scene, offset);
+    outColor = texture(scene, offset) +texture(blur, offset) ;
     if (rad*dist <radius)
     {
         outColor = vec4(1,1,1,1);
