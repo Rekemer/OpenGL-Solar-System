@@ -16,7 +16,7 @@ struct GLFWwindow;
 class Renderer
 {
 public:
-	Renderer( GLFWwindow* window,int windowWidth, int windowHeight);
+	Renderer( GLFWwindow* window1, GLFWwindow* window2,int windowWidth, int windowHeight);
 	~Renderer();
 	void SetUpFrameBuffer();
 	void DrawModel(float deltaTime);
@@ -28,7 +28,7 @@ public:
 	void SetUpShadowBuffer();
 	void Init();
 	void LoadSolarSystem();
-	GLFWwindow* GetWindow() { return _window; }
+	GLFWwindow* GetWindow() { return _window1; }
 	glm::mat4 GetPerspectiveMatrix()const { return _perspectiveMatrix; }
 	glm::mat4 GetOrthographicMatrix()const { return _orthographicMatrix; }
 	Camera& GetCamera() { return  _camera; }
@@ -55,8 +55,13 @@ private:
 	unsigned int pingpongBuffer[2];
 	unsigned int blackFBO;
 	unsigned int blackBuffer;
+	unsigned int cubeVBO, cubeVAO;
 	class std::vector<Entity*> transforms;
 	std::vector< glm::vec3> lightPos;
+
+	glm::vec3 colorSun{1,1,1};
+	glm::vec3 cellColor{ 285 / 256.0f,285 / 256.0f,285 / 2256.056f };
+
 
 	std::vector<Model*> models;
 	std::vector<Sphere*> spheres;
@@ -67,7 +72,9 @@ private:
 	class Sphere* _blackHole;
 	glm::mat4 _perspectiveMatrix;
 	glm::mat4 _orthographicMatrix;
-	GLFWwindow* _window;
+	GLFWwindow* _window1;
+	GLFWwindow* _window2;
+	bool lastFrame, currentFrame;
 	Camera _camera;
 	float lastFrameTimeStart;
 	std::random_device rand;
@@ -84,5 +91,6 @@ private:
 	Shader* _blurShader;
 	Shader* _blackHoleShader;
 	Shader* _blackHoleShaderScreen;
+	Shader* _cubeShader;
 };
 

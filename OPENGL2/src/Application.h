@@ -11,7 +11,8 @@ public:
 	bool Init();
 private:
 
-	GLFWwindow* _window;
+	GLFWwindow* _window1;
+	GLFWwindow* _window2;
 	int _windowHeight;
 	int _windowWidth;
 	class Input* _input;

@@ -16,6 +16,7 @@ public:
 	glm::mat4 GetViewMatrix() { return _view; }
 	void UpdateViewMatrix();
 	glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+	bool isCursorHoveringWindow;
 private:
 
 protected:
@@ -29,6 +30,5 @@ protected:
 	float pitch = 0.f; // up and down axis
 	float _lastX;
 	float _lastY;
-	bool isCursorHoveringWindow;
 };
 

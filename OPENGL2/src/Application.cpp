@@ -25,11 +25,10 @@ Application::~Application()
 
 void Application::Run()
 {
-    while (!glfwWindowShouldClose(_window))
+    while (!glfwWindowShouldClose(_window1))
     {
         _renderer->Draw();
         glfwPollEvents();
-        glfwSwapBuffers(_window);
     }
 	
 	
@@ -49,8 +48,9 @@ bool Application::Init()
     /* Create a windowed mode window and its OpenGL context */
     if (!glfwInit())
         return -1;
-    _window = glfwCreateWindow(_windowWidth, _windowHeight, "OPENGL", NULL, NULL);
-    if (!_window)
+    _window1 = glfwCreateWindow(_windowWidth, _windowHeight, "OPENGL", NULL, NULL);
+    _window2 = glfwCreateWindow(_windowWidth/2, _windowHeight/2, "OPENGL Parametrs", NULL, NULL);
+    if (!_window1 || !_window2)
     {
         glfwTerminate();
         return -1;
@@ -59,9 +59,10 @@ bool Application::Init()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     /* Make the window's context current */
-    glfwMakeContextCurrent(_window);
+    glfwMakeContextCurrent(_window1);
     glfwSwapInterval(0);
-    glfwSetKeyCallback(_window, ProcessInput);
+    glfwSetKeyCallback(_window1, ProcessInput);
+    glfwSetKeyCallback(_window2, ProcessInput);
   //  glfwSetInputMode(_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 
     // Initialize GLEW
@@ -78,7 +79,7 @@ bool Application::Init()
   
 
 
-    _renderer = new Renderer(_window,_windowWidth, _windowHeight);
+    _renderer = new Renderer(_window1,_window2,_windowWidth, _windowHeight);
     _input = new Input();
     _renderer->Init();
 

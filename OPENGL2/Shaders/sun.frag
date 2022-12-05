@@ -76,6 +76,8 @@ in vec3 normal;
 in vec3 lightPosition;
 in vec3 fragPos;
 
+uniform vec3 colorSun;
+uniform vec3 cellColor;
 
 
 
@@ -91,9 +93,9 @@ vec4 voronoi(vec2 texCoord)
    vec4 result;
    vec2 i_st = floor(texCoord);
    vec2 f_st = fract(texCoord);
-    vec4 cellColor = vec4(224/256f,180/256f,20/256f,1);
-  vec4 cellColor2 = vec4(235/256f,121/256f,21/256f,1);
-  vec4 cellColor3 = vec4(285/256f,285/256f,285/256f,1);
+   // vec4 cellColor = vec4(224/256f,180/256f,20/256f,1);
+  //vec4 cellColor2 = vec4(235/256f,121/256f,21/256f,1);
+  //vec4 cellColor3 = vec4(285/256f,285/256f,285/256f,1);
    float m_dist = 1.;
   
     for (int y= -1; y <= 1; y++) 
@@ -124,8 +126,9 @@ vec4 voronoi(vec2 texCoord)
 
     }
 
-  
-   result = vec4(m_dist,m_dist,m_dist,1) +cellColor3 ;
+   
+   result = vec4(1-m_dist,1-m_dist,1-m_dist,1) *vec4(cellColor,0) + vec4(colorSun,0);
+
    //result = vec4(i_st,0,1);
    return result;
 }
@@ -165,7 +168,7 @@ void main()
  vec4 color1 = texture(material.texture_diffuse2,diffuseTexCoords);
  color1 = (color1*2 - 1) * sin(time)/100;
 
- vec4 color2 = texture(material.texture_diffuse1,diffuseTexCoords+color1.xy);
+ vec4 color2 = texture(material.texture_diffuse1,diffuseTexCoords+color1.xy) * vec4(colorSun,1);
  outColor =  color2;
  outColor *= (voronoi(texCoord));
 

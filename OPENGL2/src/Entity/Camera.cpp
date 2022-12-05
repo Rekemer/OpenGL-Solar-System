@@ -19,7 +19,7 @@ void Camera::Update()
     float currentFrame = glfwGetTime();
     float deltaTime = currentFrame - lastFrame;
     lastFrame = currentFrame;
-    UpdateCursor();
+   // UpdateCursor();
     ProcessKeyboardInput(deltaTime);
     ProcessMouseInput();
     UpdateViewMatrix();
@@ -50,7 +50,7 @@ void Camera::ProcessMouseInput()
 {
 
 
-   // if (!isCursorHoveringWindow) return;
+    if (!isCursorHoveringWindow) return;
     if (firstMouse )
     {
         GLdouble currentXPos, currentYPos;

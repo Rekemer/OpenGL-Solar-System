@@ -32,18 +32,19 @@
  std::string releasePath = "";
 #endif // RELEASE
 
-Renderer::Renderer( GLFWwindow* window, int windowWidth, int windowHeight)
+Renderer::Renderer(GLFWwindow* window1, GLFWwindow* window2, int windowWidth, int windowHeight)
 {
 	_windowHeight = windowHeight;
 	_windowWidth = windowWidth;
 	auto aspect = (float)windowWidth / (float)windowHeight;
 	 _orthographicMatrix= glm::ortho(-1.0f, 1.0f , -1.0f * 1.f/aspect, 1.0f * 1.f/aspect);
 	 _perspectiveMatrix =  glm::perspective(glm::radians(45.0f), aspect, 0.1f, 100.0f);
-	 _window = window;
+	 _window1 = window1;
+	 _window2 = window2;
 	 ImGui::CreateContext();
 	 ImGui::StyleColorsDark();
 
-	 ImGui_ImplGlfw_InitForOpenGL(window, true);
+	 ImGui_ImplGlfw_InitForOpenGL(_window2, true);
 
 	 const char* glsl_version = "#version 130";
 	 ImGui_ImplOpenGL3_Init(glsl_version);
@@ -183,6 +184,8 @@ void Renderer::DrawSun(float timeAppStart, float deltaTime)
 	_sunShader->SetVectorUniform("cameraPos", _camera.GetPosition());
 
 	_sunShader->SetFloatUniform("time", timeAppStart);
+	_sunShader->SetVectorUniform("colorSun", colorSun);
+	_sunShader->SetVectorUniform("cellColor", cellColor);
 	//glActiveTexture(GL_TEXTURE2);
 	//glBindTexture(GL_TEXTURE_2D, 0);
 	//
@@ -244,9 +247,11 @@ void Renderer::DrawPlanets(float deltaTime)
 		sphere->Draw(*_basicShader, view, _perspectiveMatrix);
 	}
 }
-
+float exposure = 1;
 void Renderer::Draw()
 {
+	glfwMakeContextCurrent(_window1);
+	glClear(GL_COLOR_BUFFER_BIT);
 	float timeAppStart = (float)glfwGetTime();
 	float deltaTime = (timeAppStart - lastFrameTimeStart) / 1000.0f;
 	lastFrameTimeStart = timeAppStart;
@@ -254,19 +259,19 @@ void Renderer::Draw()
 	float speed = 100;
 	auto posBlackHole = _blackHole->GetPosition();
 	
-	if (glfwGetKey(_window, GLFW_KEY_LEFT) == GLFW_PRESS)
+	if (glfwGetKey(_window1, GLFW_KEY_LEFT) == GLFW_PRESS)
 	{
 		posBlackHole = posBlackHole + glm::vec3(-speed,0,0)* deltaTime;
 	}
-	if (glfwGetKey(_window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+	if (glfwGetKey(_window1, GLFW_KEY_RIGHT) == GLFW_PRESS)
 	{
 		posBlackHole = posBlackHole + glm::vec3(speed, 0, 0) * deltaTime;
 	}
-	if (glfwGetKey(_window, GLFW_KEY_UP) == GLFW_PRESS)
+	if (glfwGetKey(_window1, GLFW_KEY_UP) == GLFW_PRESS)
 	{
 		posBlackHole = posBlackHole + glm::vec3(0, speed, 0) * deltaTime;
 	}
-	if (glfwGetKey(_window, GLFW_KEY_DOWN) == GLFW_PRESS)
+	if (glfwGetKey(_window1, GLFW_KEY_DOWN) == GLFW_PRESS)
 	{
 		posBlackHole = posBlackHole + glm::vec3(0, -speed, 0) * deltaTime;
 	}
@@ -306,13 +311,20 @@ void Renderer::Draw()
 		_skybox->SetPosition(_camera.GetPosition());
 		_skybox->Draw(*_skyBoxShader, view, _perspectiveMatrix);
 	}
-
+	auto ident = glm::mat4(1);
+	auto trans = glm::translate(ident, glm::vec3{ 0,0,7 });
+	trans = glm::scale(trans, glm::vec3{ 2,2,2 });
+	_cubeShader->Bind();
+	_cubeShader->SetMatrixUniform("worldMatrix", trans);
+	_cubeShader->SetMatrixUniform("projMatrix", _perspectiveMatrix);
+	// camera/view transformation
+	_cubeShader->SetMatrixUniform("viewMatrix", view);
+	glBindVertexArray(cubeVAO);
+	glDrawArrays(GL_TRIANGLES, 0, 36);
 	  
 
 	_instanceShader->Bind();
 	DrawModel(deltaTime);
-
-
 
 	
 
@@ -394,7 +406,7 @@ void Renderer::Draw()
 	_screenShader->Bind();
 	_screenShader->setInt("scene", 0);
 	_screenShader->setInt("bloomBlur", 1);
-	_screenShader->SetFloatUniform("exposure", 1.0);
+	_screenShader->SetFloatUniform("exposure", exposure);
 
 	_screenShader->SetFloatUniform("radius", _blackHole->GetScale().x);
 	_screenShader->SetFloatUniform("dist", glm::length(distance));
@@ -408,6 +420,15 @@ void Renderer::Draw()
 	
 
 	_screenShader->SetVectorUniform("pos", glm::vec3{ s_x,s_y,0 });
+	if (glfwGetKey(_window1, GLFW_KEY_H)) {
+		currentFrame = true;
+		if (currentFrame && !lastFrame) {
+			_camera.isCursorHoveringWindow = !_camera.isCursorHoveringWindow;
+		}
+		
+	}
+	else currentFrame = false;
+	lastFrame = currentFrame;
 
 	 // back to defaul)t
 	glActiveTexture(GL_TEXTURE0);
@@ -417,39 +438,36 @@ void Renderer::Draw()
 	screenQuad.Bind();
 	glDrawElements(GL_TRIANGLES, screenQuad.GetNumIndices(), GL_UNSIGNED_INT, 0);
 
-
+	glfwSwapBuffers(_window1);
 
 	//// imgui
+	glfwMakeContextCurrent(_window2);
+	/* Render here */
+	glClear(GL_COLOR_BUFFER_BIT);
+	/* Swap front and back buffers */
+	
+	ImGui_ImplOpenGL3_NewFrame();
+	ImGui_ImplGlfw_NewFrame();
+	ImGui::NewFrame();
 
-	//ImGui_ImplOpenGL3_NewFrame();
-	//ImGui_ImplGlfw_NewFrame();
-	//ImGui::NewFrame();
+	static float f = 0.0f;
+	static int counter = 0;
 
-	//static float f = 0.0f;
-	//static int counter = 0;
-
-	//bool show_demo_window = true;
-	//bool show_another_window = true;
-	//ImVec4 blackHolePosImGui = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-	//ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
-
-	//ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
-
-
-
-	//ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
-	//ImGui::ColorEdit3("Black Hole position", (float*)&blackHolePosImGui); // Edit 3 floats representing a color
+	bool show_demo_window = true;
+	bool show_another_window = true;
+	
+	ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
 
 
-	//ImGui::SameLine();
-
-
-	//ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-	//ImGui::End();
-
-	//ImGui::Render();
-	//ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
+	ImGui::SliderFloat("exposure", &exposure, 0.0f, 10.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
+	ImGui::SliderFloat3("colorSun", &colorSun[0], 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
+	ImGui::SliderFloat3("cellSunColor",&cellColor[0], 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
+	ImGui::Checkbox("isHover",&_camera.isCursorHoveringWindow);            // Edit 1 float using a slider from 0.0f to 1.0f
+	
+	ImGui::End();
+	ImGui::Render();
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+	glfwSwapBuffers(_window2);
 
 	
 }
@@ -614,7 +632,7 @@ void Renderer::Init()
 
 
 	//camera
-	_camera.Init(_window);
+	_camera.Init(_window1);
 	_camera.SetPosition(glm::vec3(0.f, 10.f,-25.f));
 
 
@@ -629,7 +647,7 @@ void Renderer::Init()
 	_blurShader = new Shader(releasePath+"Shaders/blur.vert", releasePath+"Shaders/blur.frag");
 	_blackHoleShader = new Shader(releasePath+"Shaders/black_hole.vert", releasePath+"Shaders/black_hole.frag");
 	_blackHoleShaderScreen = new Shader(releasePath+"Shaders/black_hole_screen.vert", releasePath+"Shaders/black_hole_screen.frag");
-
+	_cubeShader = new Shader(releasePath + "Shaders/cube.vert", releasePath + "Shaders/cube.frag");
 	LoadSolarSystem();
 
 	SetUpShadowBuffer();
@@ -650,6 +668,59 @@ void Renderer::LoadSolarSystem()
 	// Saturn
 	// Uranus
 	//Neptune
+	float cubeVertices[] = {
+	   -0.5f, -0.5f, -0.5f,
+		0.5f, -0.5f, -0.5f,
+		0.5f,  0.5f, -0.5f,
+		0.5f,  0.5f, -0.5f,
+	   -0.5f,  0.5f, -0.5f,
+	   -0.5f, -0.5f, -0.5f,
+
+	   -0.5f, -0.5f,  0.5f,
+		0.5f, -0.5f,  0.5f,
+		0.5f,  0.5f,  0.5f,
+		0.5f,  0.5f,  0.5f,
+	   -0.5f,  0.5f,  0.5f,
+	   -0.5f, -0.5f,  0.5f,
+
+	   -0.5f,  0.5f,  0.5f,
+	   -0.5f,  0.5f, -0.5f,
+	   -0.5f, -0.5f, -0.5f,
+	   -0.5f, -0.5f, -0.5f,
+	   -0.5f, -0.5f,  0.5f,
+	   -0.5f,  0.5f,  0.5f,
+
+		0.5f,  0.5f,  0.5f,
+		0.5f,  0.5f, -0.5f,
+		0.5f, -0.5f, -0.5f,
+		0.5f, -0.5f, -0.5f,
+		0.5f, -0.5f,  0.5f,
+		0.5f,  0.5f,  0.5f,
+
+	   -0.5f, -0.5f, -0.5f,
+		0.5f, -0.5f, -0.5f,
+		0.5f, -0.5f,  0.5f,
+		0.5f, -0.5f,  0.5f,
+	   -0.5f, -0.5f,  0.5f,
+	   -0.5f, -0.5f, -0.5f,
+
+	   -0.5f,  0.5f, -0.5f,
+		0.5f,  0.5f, -0.5f,
+		0.5f,  0.5f,  0.5f,
+		0.5f,  0.5f,  0.5f,
+	   -0.5f,  0.5f,  0.5f,
+	   -0.5f,  0.5f, -0.5f,
+	};
+
+	glGenVertexArrays(1, &cubeVAO);
+	glBindVertexArray(cubeVAO);
+	glGenBuffers(1, &cubeVBO);
+
+	glBindBuffer(GL_ARRAY_BUFFER, cubeVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), cubeVertices, GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+
 
 	_blackHole = new Sphere(48 * 2, this);
 	_blackHole->SetPosition(4, 0, 0);
