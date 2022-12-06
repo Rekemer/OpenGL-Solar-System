@@ -61,6 +61,11 @@ private:
 
 	glm::vec3 colorSun{1,1,1};
 	glm::vec3 cellColor{ 285 / 256.0f,285 / 256.0f,285 / 2256.056f };
+	glm::vec3 ambientLightPlanet{ 0.2f, 0.2f, 0.2f };
+	glm::vec3 diffuseLightPlanet{ 0.6f, 0.6f, 0.6f };
+	float constantLightParam = 1;
+	float linearLightParam = 0.014f;
+	float quadraticLightParam =0.007f;
 
 
 	std::vector<Model*> models;

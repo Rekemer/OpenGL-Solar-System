@@ -93,9 +93,6 @@ vec4 voronoi(vec2 texCoord)
    vec4 result;
    vec2 i_st = floor(texCoord);
    vec2 f_st = fract(texCoord);
-   // vec4 cellColor = vec4(224/256f,180/256f,20/256f,1);
-  //vec4 cellColor2 = vec4(235/256f,121/256f,21/256f,1);
-  //vec4 cellColor3 = vec4(285/256f,285/256f,285/256f,1);
    float m_dist = 1.;
   
     for (int y= -1; y <= 1; y++) 
@@ -159,8 +156,8 @@ void main()
    vec2 texCoord = vec2(diffuseTexCoords.x,diffuseTexCoords.y) *30 ;
    
    
-  vec4 cellColor = vec4(224/256f,180/256f,20/256f,1);
-  vec4 cellColor2 = vec4(235/256f,121/256f,21/256f,1);
+  vec4 cellColor = vec4(224/256.0f,180/256.0f,20/256.0f,1);
+  vec4 cellColor2 = vec4(235/256.0f,121/256.0f,21/256.0f,1);
 
  
  vec2 tex;

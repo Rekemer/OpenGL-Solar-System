@@ -16,14 +16,6 @@
 #include "../../imgui/imgui_impl_glfw.h"
 #include "../../imgui/imgui_impl_opengl3.h"
 
-//#include <glfw3.h>
-//#include "VertexArray.h"
-//#include "Shader.h"
-//#include "../Entity/Mesh.h"
-//#include "../TextureDefault.h"
-//#include "../Entity/Camera.h"
-//#include "../Entity/Model.h"
-//#include "../Entity/Sphere.h"
 
 #ifdef RELEASE
  std::string releasePath = "../../../OPENGL2/";
@@ -142,7 +134,6 @@ void Renderer::DrawModel(float deltaTime)
 	_instanceShader->SetVectorUniform("cameraPos", _camera.GetPosition());
 
 	_instanceShader->SetVectorUniform("pointLights[0].position", lightPos[0]);
-	_instanceShader->SetVectorUniform("pointLights[0].ambient", 0.3f, 0.3f, 0.3f);
 	_instanceShader->SetVectorUniform("pointLights[0].diffuse", 0.6f, 0.6f, 0.6f);
 	_instanceShader->SetVectorUniform("pointLights[0].specular", 0.0f, 0.0f, 0.0f);
 	_instanceShader->SetFloatUniform("pointLights[0].constant", 1.0f);
@@ -150,7 +141,7 @@ void Renderer::DrawModel(float deltaTime)
 	_instanceShader->SetFloatUniform("pointLights[0].quadratic", 0.007f);
 
 	_instanceShader->SetVectorUniform("pointLights[1].position", lightPos[1]);
-	_instanceShader->SetVectorUniform("pointLights[1].ambient", 0.0f, 0.0f, 0.0f);
+	_instanceShader->SetVectorUniform("pointLights[1].ambient", 0.3f, 0.3f, 0.3f);
 	_instanceShader->SetVectorUniform("pointLights[1].diffuse", 0.6f, 0.6f, 0.6f);
 	_instanceShader->SetVectorUniform("pointLights[1].specular", 0.0f, 0.0f, 0.0f);
 	_instanceShader->SetFloatUniform("pointLights[1].constant", 1.0f);
@@ -158,7 +149,7 @@ void Renderer::DrawModel(float deltaTime)
 	_instanceShader->SetFloatUniform("pointLights[1].quadratic", 0.007f);
 
 	_instanceShader->SetVectorUniform("pointLights[2].position", lightPos[2]);
-	_instanceShader->SetVectorUniform("pointLights[2].ambient", 0.0f, 0.0f, 0.0f);
+	_instanceShader->SetVectorUniform("pointLights[2].ambient", 0.3f, 0.3f, 0.3f);
 	_instanceShader->SetVectorUniform("pointLights[2].diffuse", 0.6f, 0.6f, 0.6f);
 	_instanceShader->SetVectorUniform("pointLights[2].specular", 0.0f, 0.0f, 0.0f);
 	_instanceShader->SetFloatUniform("pointLights[2].constant", 1.0f);
@@ -186,10 +177,7 @@ void Renderer::DrawSun(float timeAppStart, float deltaTime)
 	_sunShader->SetFloatUniform("time", timeAppStart);
 	_sunShader->SetVectorUniform("colorSun", colorSun);
 	_sunShader->SetVectorUniform("cellColor", cellColor);
-	//glActiveTexture(GL_TEXTURE2);
-	//glBindTexture(GL_TEXTURE_2D, 0);
-	//
-	//_sunShader->setInt("material.texture_diffuse1", 2);
+
 
 	_sun->Update(deltaTime);
 	auto view = _camera.GetViewMatrix();
@@ -212,33 +200,33 @@ void Renderer::DrawPlanets(float deltaTime)
 	_basicShader->SetVectorUniform("cameraPos", _camera.GetPosition());
 
 	_basicShader->SetVectorUniform("pointLights[0].position", lightPos[0]);
-	_basicShader->SetVectorUniform("pointLights[0].ambient", 0.2f, 0.2f, 0.2f);
-	_basicShader->SetVectorUniform("pointLights[0].diffuse", 0.6f, 0.6f, 0.6f);
+	_basicShader->SetVectorUniform("pointLights[0].ambient", ambientLightPlanet);
+	_basicShader->SetVectorUniform("pointLights[0].diffuse", diffuseLightPlanet);
 	_basicShader->SetVectorUniform("pointLights[0].specular", 0.0f, 0.0f, 0.0f);
-	_basicShader->SetFloatUniform("pointLights[0].constant", 1.0f);
-	_basicShader->SetFloatUniform("pointLights[0].linear", 0.014f);
-	_basicShader->SetFloatUniform("pointLights[0].quadratic", 0.007f);
+	_basicShader->SetFloatUniform("pointLights[0].constant", constantLightParam);
+	_basicShader->SetFloatUniform("pointLights[0].linear", linearLightParam);
+	_basicShader->SetFloatUniform("pointLights[0].quadratic", quadraticLightParam);
 
 	_basicShader->SetVectorUniform("pointLights[1].position", lightPos[1]);
-	_basicShader->SetVectorUniform("pointLights[1].ambient", 0.2f, 0.2f, 0.2f);
-	_basicShader->SetVectorUniform("pointLights[1].diffuse", 0.6f, 0.6f, 0.6f);
+	_basicShader->SetVectorUniform("pointLights[1].ambient", ambientLightPlanet);
+	_basicShader->SetVectorUniform("pointLights[1].diffuse", diffuseLightPlanet);
 	_basicShader->SetVectorUniform("pointLights[1].specular", 0.0f, 0.0f, 0.0f);
 	_basicShader->SetFloatUniform("pointLights[1].constant", 1.0f);
-	_basicShader->SetFloatUniform("pointLights[1].linear", 0.014f);
-	_basicShader->SetFloatUniform("pointLights[1].quadratic", 0.007f);
+	_basicShader->SetFloatUniform("pointLights[1].linear", linearLightParam);
+	_basicShader->SetFloatUniform("pointLights[1].quadratic", quadraticLightParam);
 
 	_basicShader->SetVectorUniform("pointLights[2].position", lightPos[2]);
-	_basicShader->SetVectorUniform("pointLights[2].ambient", 0.2f, 0.2f, 0.2f);
-	_basicShader->SetVectorUniform("pointLights[2].diffuse", 0.6f, 0.6f, 0.6f);
+	_basicShader->SetVectorUniform("pointLights[2].ambient", ambientLightPlanet);
+	_basicShader->SetVectorUniform("pointLights[2].diffuse", diffuseLightPlanet);
 	_basicShader->SetVectorUniform("pointLights[2].specular", 0.0f, 0.0f, 0.0f);
-	_basicShader->SetFloatUniform("pointLights[2].constant", 1.0f);
-	_basicShader->SetFloatUniform("pointLights[2].linear", 0.014f);
-	_basicShader->SetFloatUniform("pointLights[2].quadratic", 0.007f);
+	_basicShader->SetFloatUniform("pointLights[2].constant", constantLightParam);
+	_basicShader->SetFloatUniform("pointLights[2].linear", linearLightParam);
+	_basicShader->SetFloatUniform("pointLights[2].quadratic", quadraticLightParam);
 
 	glActiveTexture(GL_TEXTURE8);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, depthCubemap);
 	_basicShader->setInt("depthMap", 8);
-	//_basicShader->SetFloatUniform("time", timeAppStart);
+	
 
 	auto view = _camera.GetViewMatrix();
 	for (auto sphere : spheres)
@@ -304,10 +292,6 @@ void Renderer::Draw()
 		glDisable(GL_CULL_FACE);
 		glCullFace(GL_BACK);
 		_skyBoxShader->Bind();
-		//glActiveTexture(GL_TEXTURE1);
-		//glBindTexture(GL_TEXTURE_2D, 0);
-		//_skyBoxShader->setInt("material.texture_diffuse1", 1);
-
 		_skybox->SetPosition(_camera.GetPosition());
 		_skybox->Draw(*_skyBoxShader, view, _perspectiveMatrix);
 	}
@@ -328,53 +312,18 @@ void Renderer::Draw()
 
 	
 
-	//PrintVec(transforms[0]->GetPosition());
-
 
 	DrawSun(timeAppStart, deltaTime);
 
 
 
-	//_blackHoleShader->Bind();
-	//_blackHoleShader->SetFloatUniform("radius", _blackHole->GetScale().x);
-	//
-	//
+
 	auto distance = _blackHole->GetPosition() - _camera.GetPosition();
-	//_blackHoleShader->SetVectorUniform("dist", distance);
-	//_blackHole->Draw(*_blackHoleShader, view, _perspectiveMatrix);
+	
 	
 	
 	_basicShader->Bind();
 	DrawPlanets(deltaTime);
-
-	// black hole effect
-	//GLCall(glBindFramebuffer(GL_FRAMEBUFFER, blackFBO));
-	//glDisable(GL_DEPTH_TEST);
-	//GLCall(glClearColor(1.0f, 1.0f, 1.0f, 1.0f));
-	//GLCall(glClear(GL_COLOR_BUFFER_BIT));
-	//std::cout << glm::length(distance) << "\n";
-	//_blackHoleShaderScreen->Bind();
-	//_blackHoleShaderScreen->setInt("scene",0);
-	//_blackHoleShaderScreen->SetFloatUniform("radius", _blackHole->GetScale().x);
-	//_blackHoleShaderScreen->SetFloatUniform("dist", glm::length(distance));
-	//glm::vec4 screenSpace = _perspectiveMatrix * view * glm::vec4(_blackHole->GetPosition(),1);
-	//screenSpace /= screenSpace.w;
-	////std::cout << screenSpace.x << " " << screenSpace.y << "\n";
-	//auto s_x = (screenSpace.x + 1.f) / 2.f;
-	//auto s_y = (screenSpace.y + 1.f) / 2.f;
-	////std::cout << s_x  << " " << s_y << "\n";
-	//glm::vec2 screenSpaceCoords = (glm::vec2(screenSpace) + glm::vec2{ 1.f,1.f }) / 2.f;
-	////std::cout << screenSpaceCoords.x << " " << screenSpaceCoords.y << "\n";
-	//
-	//_blackHoleShaderScreen->SetVectorUniform("pos", glm::vec3{ s_x,s_y,0 });
-	//glActiveTexture(GL_TEXTURE0);
-	//glBindTexture(GL_TEXTURE_2D, colorBuffers[0]);
-	//screenQuad.Bind();
-	//glDrawElements(GL_TRIANGLES, screenQuad.GetNumIndices(), GL_UNSIGNED_INT, 0);
-
-	//
-
-
 	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, 0));
 	
 	glDisable(GL_DEPTH_TEST);
@@ -464,6 +413,13 @@ void Renderer::Draw()
 	ImGui::SliderFloat3("cellSunColor",&cellColor[0], 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
 	ImGui::Checkbox("isHover",&_camera.isCursorHoveringWindow);            // Edit 1 float using a slider from 0.0f to 1.0f
 	
+	ImGui::SliderFloat3("ambient light planet",&ambientLightPlanet[0], 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
+	ImGui::SliderFloat3("diffuse light planet",&diffuseLightPlanet[0], 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
+	ImGui::Text("lighting");
+	
+	ImGui::SliderFloat("linearLightParam", &linearLightParam, 0.0f, 1.0f);
+	ImGui::SliderFloat("quadraticLightParam", &quadraticLightParam, 0.0f, 1.0f);
+
 	ImGui::End();
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -668,6 +624,7 @@ void Renderer::LoadSolarSystem()
 	// Saturn
 	// Uranus
 	//Neptune
+
 	float cubeVertices[] = {
 	   -0.5f, -0.5f, -0.5f,
 		0.5f, -0.5f, -0.5f,
@@ -738,9 +695,7 @@ void Renderer::LoadSolarSystem()
 	path = releasePath + "res/Models/Cosmos/Sun/sun.jpg";
 	_sun->SetTexture(path);
 	path = releasePath + "res/Textures/uv_distortion.png";
-//	path = "res/Textures/uv_texture.png";
 	_sun->SetTexture(path);
-	//spheres.emplace_back(_sun);
 	_sun->SetScale(3.5f,3.5f,3.5f);
 	_sun->SetPosition(2, 0, 0);
 

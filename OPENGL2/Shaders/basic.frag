@@ -201,5 +201,5 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
     float shadow = ShadowCalculation(fragPos,light.position);
     vec3 debug = vec3(ShadowDebug(fragPos,light.position));
     vec3 text = textureDebug(fragPos,light.position);
-    return vec3 ( diffuse*(1-shadow));
+    return vec3 ( diffuse*(1-shadow)+ambient);
 } 
