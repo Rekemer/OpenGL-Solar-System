@@ -8,14 +8,19 @@
 #include <iostream>
 
 
-Application::Application(int windowHeight, int windowWidth ) : _isRunning(true),
+
+
+Application::Application(int windowHeight, int windowWidth, bool* mod) : _isRunning(true),
 _windowHeight(windowHeight),
-_windowWidth(windowWidth)
+_windowWidth(windowWidth), mod{mod}
 {
-  
+   
 }
 
-
+void Application::UpdateShaders()
+{
+    _renderer->ReloadShaders();
+}
 Application::~Application()
 {
     delete _renderer;
@@ -27,11 +32,15 @@ void Application::Run()
 {
     while (!glfwWindowShouldClose(_window1))
     {
+        if (*mod) {
+            *mod = false;
+            _renderer->ReloadShaders();
+        }
         _renderer->Draw();
         glfwPollEvents();
     }
 	
-	
+  
 	
 }
 static void ProcessInput(GLFWwindow* window, int key, int scancode, int action, int nods)
@@ -50,6 +59,8 @@ bool Application::Init()
         return -1;
     _window1 = glfwCreateWindow(_windowWidth, _windowHeight, "OPENGL", NULL, NULL);
     _window2 = glfwCreateWindow(_windowWidth/2, _windowHeight/2, "OPENGL Parametrs", NULL, NULL);
+    glfwSetWindowPos(_window1, 10,100);
+    glfwSetWindowPos(_window2, _windowWidth + 100, _windowHeight / 2);
     if (!_window1 || !_window2)
     {
         glfwTerminate();
@@ -82,7 +93,7 @@ bool Application::Init()
     _renderer = new Renderer(_window1,_window2,_windowWidth, _windowHeight);
     _input = new Input();
     _renderer->Init();
-
+    
 	return true;
 }
 

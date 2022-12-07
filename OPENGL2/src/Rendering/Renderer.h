@@ -27,6 +27,8 @@ public:
 	void DrawShadows();
 	void SetUpShadowBuffer();
 	void Init();
+	void ReloadShaders();
+	void DrawImGui();
 	void LoadSolarSystem();
 	GLFWwindow* GetWindow() { return _window1; }
 	glm::mat4 GetPerspectiveMatrix()const { return _perspectiveMatrix; }

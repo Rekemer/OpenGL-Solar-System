@@ -106,13 +106,7 @@ void main()
 //    // phase 2: Point lights
    for(int i = 0; i < NR_POINT_LIGHTS; i++)
      result += CalcPointLight(pointLights[i], norm, fragPos, viewDir);    
-    // result = CalcPointLight(pointLights[0], norm, fragPos, viewDir);    
-//    // phase 3: Spot light
-//    result += CalcSpotLight(spotLight, norm, fragPos, viewDir);
-    //outColor = vec4(result,1.0f);
-   //outColor = texture(material.texture_diffuse1,diffuseTexCoords);
-  // float offsetX =time; 
-  // vec2 texCoord = vec2(diffuseTexCoords.x+offsetX,diffuseTexCoords.y);
+
   
    outColor = vec4(result ,1.0);
   float brightness = dot(outColor.rgb, vec3(0.2126, 0.7152, 0.0722));

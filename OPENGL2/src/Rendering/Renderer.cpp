@@ -17,12 +17,24 @@
 #include "../../imgui/imgui_impl_opengl3.h"
 
 
+#include "efsw.hpp"
+
+ 
+
+
 #ifdef RELEASE
  std::string releasePath = "../../../OPENGL2/";
 #else
 
  std::string releasePath = "";
 #endif // RELEASE
+
+
+
+
+
+
+
 
 Renderer::Renderer(GLFWwindow* window1, GLFWwindow* window2, int windowWidth, int windowHeight)
 {
@@ -45,6 +57,7 @@ Renderer::Renderer(GLFWwindow* window1, GLFWwindow* window2, int windowWidth, in
 
 Renderer::~Renderer()
 {
+	glfwMakeContextCurrent(_window1);
 	delete _basicShader;
 	delete _instanceShader;
 	delete _screenShader;
@@ -349,7 +362,12 @@ void Renderer::Draw()
 			first_iteration = false;
 	}
 	
+	
+
 	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, 0));
+	
+
+
 	GLCall(glClearColor(1.0f, 1.0f, 1.0f, 1.0f));
 	GLCall(glClear(GL_COLOR_BUFFER_BIT));
 	_screenShader->Bind();
@@ -389,46 +407,42 @@ void Renderer::Draw()
 
 	glfwSwapBuffers(_window1);
 
-	//// imgui
-	glfwMakeContextCurrent(_window2);
-	/* Render here */
-	glClear(GL_COLOR_BUFFER_BIT);
-	/* Swap front and back buffers */
 	
-	ImGui_ImplOpenGL3_NewFrame();
-	ImGui_ImplGlfw_NewFrame();
-	ImGui::NewFrame();
-
-	static float f = 0.0f;
-	static int counter = 0;
-
-	bool show_demo_window = true;
-	bool show_another_window = true;
-	
-	ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
-
-
-	ImGui::SliderFloat("exposure", &exposure, 0.0f, 10.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
-	ImGui::SliderFloat3("colorSun", &colorSun[0], 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
-	ImGui::SliderFloat3("cellSunColor",&cellColor[0], 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
-	ImGui::Checkbox("isHover",&_camera.isCursorHoveringWindow);            // Edit 1 float using a slider from 0.0f to 1.0f
-	
-	ImGui::SliderFloat3("ambient light planet",&ambientLightPlanet[0], 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
-	ImGui::SliderFloat3("diffuse light planet",&diffuseLightPlanet[0], 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
-	ImGui::Text("lighting");
-	
-	ImGui::SliderFloat("linearLightParam", &linearLightParam, 0.0f, 1.0f);
-	ImGui::SliderFloat("quadraticLightParam", &quadraticLightParam, 0.0f, 1.0f);
-
-	ImGui::End();
-	ImGui::Render();
-	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-	glfwSwapBuffers(_window2);
-
+	DrawImGui();
 	
 }
 const unsigned int SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
 
+
+void Renderer::ReloadShaders()
+{
+	glfwMakeContextCurrent(_window1);
+	delete _cubeShader;
+	delete _basicShader;
+	delete _instanceShader;
+	delete _screenShader;
+	delete _sunShader;
+	delete _skyBoxShader;
+	delete _depthShader;
+	delete _depthInstanceShader;
+	delete _blurShader;
+	delete _blackHoleShader;
+	delete _blackHoleShaderScreen;
+
+	_basicShader = new Shader(releasePath + "Shaders/basic.vert", releasePath + "Shaders/basic.frag");
+	_instanceShader = new Shader(releasePath + "Shaders/instance.vert", releasePath + "Shaders/instance.frag");
+	_screenShader = new Shader(releasePath + "Shaders/screen.vert", releasePath + "Shaders/screen.frag");
+	_sunShader = new Shader(releasePath + "Shaders/sun.vert", releasePath + "Shaders/sun.frag");
+	_skyBoxShader = new Shader(releasePath + "Shaders/skybox.vert", releasePath + "Shaders/skybox.frag");
+	_depthShader = new Shader(releasePath + "Shaders/depth.vert", releasePath + "Shaders/depth.frag", releasePath + "Shaders/depth.geom");
+	_depthInstanceShader = new Shader(releasePath + "Shaders/depth_instance.vert", releasePath + "Shaders/depth.frag", releasePath + "Shaders/depth.geom");
+	_blurShader = new Shader(releasePath + "Shaders/blur.vert", releasePath + "Shaders/blur.frag");
+	_blackHoleShader = new Shader(releasePath + "Shaders/black_hole.vert", releasePath + "Shaders/black_hole.frag");
+	_blackHoleShaderScreen = new Shader(releasePath + "Shaders/black_hole_screen.vert", releasePath + "Shaders/black_hole_screen.frag");
+	_cubeShader = new Shader(releasePath + "Shaders/cube.vert", releasePath + "Shaders/cube.frag");
+	glfwMakeContextCurrent(_window2);
+
+}
 
 void Renderer::SetUpBlurBuffers()
 {
@@ -472,8 +486,55 @@ void Renderer::SetUpBlurBuffers()
 		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 			std::cout << "Framebuffer not complete!" << std::endl;
 	}
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
+void Renderer::DrawImGui()
+{
+	//// imgui
 
+	glfwMakeContextCurrent(_window2);
+
+
+
+	/* Render here */
+	glClear(GL_COLOR_BUFFER_BIT);
+	/* Swap front and back buffers */
+
+	ImGui_ImplOpenGL3_NewFrame();
+	ImGui_ImplGlfw_NewFrame();
+	ImGui::NewFrame();
+
+	static float f = 0.0f;
+	static int counter = 0;
+
+	bool show_demo_window = true;
+	bool show_another_window = true;
+
+	ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
+
+
+	ImGui::SliderFloat("exposure", &exposure, 0.0f, 10.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
+	ImGui::SliderFloat3("colorSun", &colorSun[0], 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
+	ImGui::SliderFloat3("cellSunColor", &cellColor[0], 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
+	ImGui::Checkbox("isHover", &_camera.isCursorHoveringWindow);            // Edit 1 float using a slider from 0.0f to 1.0f
+
+	ImGui::SliderFloat3("ambient light planet", &ambientLightPlanet[0], 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
+	ImGui::SliderFloat3("diffuse light planet", &diffuseLightPlanet[0], 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
+	ImGui::Text("lighting");
+
+	ImGui::SliderFloat("linearLightParam", &linearLightParam, 0.0f, 1.0f);
+	ImGui::SliderFloat("quadraticLightParam", &quadraticLightParam, 0.0f, 1.0f);
+
+	if (ImGui::Button("Reload Shaders"))
+	{
+		ReloadShaders();
+	}
+
+	ImGui::End();
+	ImGui::Render();
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+	glfwSwapBuffers(_window2);
+}
 void Renderer::DrawShadows()
 {
 	GLCall(glEnable(GL_DEPTH_TEST));
@@ -604,6 +665,9 @@ void Renderer::Init()
 	_blackHoleShader = new Shader(releasePath+"Shaders/black_hole.vert", releasePath+"Shaders/black_hole.frag");
 	_blackHoleShaderScreen = new Shader(releasePath+"Shaders/black_hole_screen.vert", releasePath+"Shaders/black_hole_screen.frag");
 	_cubeShader = new Shader(releasePath + "Shaders/cube.vert", releasePath + "Shaders/cube.frag");
+
+;
+
 	LoadSolarSystem();
 
 	SetUpShadowBuffer();

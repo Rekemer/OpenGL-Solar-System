@@ -96,15 +96,13 @@ void main()
     float deformation  = 1 / pow(rad * pow(dist,0.5),2) * radius * 0.1;
     offset = offset * (1 - deformation);
     offset += vec2(pos);
-    //outColor = vec4(1,0,0,1);
-    //fragPos
+ 
     outColor = texture(scene, offset) +texture(blur, offset) ;
     if (rad*dist <radius)
     {
         outColor = vec4(1,1,1,1);
     }
-    //outColor =  vec4(offset,0,1);
-
+   
 
 
 }
