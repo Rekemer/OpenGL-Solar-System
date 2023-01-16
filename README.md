@@ -15,3 +15,5 @@
     Sun has little bloom like effect with HDR
 * *Normal Maps*:
     Bumpiness in textures are added with normal mapping
+ * *Black Hole*:
+    Black hole is implemented as post-processing effect
