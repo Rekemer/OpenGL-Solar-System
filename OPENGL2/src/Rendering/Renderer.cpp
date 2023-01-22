@@ -282,8 +282,8 @@ void Renderer::Draw()
 	DrawShadows();
 
 	GLCall(glViewport(0, 0, _windowWidth, _windowHeight));
-	glEnable(GL_CULL_FACE);
-	glCullFace(GL_BACK);
+	
+	
 
 	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer));
 	GLCall(glEnable(GL_DEPTH_TEST));
@@ -308,17 +308,9 @@ void Renderer::Draw()
 		_skybox->SetPosition(_camera.GetPosition());
 		_skybox->Draw(*_skyBoxShader, view, _perspectiveMatrix);
 	}
-	auto ident = glm::mat4(1);
-	auto trans = glm::translate(ident, glm::vec3{ 0,0,7 });
-	trans = glm::scale(trans, glm::vec3{ 2,2,2 });
-	_cubeShader->Bind();
-	_cubeShader->SetMatrixUniform("worldMatrix", trans);
-	_cubeShader->SetMatrixUniform("projMatrix", _perspectiveMatrix);
-	// camera/view transformation
-	_cubeShader->SetMatrixUniform("viewMatrix", view);
-	glBindVertexArray(cubeVAO);
-	glDrawArrays(GL_TRIANGLES, 0, 36);
-	  
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
+
 
 	_instanceShader->Bind();
 	DrawModel(deltaTime);
@@ -780,7 +772,7 @@ void Renderer::LoadSolarSystem()
 	mercury->SetScale(1.f, 1.f, 1.f);
 
 
-	auto venus = new Sphere(48 * 2, this);
+	auto venus = new Sphere(24, this);
 	path = releasePath + "res/Models/Cosmos/Planets/venus.jpg";
 	venus->SetTexture(path);
 	path = releasePath + "res/Textures/Normal/venus.png";

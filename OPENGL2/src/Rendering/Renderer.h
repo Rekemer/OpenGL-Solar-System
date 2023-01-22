@@ -51,7 +51,7 @@ private:
 	unsigned int frameBuffer;
 	unsigned int depthCubemap;
 	unsigned int depthMapFBO;
-	unsigned int rocksAmount =700;
+	unsigned int rocksAmount =700*10;
 	unsigned int colorBuffers[2];
 	unsigned int pingpongFBO[2];
 	unsigned int pingpongBuffer[2];
