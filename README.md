@@ -13,6 +13,8 @@
 * *Voronoi Shader*:
     The movement of plasma is realized with special sun shader and UV map displacement
 * *Bloom Effect*:
-    Sun has little bloom effect with HDR
+    Sun has little bloom like effect with HDR
 * *Normal Maps*:
     Bumpiness in textures are added with normal mapping
+ * *Black Hole*:
+    Black hole is implemented as post-processing effect
