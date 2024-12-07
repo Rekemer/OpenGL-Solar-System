@@ -1,10 +1,9 @@
 # OpenGL Solar System Project
-***
-<img src="OPENGL2/res/blackHole.gif"  width=50% height=50%>
-<img src="OPENGL2/res/OpenGL2.gif"  width=50% height=50%>
-<img src="OPENGL2/res/Solar-System.png"  width=50% height=50%>
-<img src="OPENGL2/res/Shadow.png"  width=50% height=50%>
-***
+| |  |
+|----|----|
+| ![](OPENGL2/res/blackHole.gif) | ![](OPENGL2/res/OpenGL2.gif) |
+| ![](./screenshots/test_opcode.png) |
+| ![](OPENGL2/res/Solar-System.png)  |![](OPENGL2/res/Shadow.png)
 ## Features
 * *Instance Rendering*:
    Every asteroid has world matrix as attribute of vertex 
